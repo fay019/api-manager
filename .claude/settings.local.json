@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(composer require:*)",
+      "Bash(php artisan make:model:*)",
+      "Bash(php artisan:*)",
+      "Bash(curl:*)",
+      "Bash(find:*)",
+      "Bash(xargs grep:*)",
+      "Bash(ls:*)",
+      "Bash(php -l:*)",
+      "Bash(tree:*)",
+      "Bash(grep:*)",
+      "Bash(composer dump-autoload:*)"
+    ]
+  }
+}

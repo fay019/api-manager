@@ -1,0 +1,20 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+
+class FilamentAuth
+{
+    public function handle(Request $request, Closure $next)
+    {
+        if ($request->user() && !$request->user()->is_admin) {
+            auth()->logout();
+
+            return redirect('/admin/login')->with('error', 'Unauthorized access');
+        }
+
+        return $next($request);
+    }
+}
