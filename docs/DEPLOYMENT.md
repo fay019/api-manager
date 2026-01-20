@@ -1,8 +1,8 @@
-# Deployment Guide - Shared Hosting
+# 🚀 Deployment Guide - Shared Hosting
 
 This guide covers deploying the API Hub to shared hosting (e.g., api.moussouni.dev).
 
-## Prerequisites Checklist
+## ✅ Prerequisites Checklist
 
 - [ ] PHP 8.4+ with required extensions
 - [ ] MySQL 5.7+ OR SQLite support
@@ -32,7 +32,7 @@ php -m | grep -E "bcmath|ctype|json|mbstring|openssl|pdo|tokenizer|xml"
 
 ---
 
-## Step 1: Upload Project
+## 📁 Step 1: Upload Project
 
 ### Option A: Git (Recommended)
 
@@ -59,7 +59,7 @@ git clone https://github.com/yourname/api-manager.git .
 
 ---
 
-## Step 2: SSH Access & Environment
+## 🔧 Step 2: SSH Access & Environment
 
 ```bash
 ssh user@api.moussouni.dev
@@ -110,7 +110,7 @@ PROMO_EVENT_RETENTION_DAYS=180
 
 ---
 
-## Step 3: Install Dependencies
+## 📦 Step 3: Install Dependencies
 
 ```bash
 # Install composer dependencies (production only)
@@ -130,7 +130,7 @@ APP_KEY=base64:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
 
 ---
 
-## Step 4: Database Setup
+## 🗄️ Step 4: Database Setup
 
 ### Create Database via Hosting Control Panel
 
@@ -166,7 +166,7 @@ php artisan tinker
 
 ---
 
-## Step 5: Configure Web Server
+## 🌐 Step 5: Configure Web Server
 
 ### Document Root (Important!)
 
@@ -194,7 +194,7 @@ Create `/path/to/api-manager/.htaccess`:
 
 ---
 
-## Step 6: File Permissions
+## 🔐 Step 6: File Permissions
 
 ```bash
 # SSH into server
@@ -215,7 +215,7 @@ ls -la storage/ | head -5
 
 ---
 
-## Step 7: Production Optimization
+## ⚡ Step 7: Production Optimization
 
 ```bash
 # Clear any cached files
@@ -239,7 +239,7 @@ ls -la bootstrap/cache/
 
 ---
 
-## Step 8: Set Up Cron Jobs
+## ⏰ Step 8: Set Up Cron Jobs
 
 Scheduled tasks must run every minute. Add to hosting control panel:
 
@@ -274,7 +274,7 @@ $schedule->command('promo:prune-events')->dailyAt('03:00');
 
 ---
 
-## Step 9: HTTPS & Redirects
+## 🔒 Step 9: HTTPS & Redirects
 
 ### Force HTTPS
 
@@ -301,7 +301,7 @@ curl -I https://api.moussouni.dev
 
 ---
 
-## Step 10: Test Deployment
+## ✅ Step 10: Test Deployment
 
 ### Health Check
 
@@ -331,7 +331,7 @@ curl -H "X-API-KEY: apk_xxxxx" https://api.moussouni.dev/api/v1/promo/banner.jso
 
 ---
 
-## Step 11: Security Hardening
+## 🛡️ Step 11: Security Hardening
 
 ### Change Admin Password
 
@@ -374,7 +374,7 @@ chmod 600 /home/user/backups/api-manager.env
 
 ---
 
-## Step 12: Monitoring & Logs
+## 📊 Step 12: Monitoring & Logs
 
 ### Check Application Logs
 
@@ -409,7 +409,7 @@ mysql -u user -p -h localhost
 
 ---
 
-## Deployment Checklist
+## 📋 Deployment Checklist
 
 Before going live:
 
@@ -433,7 +433,7 @@ Before going live:
 
 ---
 
-## Troubleshooting
+## ⚠️ Troubleshooting
 
 ### 500 Error on Admin Panel
 
@@ -510,7 +510,7 @@ php artisan schedule:work  # Will show what runs
 
 ---
 
-## Updates & Maintenance
+## 🔄 Updates & Maintenance
 
 ### Pull Latest Changes
 
@@ -554,7 +554,7 @@ php artisan route:clear && php artisan route:cache
 
 ---
 
-## Scaling Considerations
+## 📈 Scaling Considerations
 
 ### When to Upgrade
 
@@ -574,7 +574,7 @@ When moving from shared to dedicated hosting:
 
 ---
 
-## Support
+## 💬 Support
 
 For issues:
 
@@ -586,7 +586,7 @@ For issues:
 
 ---
 
-## Resources
+## 📚 Resources
 
 - [Laravel Deployment](https://laravel.com/docs/12/deployment)
 - [Shared Hosting Optimization](https://laravel.com/docs/12/configuration#optimization)

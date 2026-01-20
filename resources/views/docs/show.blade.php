@@ -223,6 +223,35 @@
             color: #999;
             font-size: 0.9em;
         }
+
+        .markdown-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            margin: 16px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .markdown-content > *:first-child {
+            margin-top: 0;
+        }
+
+        .markdown-content ul ul,
+        .markdown-content ol ol,
+        .markdown-content ul ol,
+        .markdown-content ol ul {
+            margin-top: 8px;
+            margin-bottom: 8px;
+        }
+
+        .markdown-content input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        .markdown-content li input[type="checkbox"] {
+            margin-left: -24px;
+            margin-right: 12px;
+        }
     </style>
 </head>
 <body>
@@ -235,8 +264,8 @@
         <div class="doc-content">
             <a href="{{ route('docs.index') }}" class="back-link">← Back to Documentation</a>
 
-            <div style="white-space: pre-wrap; word-break: break-word;">
-                {!! e($content) !!}
+            <div class="markdown-content">
+                {!! $content !!}
             </div>
 
             <hr>

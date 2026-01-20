@@ -1,6 +1,6 @@
-# Database Schema
+# 🗄️ Database Schema
 
-## Overview
+## 📊 Overview
 
 8 tables support the API hub system:
 
@@ -17,9 +17,9 @@ users
 
 ---
 
-## Tables
+## 📋 Tables
 
-### users
+### 👤 users
 
 Default Laravel users table + admin flag.
 
@@ -47,7 +47,7 @@ Default Laravel users table + admin flag.
 
 ---
 
-### api_clients
+### 🔌 api_clients
 
 API client accounts with configuration.
 
@@ -83,7 +83,7 @@ $client->requestLogs()->where('created_at', '>=', now()->subDay())->get();
 
 ---
 
-### api_keys
+### 🔑 api_keys
 
 Secure API keys for client authentication.
 
@@ -128,7 +128,7 @@ if ($key && password_verify($rawKey, $key->key_hash)) {
 
 ---
 
-### api_request_logs
+### 📝 api_request_logs
 
 Audit trail of all API requests.
 
@@ -188,7 +188,7 @@ php artisan api:prune-logs --days=90
 
 ---
 
-### documentation_settings
+### 📚 documentation_settings
 
 Configuration for documentation files displayed in admin panel.
 
@@ -237,7 +237,7 @@ DocumentationSetting::getByName('readme');
 
 ---
 
-### promos
+### 🎯 promos
 
 Promotional banners.
 
@@ -290,7 +290,7 @@ Promo::where('status', 'published')
 
 ---
 
-### promo_versions
+### 📑 promo_versions
 
 Version history snapshots (automatic on change).
 
@@ -340,7 +340,7 @@ $v2 = $promo->versions()->where('version', 2)->first();
 
 ---
 
-### promo_events
+### 📊 promo_events
 
 User interactions with promos (impressions, clicks, dismissals).
 
@@ -401,7 +401,7 @@ php artisan promo:prune-events --days=180
 
 ---
 
-## Relationships
+## 🔗 Relationships
 
 ```
 User
@@ -435,7 +435,7 @@ PromoEvent
 
 ---
 
-## Performance Considerations
+## ⚡ Performance Considerations
 
 ### Indexes
 All critical queries have indexes:
@@ -466,7 +466,7 @@ All critical queries have indexes:
 
 ---
 
-## Backups
+## 💾 Backups
 
 For shared hosting:
 - Export MySQL: `mysqldump -u user -p dbname > backup.sql`

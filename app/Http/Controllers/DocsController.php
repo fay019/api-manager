@@ -23,6 +23,7 @@ class DocsController extends Controller
     /**
      * Show a specific documentation by name
      * Uses dynamic path from database
+     * Converts Markdown to HTML for display
      */
     public function show(string $docName)
     {
@@ -43,7 +44,16 @@ class DocsController extends Controller
             abort(404);
         }
 
-        $content = file_get_contents($filePath);
+        $markdownContent = file_get_contents($filePath);
+
+        // Convert Markdown to HTML
+        $converter = new \League\CommonMark\GithubFlavoredMarkdownConverter([
+            'html_input' => 'strip',
+            'allow_unsafe_links' => false,
+            'max_nesting_level' => 100,
+        ]);
+        $content = $converter->convert($markdownContent)->getContent();
+
         $title = ucfirst($docName) . ' Documentation';
 
         return view('docs.show', compact('title', 'content'));
