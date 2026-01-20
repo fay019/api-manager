@@ -5,7 +5,6 @@ namespace App\Filament\Pages;
 use App\Models\DocumentationSetting;
 use App\Services\DocumentationScanner;
 use BackedEnum;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
@@ -17,10 +16,10 @@ class ManageAppSettings extends Page implements HasForms
 {
     use InteractsWithForms;
 
-    protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-cog-6-tooth';
+    protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-book-open';
     protected static string|UnitEnum|null $navigationGroup = 'System';
     protected static ?int $navigationSort = 99;
-    protected static ?string $title = 'App Settings';
+    protected static ?string $title = 'Documentation Settings';
 
     protected string $view = 'filament.pages.manage-app-settings';
 
@@ -28,7 +27,6 @@ class ManageAppSettings extends Page implements HasForms
 
     public function mount(): void
     {
-        DocumentationScanner::sync();
         $this->form->fill($this->getInitialFormData());
     }
 
@@ -41,19 +39,12 @@ class ManageAppSettings extends Page implements HasForms
 
     protected function getFormSchema(): array
     {
-        return [
-            Toggle::make('show_admin_credentials')
-                ->label('Show Admin Credentials')
-                ->helperText('Display admin credentials on home page')
-                ->live(),
-        ];
+        return [];
     }
 
     protected function getInitialFormData(): array
     {
-        $formData = [
-            'show_admin_credentials' => DocumentationSetting::shouldShowCredentials() ?? false,
-        ];
+        $formData = [];
 
         DocumentationSetting::all()->each(function (DocumentationSetting $doc) use (&$formData) {
             $formData['doc_' . $doc->doc_name . '_visible'] = $doc->is_visible;
@@ -152,23 +143,4 @@ class ManageAppSettings extends Page implements HasForms
         }
     }
 
-    public function updatedData(): void
-    {
-        try {
-            $data = $this->data ?? [];
-
-            // Save admin credentials setting if it changed
-            if (isset($data['show_admin_credentials'])) {
-                $setting = DocumentationSetting::first();
-                if ($setting) {
-                    $credentialsValue = (bool) $data['show_admin_credentials'];
-                    $setting->update([
-                        'show_admin_credentials' => $credentialsValue,
-                    ]);
-                }
-            }
-        } catch (\Exception $e) {
-            \Log::error('Error updating settings:', ['error' => $e->getMessage()]);
-        }
-    }
 }

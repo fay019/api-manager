@@ -13,12 +13,10 @@ class DocumentationSetting extends Model
         'doc_name',
         'path',
         'is_visible',
-        'show_admin_credentials',
     ];
 
     protected $casts = [
         'is_visible' => 'boolean',
-        'show_admin_credentials' => 'boolean',
     ];
 
     /**
@@ -37,21 +35,6 @@ class DocumentationSetting extends Model
         return self::where('is_visible', true)
             ->pluck('doc_name')
             ->toArray();
-    }
-
-    /**
-     * Get admin credentials visibility setting
-     */
-    public static function shouldShowCredentials(): bool
-    {
-        // Check if in local environment first
-        if (config('app.env') !== 'local') {
-            return false;
-        }
-
-        // Then check the setting (use first record or default to true)
-        $setting = self::first();
-        return $setting ? (bool) $setting->show_admin_credentials : true;
     }
 
     /**

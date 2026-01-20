@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('doc_name')->unique();  // 'readme', 'api', 'database', etc.
             $table->string('path');                 // '/README.md', '/docs/API.md', etc.
             $table->boolean('is_visible')->default(true);
-            $table->boolean('show_admin_credentials')->default(true);  // For home page credentials
             $table->timestamps();
         });
     }

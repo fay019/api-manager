@@ -11,6 +11,11 @@
             box-sizing: border-box;
         }
 
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             background: #f5f5f5;
@@ -160,48 +165,80 @@
         <h1>📚 Documentation</h1>
         <p class="subtitle">Complete guides for the API Hub system</p>
 
-        <div class="docs-grid">
-            @if(in_array('readme', $visibleDocs))
-                <a href="{{ route('docs.readme') }}" class="doc-card">
-                    <div class="icon">📖</div>
-                    <h3>README</h3>
-                    <p>Quick start guide with project overview, features, and setup instructions.</p>
-                    <div class="meta">Getting Started</div>
-                </a>
-            @endif
+        @if(empty($visibleDocs))
+            <!-- Empty State - Friendly Welcome -->
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; padding: 60px 30px; text-align: center; box-shadow: 0 8px 16px rgba(102, 126, 234, 0.2); margin: 40px 0; color: white;">
+                <div style="font-size: 4rem; margin-bottom: 20px; animation: bounce 2s infinite;">📚</div>
+                <h2 style="font-size: 1.8em; color: white; margin-bottom: 15px; font-weight: 600;">Documentation Coming Soon! 🎉</h2>
+                <p style="color: rgba(255,255,255,0.95); font-size: 1.05em; margin-bottom: 25px; line-height: 1.8;">
+                    We're preparing comprehensive documentation to help you get the most out of this API hub. <br>
+                    <strong>Good things are on the way!</strong>
+                </p>
+                <p style="color: rgba(255,255,255,0.9); font-size: 0.95em; margin-bottom: 30px;">
+                    In the meantime, check out the API health status@if(auth()->check() && auth()->user()->is_admin) or explore the admin panel@endif:
+                </p>
+                <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                    <a href="/api/v1/health" style="background: rgba(255,255,255,0.2); color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; border: 2px solid rgba(255,255,255,0.3); transition: all 0.3s;">
+                        🏥 API Health
+                    </a>
+                    @if(auth()->check() && auth()->user()->is_admin)
+                        <a href="/admin" style="background: white; color: #667eea; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; transition: all 0.3s;">
+                            ⚙️ Admin Panel
+                        </a>
+                    @endif
+                </div>
+                @if(auth()->check() && auth()->user()->is_admin)
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.85em; margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.2);">
+                        <strong>Administrator?</strong> Enable documentation in <a href="/admin" style="color: white; text-decoration: underline;">Documentation Settings</a>
+                    </p>
+                @endif
+            </div>
+        @else
+            <div class="docs-grid">
+                @if(in_array('readme', $visibleDocs))
+                    <a href="{{ route('docs.readme') }}" class="doc-card">
+                        <div class="icon">📖</div>
+                        <h3>README</h3>
+                        <p>Quick start guide with project overview, features, and setup instructions.</p>
+                        <div class="meta">Getting Started</div>
+                    </a>
+                @endif
 
-            @if(in_array('api', $visibleDocs))
-                <a href="{{ route('docs.api') }}" class="doc-card">
-                    <div class="icon">📡</div>
-                    <h3>API Documentation</h3>
-                    <p>Complete endpoint reference with authentication, rate limiting, and examples.</p>
-                    <div class="meta">API Reference</div>
-                </a>
-            @endif
+                @if(in_array('api', $visibleDocs))
+                    <a href="{{ route('docs.api') }}" class="doc-card">
+                        <div class="icon">📡</div>
+                        <h3>API Documentation</h3>
+                        <p>Complete endpoint reference with authentication, rate limiting, and examples.</p>
+                        <div class="meta">API Reference</div>
+                    </a>
+                @endif
 
-            @if(in_array('database', $visibleDocs))
-                <a href="{{ route('docs.database') }}" class="doc-card">
-                    <div class="icon">🗄️</div>
-                    <h3>Database Schema</h3>
-                    <p>Detailed schema documentation, relationships, and query examples.</p>
-                    <div class="meta">Schema & Queries</div>
-                </a>
-            @endif
+                @if(in_array('database', $visibleDocs))
+                    <a href="{{ route('docs.database') }}" class="doc-card">
+                        <div class="icon">🗄️</div>
+                        <h3>Database Schema</h3>
+                        <p>Detailed schema documentation, relationships, and query examples.</p>
+                        <div class="meta">Schema & Queries</div>
+                    </a>
+                @endif
 
-            @if(in_array('deployment', $visibleDocs))
-                <a href="{{ route('docs.deployment') }}" class="doc-card">
-                    <div class="icon">🚀</div>
-                    <h3>Deployment Guide</h3>
-                    <p>Step-by-step instructions for deploying to shared hosting.</p>
-                    <div class="meta">Shared Hosting</div>
-                </a>
-            @endif
-        </div>
+                @if(in_array('deployment', $visibleDocs))
+                    <a href="{{ route('docs.deployment') }}" class="doc-card">
+                        <div class="icon">🚀</div>
+                        <h3>Deployment Guide</h3>
+                        <p>Step-by-step instructions for deploying to shared hosting.</p>
+                        <div class="meta">Shared Hosting</div>
+                    </a>
+                @endif
+            </div>
+        @endif
 
         <div class="features">
             <h3>Key Resources</h3>
             <ul>
-                <li><strong>Admin Panel:</strong> <a href="/admin" style="color: #667eea;">/admin</a></li>
+                @if(auth()->check() && auth()->user()->is_admin)
+                    <li><strong>Admin Panel:</strong> <a href="/admin" style="color: #667eea;">/admin</a></li>
+                @endif
                 <li><strong>API Health:</strong> <a href="/api/v1/health" style="color: #667eea;">/api/v1/health</a></li>
                 <li><strong>Promo Banner:</strong> <a href="/api/v1/promo/banner.json" style="color: #667eea;">/api/v1/promo/banner.json</a></li>
                 <li><strong>Source Code:</strong> Check the project root directory</li>

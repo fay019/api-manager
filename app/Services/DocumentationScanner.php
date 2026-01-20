@@ -102,7 +102,8 @@ class DocumentationScanner
     /**
      * Sync documentation files with database
      * Creates/updates entries for all discovered docs
-     * IMPORTANT: Only sets is_visible to true for NEW records, preserves existing visibility settings
+     * IMPORTANT: New documents are created with is_visible = false (user must enable manually)
+     * Existing documents preserve their visibility setting
      */
     public static function sync(): void
     {
@@ -115,11 +116,11 @@ class DocumentationScanner
                 // Update only the path for existing records - preserve is_visible setting
                 $existing->update(['path' => $doc['path']]);
             } else {
-                // Create new record with is_visible = true
+                // Create new record with is_visible = false (user must manually enable)
                 \App\Models\DocumentationSetting::create([
                     'doc_name' => $doc['doc_name'],
                     'path' => $doc['path'],
-                    'is_visible' => true,
+                    'is_visible' => false,
                 ]);
             }
         }

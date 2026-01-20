@@ -13,10 +13,8 @@ class DocsController extends Controller
 
     public function index()
     {
-        if (!$this->settingService->isDocsIndexVisible()) {
-            abort(404);
-        }
-
+        // Show documentation page even if no docs are visible
+        // Empty state will guide users
         $visibleDocs = $this->settingService->getVisibleDocs();
         $allDocs = $this->settingService->getAllDocs();
         return view('docs.index', compact('visibleDocs', 'allDocs'));

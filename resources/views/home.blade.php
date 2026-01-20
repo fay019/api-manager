@@ -255,6 +255,17 @@
             margin: 5px 0;
         }
 
+        .admin-link {
+            color: #ccc;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: color 0.3s ease;
+        }
+
+        .admin-link:hover {
+            color: #667eea;
+        }
+
         @media (max-width: 768px) {
             .header {
                 padding: 40px 20px;
@@ -287,11 +298,13 @@
             <section class="section">
                 <h2>Quick Navigation</h2>
                 <div class="quick-nav">
-                    <a href="/admin" class="nav-card">
-                        <div class="icon">📊</div>
-                        <h3>Admin Panel</h3>
-                        <p>Manage clients, keys, and content</p>
-                    </a>
+                    @if(auth()->check() && auth()->user()->is_admin)
+                        <a href="/admin" class="nav-card">
+                            <div class="icon">📊</div>
+                            <h3>Admin Panel</h3>
+                            <p>Manage clients, keys, and content</p>
+                        </a>
+                    @endif
 
                     <a href="{{ route('docs.index') }}" class="nav-card" style="border-color: #667eea; box-shadow: 0 5px 20px rgba(102, 126, 234, 0.15);">
                         <div class="icon" style="font-size: 3em;">📚</div>
@@ -310,20 +323,6 @@
             <!-- Getting Started -->
             <section class="section">
                 <h2>Getting Started</h2>
-
-                @if($showCredentials)
-                    <div class="getting-started">
-                        <h3>Admin Access</h3>
-                        <ol>
-                            <li>Go to <strong><a href="/admin">/admin</a></strong></li>
-                            <li>Login with default credentials:</li>
-                        </ol>
-                        <div class="credentials-box">
-                            <strong>Email:</strong> admin@moussouni.dev<br>
-                            <strong>Password:</strong> password
-                        </div>
-                    </div>
-                @endif
 
                 <div class="getting-started">
                     <h3>Test the API</h3>
@@ -399,6 +398,9 @@
                 <a href="{{ route('docs.index') }}" style="color: #667eea; text-decoration: none;">All Documentation</a> •
                 <a href="{{ route('docs.database') }}" style="color: #667eea; text-decoration: none;">Database Schema</a> •
                 <a href="{{ route('docs.deployment') }}" style="color: #667eea; text-decoration: none;">Deployment Guide</a>
+                @if(!auth()->check())
+                    • <a href="/admin/login" class="admin-link">admin</a>
+                @endif
             </p>
         </div>
     </div>
