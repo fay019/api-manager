@@ -50,7 +50,7 @@ class Promo extends Model
     public function scopeActive($query)
     {
         return $query
-            ->where('status', PromoStatus::PUBLISHED)
+            ->whereIn('status', [PromoStatus::PUBLISHED, PromoStatus::SCHEDULED])
             ->where(function ($q) {
                 $q->whereNull('starts_at')
                   ->orWhere('starts_at', '<=', now());
