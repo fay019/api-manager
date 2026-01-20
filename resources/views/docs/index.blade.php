@@ -195,41 +195,17 @@
             </div>
         @else
             <div class="docs-grid">
-                @if(in_array('readme', $visibleDocs))
-                    <a href="{{ route('docs.readme') }}" class="doc-card">
-                        <div class="icon">📖</div>
-                        <h3>README</h3>
-                        <p>Quick start guide with project overview, features, and setup instructions.</p>
-                        <div class="meta">Getting Started</div>
+                @foreach($visibleDocs as $docName)
+                    @php
+                        $metadata = \App\Services\DocumentationScanner::getMetadata($docName);
+                    @endphp
+                    <a href="{{ route('docs.show', $docName) }}" class="doc-card">
+                        <div class="icon">{{ $metadata['icon'] }}</div>
+                        <h3>{{ $metadata['label'] }}</h3>
+                        <p>{{ $metadata['description'] }}</p>
+                        <div class="meta">{{ ucfirst($docName) }}</div>
                     </a>
-                @endif
-
-                @if(in_array('api', $visibleDocs))
-                    <a href="{{ route('docs.api') }}" class="doc-card">
-                        <div class="icon">📡</div>
-                        <h3>API Documentation</h3>
-                        <p>Complete endpoint reference with authentication, rate limiting, and examples.</p>
-                        <div class="meta">API Reference</div>
-                    </a>
-                @endif
-
-                @if(in_array('database', $visibleDocs))
-                    <a href="{{ route('docs.database') }}" class="doc-card">
-                        <div class="icon">🗄️</div>
-                        <h3>Database Schema</h3>
-                        <p>Detailed schema documentation, relationships, and query examples.</p>
-                        <div class="meta">Schema & Queries</div>
-                    </a>
-                @endif
-
-                @if(in_array('deployment', $visibleDocs))
-                    <a href="{{ route('docs.deployment') }}" class="doc-card">
-                        <div class="icon">🚀</div>
-                        <h3>Deployment Guide</h3>
-                        <p>Step-by-step instructions for deploying to shared hosting.</p>
-                        <div class="meta">Shared Hosting</div>
-                    </a>
-                @endif
+                @endforeach
             </div>
         @endif
 
