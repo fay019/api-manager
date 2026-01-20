@@ -246,11 +246,25 @@
 
         .markdown-content input[type="checkbox"] {
             margin-right: 8px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            vertical-align: middle;
+            accent-color: #667eea;
         }
 
         .markdown-content li input[type="checkbox"] {
             margin-left: -24px;
             margin-right: 12px;
+        }
+
+        .markdown-content input[type="checkbox"]:disabled {
+            opacity: 1;
+            cursor: default;
+        }
+
+        .markdown-content input[type="checkbox"]:disabled:checked {
+            accent-color: #667eea;
         }
     </style>
 </head>
