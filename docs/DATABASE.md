@@ -198,7 +198,6 @@ Configuration for documentation files displayed in admin panel.
 | doc_name | string(255) | ❌ | | Unique document identifier (e.g., `readme`, `api`, `deployment`) |
 | path | string(255) | ❌ | | File path relative to project root (e.g., `/README.md`, `/docs/API.md`) |
 | is_visible | boolean | ❌ | true | Whether document is shown in admin panel |
-| show_admin_credentials | boolean | ❌ | true | Display admin credentials on home page |
 | created_at | timestamp | ❌ | now() | |
 | updated_at | timestamp | ❌ | now() | |
 
@@ -211,8 +210,7 @@ Configuration for documentation files displayed in admin panel.
 **Purpose:**
 - Track which documentation files exist in the project
 - Control visibility of each document in Filament admin panel
-- Store admin credentials visibility preference
-- Synced automatically via `DocumentationScanner::sync()`
+- User controls which docs appear via toggles in admin panel
 
 **Queries:**
 ```php
@@ -222,18 +220,16 @@ DocumentationSetting::where('is_visible', true)->get();
 // Check specific doc visibility
 DocumentationSetting::where('doc_name', 'api')->first()->is_visible;
 
-// Should show admin credentials (local env only)
-DocumentationSetting::shouldShowCredentials();
-
 // Get doc by name
 DocumentationSetting::getByName('readme');
 ```
 
 **Sync Logic:**
-- Automatically discovers `.md` files in project root and `/docs` directory
-- Creates new entries with `is_visible = true` for newly discovered docs
-- Preserves existing `is_visible` settings on sync (doesn't reset to true)
-- Deletes entries for files that no longer exist (except 'settings' doc)
+- Triggered manually by user clicking "Scan Documentation" button
+- Discovers `.md` files in project root and `/docs` directory
+- Creates new entries with `is_visible = false` for newly discovered docs (user must enable manually)
+- Preserves existing `is_visible` settings on sync (doesn't overwrite)
+- Deletes entries for files that no longer exist
 
 **Auto-Caching:**
 - Cache cleared on any create/update/delete via model observer
