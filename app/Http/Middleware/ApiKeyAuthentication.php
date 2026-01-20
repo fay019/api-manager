@@ -29,7 +29,7 @@ class ApiKeyAuthentication
                     return ApiResponse::unauthorized('API key has expired');
                 }
 
-                if ($key->apiClient->status->value !== 'active') {
+                if (!$key->apiClient->is_active) {
                     return ApiResponse::unauthorized('API client is not active');
                 }
 

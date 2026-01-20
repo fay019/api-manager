@@ -2,25 +2,36 @@
 
 namespace App\Models;
 
-use App\Enums\ApiClientStatus;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ApiClient extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'name',
-        'status',
+        'contact_email',
+        'contact_name',
+        'website',
+        'client_type',
+        'description',
+        'is_active',
         'allowed_origins',
         'notes',
         'rate_limit_per_minute',
+        'monthly_quota',
+        'webhook_url',
+        'activated_at',
     ];
 
     protected function casts(): array
     {
         return [
             'allowed_origins' => 'array',
-            'status' => ApiClientStatus::class,
+            'is_active' => 'boolean',
+            'activated_at' => 'datetime',
         ];
     }
 

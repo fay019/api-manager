@@ -3,20 +3,22 @@
 namespace App\Services;
 
 use App\Models\ApiKey;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
 
 class ApiKeyService
 {
     public function generateKey(): array
     {
-        $rawKey = Str::random(32);
+        $rawKeyPart = Str::random(32);
         $prefix = 'apk_' . Str::random(4);
-        $hash = bcrypt($rawKey);
+        $fullRawKey = "{$prefix}{$rawKeyPart}";
+        $encrypted = Crypt::encryptString($fullRawKey);
 
         return [
-            'raw' => "{$prefix}{$rawKey}",
+            'raw' => $fullRawKey,
             'prefix' => $prefix,
-            'hash' => $hash,
+            'encrypted' => $encrypted,
         ];
     }
 
@@ -24,30 +26,35 @@ class ApiKeyService
     {
         $prefix = substr($rawKey, 0, 8);
 
-        $key = ApiKey::where('key_prefix', $prefix)
+        $keys = ApiKey::where('key_prefix', $prefix)
             ->where('is_active', true)
             ->with('apiClient')
-            ->first();
+            ->get();
 
-        if (!$key) {
-            return null;
-        }
+        foreach ($keys as $key) {
+            try {
+                $decrypted = Crypt::decryptString($key->key_encrypted);
+                if ($decrypted === $rawKey) {
+                    // Validation des dates et du client
+                    if ($key->starts_at && $key->starts_at->isFuture()) {
+                        continue;
+                    }
 
-        if (!hash_equals($key->key_hash, crypt($rawKey, $key->key_hash))) {
-            // Use a more reliable comparison
-            if (!password_verify($rawKey, $key->key_hash)) {
-                return null;
+                    if ($key->expires_at && $key->expires_at->isPast()) {
+                        continue;
+                    }
+
+                    if (!$key->apiClient->is_active) {
+                        continue;
+                    }
+
+                    return $key;
+                }
+            } catch (\Exception $e) {
+                continue;
             }
         }
 
-        if ($key->expires_at && $key->expires_at->isPast()) {
-            return null;
-        }
-
-        if ($key->apiClient->status->value !== 'active') {
-            return null;
-        }
-
-        return $key;
+        return null;
     }
 }

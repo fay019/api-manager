@@ -10,20 +10,22 @@ class ApiKey extends Model
 {
     protected $fillable = [
         'api_client_id',
-        'key_hash',
+        'key_encrypted',
         'key_prefix',
         'name',
+        'starts_at',
         'expires_at',
         'is_active',
     ];
 
-    protected $hidden = ['key_hash'];
+    protected $hidden = ['key_encrypted'];
 
     protected function casts(): array
     {
         return [
             'is_active' => 'boolean',
             'last_used_at' => 'datetime',
+            'starts_at' => 'datetime',
             'expires_at' => 'datetime',
         ];
     }
@@ -45,6 +47,10 @@ class ApiKey extends Model
 
     public function getIsValidAttribute(): bool
     {
-        return $this->is_active && !$this->is_expired && $this->apiClient->status->value === 'active';
+        $now = now();
+        return $this->is_active
+            && (!$this->starts_at || $this->starts_at->isPast())
+            && (!$this->expires_at || $this->expires_at->isFuture())
+            && $this->apiClient->is_active;
     }
 }

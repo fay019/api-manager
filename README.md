@@ -59,7 +59,7 @@ Body: {
 
 1. Login to `/admin` (Email: admin@moussouni.dev)
 2. Go to **API Clients** → **Create**
-3. Set name, status, allowed origins, rate limit
+3. Set name, is_active status, allowed origins, rate limit
 4. Save and generate API key
 5. Copy raw key immediately (won't be shown again)
 
