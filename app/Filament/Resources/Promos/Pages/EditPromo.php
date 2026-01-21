@@ -8,6 +8,7 @@ use App\Models\Promo;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Textarea;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -16,9 +17,81 @@ class EditPromo extends EditRecord
 {
     protected static string $resource = PromoResource::class;
 
+    public bool $showVersionHistory = false;
+
+    public function getTitle(): string
+    {
+        $record = $this->getRecord();
+        $latestVersion = $record->versions()->orderBy('version', 'desc')->first();
+        $versionNumber = $latestVersion ? $latestVersion->version : 1;
+
+        return "{$record->title} (v{$versionNumber})";
+    }
+
+    public function toggleVersionHistory(): void
+    {
+        $this->showVersionHistory = !$this->showVersionHistory;
+    }
+
+    /**
+     * Get all versions for this promo
+     */
+    public function getPromoVersions()
+    {
+        return $this->getRecord()->versions()
+            ->orderBy('version', 'desc')
+            ->with('creator')
+            ->get();
+    }
+
+    /**
+     * Get version diff
+     */
+    public function getVersionDiff($v1, $v2): array
+    {
+        $version1 = $this->getRecord()->versions()->where('version', $v1)->first();
+        $version2 = $this->getRecord()->versions()->where('version', $v2)->first();
+
+        if (!$version1 || !$version2) {
+            return [];
+        }
+
+        $payload1 = $version1->payload_json ?? [];
+        $payload2 = $version2->payload_json ?? [];
+
+        $diff = [];
+        $allKeys = array_unique(array_merge(array_keys($payload1), array_keys($payload2)));
+
+        foreach ($allKeys as $key) {
+            $old = $payload1[$key] ?? null;
+            $new = $payload2[$key] ?? null;
+
+            if ($old !== $new) {
+                $diff[$key] = ['old' => $old, 'new' => $new];
+            }
+        }
+
+        return $diff;
+    }
+
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('view_history')
+                ->label('Version History')
+                ->icon('heroicon-o-clock')
+                ->color('info')
+                ->button()
+                ->slideOver()
+                ->modalHeading('Version History & Changes')
+                ->modalDescription('Track all modifications made to this promotion')
+                ->modalContent(fn (Promo $record) => view('filament.components.version-history-modal', [
+                    'versions' => $record->versions()->orderBy('version', 'desc')->with('creator')->get(),
+                    'record' => $record,
+                    'page' => $this,
+                ]))
+                ->modalSubmitAction(false)
+                ->modalCancelActionLabel('Close'),
             Action::make('preview_json')
                 ->label('Aperçu JSON')
                 ->icon('heroicon-o-code-bracket')
