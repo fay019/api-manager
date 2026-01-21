@@ -423,21 +423,21 @@ This page works **independently of Laravel** and provides:
 - 💾 Common solutions (cache clear, permissions, etc.)
 - 🔄 Auto-refreshes every 10 seconds to detect recovery
 
-### Middleware-Level Protection
+### Bootstrap-Level Protection
 
-**New middleware `EnsureDatabaseExists`** prevents most setup errors by running **BEFORE everything else**:
+The application prepares itself automatically on first request:
 
-1. **Creates `.env` file** from `.env.example` if missing
-   - Eliminates "No environment file" errors on first visit
-   - Sets up default configuration
+**1. In `public/index.php` (BEFORE Laravel loads):**
+- ✅ Creates required directories (`storage/`, `bootstrap/cache/`, etc.)
+- ✅ Creates `.env` file from `.env.example` if missing
+- Eliminates "No environment file" and "Permission denied" errors
 
-2. **Creates SQLite file** if chosen database type
-   - Ensures database file exists before session loading
+**2. In middleware `EnsureDatabaseExists` (BEFORE session loading):**
+- ✅ Creates SQLite file if chosen database type
+- ✅ Creates sessions table automatically
+- Prevents "Sessions table not found" errors
 
-3. **Creates sessions table** automatically
-   - Prevents "Sessions table not found" errors
-
-This middleware is part of the web middleware stack and ensures your application is ready before anything else runs.
+These protections run before Laravel's configuration loads, ensuring the application is ready for anything.
 
 **Result:** Zero 500 errors on first deployment! ✅
 

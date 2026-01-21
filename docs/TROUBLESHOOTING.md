@@ -84,10 +84,11 @@ php artisan db:seed
 
 **Résolution:**
 
-Le middleware `EnsureDatabaseExists` crée maintenant automatiquement `.env` depuis `.env.example`:
-- S'exécute AVANT CheckInstallation
-- S'exécute AVANT la session middleware
+La fonction `ensureApplicationReady()` dans `public/index.php` crée maintenant automatiquement `.env` depuis `.env.example`:
+- S'exécute AVANT le chargement de la configuration Laravel
+- S'exécute AVANT les middlewares
 - Crée `.env` si `.env.example` existe
+- Crée aussi tous les répertoires nécessaires
 
 **Résultat:** Aucune erreur "env file not found" au premier accès! ✅
 

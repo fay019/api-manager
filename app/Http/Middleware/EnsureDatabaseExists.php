@@ -7,12 +7,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Middleware pour s'assurer que la base de données et le fichier .env existent.
+ * Middleware pour s'assurer que la base de données est prête.
  *
  * S'exécute avant la session pour:
- * - Créer .env depuis .env.example si manquant
  * - Créer SQLite si nécessaire
  * - Créer la table sessions
+ *
+ * Note: Le fichier .env est créé dans public/index.php AVANT ce middleware
  */
 class EnsureDatabaseExists
 {
@@ -21,9 +22,6 @@ class EnsureDatabaseExists
      */
     public function handle(Request $request, Closure $next)
     {
-        // S'assurer que .env existe (créé depuis .env.example si manquant)
-        $this->ensureEnvExists();
-
         // Créer la base de données SQLite si nécessaire
         if (config('database.default') === 'sqlite') {
             $this->ensureSqliteExists();
@@ -37,33 +35,6 @@ class EnsureDatabaseExists
         }
 
         return $next($request);
-    }
-
-    /**
-     * Crée le fichier .env depuis .env.example s'il manque.
-     */
-    protected function ensureEnvExists(): void
-    {
-        $envPath = base_path('.env');
-        $envExamplePath = base_path('.env.example');
-
-        // Si .env existe déjà, rien à faire
-        if (file_exists($envPath)) {
-            return;
-        }
-
-        // Si .env.example n'existe pas, on ne peut rien faire
-        if (!file_exists($envExamplePath)) {
-            return;
-        }
-
-        // Copier .env.example vers .env
-        try {
-            copy($envExamplePath, $envPath);
-        } catch (\Exception $e) {
-            // Silencieusement ignorer si la copie échoue
-            // (permissions insuffisantes, etc.)
-        }
     }
 
     /**

@@ -153,19 +153,20 @@ L'application effectue automatiquement TOUT ce qui est nécessaire:
 
 **Puis vous êtes redirigé vers le login admin!**
 
-### ⚡ Middleware de Pré-Installation
+### ⚡ Bootstrap Automatique
 
-Un nouveau middleware `EnsureDatabaseExists` s'exécute **avant tout le reste** pour:
+L'application crée automatiquement TOUT ce qui est nécessaire au démarrage:
 
-1. **Créer le fichier `.env`** depuis `.env.example` si manquant
-   - Évite les erreurs "No environment file" au premier accès
-   - Prépare la configuration par défaut
+**1. Dans `public/index.php` (avant tout le reste):**
+- ✅ Crée les répertoires: `storage/`, `bootstrap/cache/`, etc.
+- ✅ Crée `.env` depuis `.env.example` si manquant
+- ✅ S'exécute AVANT que Laravel charge sa configuration
+- Élimine les erreurs "No environment file" et "Permission denied"
 
-2. **Créer le fichier SQLite** s'il manque
-   - Prépare la base de données pour la session
-
-3. **Créer la table sessions** automatiquement
-   - Évite les erreurs "Sessions table not found"
+**2. Dans le middleware `EnsureDatabaseExists` (avant la session):**
+- ✅ Crée le fichier SQLite s'il manque
+- ✅ Crée la table sessions automatiquement
+- Élimine les erreurs "Sessions table not found"
 
 **Résultat:** Aucune erreur 500 au premier accès! ✅
 
