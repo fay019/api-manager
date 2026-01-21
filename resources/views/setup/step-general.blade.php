@@ -29,6 +29,35 @@
     @csrf
 
     <div class="form-group">
+        <label for="db_connection">Type de Base de Données</label>
+        <select
+            id="db_connection"
+            name="db_connection"
+            required
+        >
+            <option value="">-- Sélectionner un type --</option>
+            @foreach ($databases as $db)
+                <option value="{{ $db }}" {{ old('db_connection', $current_db) === $db ? 'selected' : '' }}>
+                    {{ ucfirst($db) }}
+                    @if ($db === 'sqlite')
+                        (Fichier local - Recommandé pour dev)
+                    @elseif ($db === 'mysql')
+                        (Serveur MySQL)
+                    @elseif ($db === 'pgsql')
+                        (Serveur PostgreSQL)
+                    @endif
+                </option>
+            @endforeach
+        </select>
+        @error('db_connection')
+            <div class="error">{{ $message }}</div>
+        @enderror
+        <div style="font-size: 12px; color: #666; margin-top: 5px;">
+            Choisissez le type de base de données à utiliser
+        </div>
+    </div>
+
+    <div class="form-group">
         <label for="site_name">Nom du Site</label>
         <input
             type="text"
