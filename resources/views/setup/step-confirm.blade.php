@@ -38,7 +38,7 @@
         <strong>Type BD:</strong>
         <span>{{ ucfirst($setup['setup.db_connection'] ?? 'N/A') }}</span>
 
-        @if ($setup['setup.db_connection'] === 'mysql' || $setup['setup.db_connection'] === 'pgsql')
+        @if (isset($setup['setup.db_connection']) && in($setup['setup.db_connection'], ['mysql', 'pgsql']))
             <strong>Hôte BD:</strong>
             <span>{{ $setup['setup.db_host'] ?? 'N/A' }}</span>
 
@@ -49,7 +49,7 @@
         <strong>Base de Données:</strong>
         <span>{{ $setup['setup.db_database'] ?? 'N/A' }}</span>
 
-        @if ($setup['setup.db_connection'] === 'mysql' || $setup['setup.db_connection'] === 'pgsql')
+        @if (isset($setup['setup.db_connection']) && in($setup['setup.db_connection'], ['mysql', 'pgsql']))
             <strong>Utilisateur BD:</strong>
             <span>{{ $setup['setup.db_username'] ?? 'N/A' }}</span>
         @endif
