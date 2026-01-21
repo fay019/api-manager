@@ -4,7 +4,9 @@ namespace App\Filament\Resources;
 
 use App\Models\ApiRequestLog;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -25,6 +27,56 @@ class ApiRequestLogResource extends Resource
     protected static ?int $navigationSort = 3;
 
     protected static ?string $label = 'Request Logs';
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                TextInput::make('created_at')
+                    ->label('Timestamp')
+                    ->disabled(),
+
+                TextInput::make('method')
+                    ->label('HTTP Method')
+                    ->disabled(),
+
+                TextInput::make('path')
+                    ->label('Endpoint')
+                    ->disabled(),
+
+                TextInput::make('status_code')
+                    ->label('Status Code')
+                    ->disabled(),
+
+                TextInput::make('duration_ms')
+                    ->label('Duration (ms)')
+                    ->disabled(),
+
+                TextInput::make('ip')
+                    ->label('IP Address')
+                    ->disabled(),
+
+                TextInput::make('user_agent')
+                    ->label('User Agent')
+                    ->disabled(),
+
+                TextInput::make('origin')
+                    ->label('Origin')
+                    ->disabled(),
+
+                TextInput::make('referer')
+                    ->label('Referer')
+                    ->disabled(),
+
+                TextInput::make('apiClient.name')
+                    ->label('API Client')
+                    ->disabled(),
+
+                TextInput::make('apiKey.name')
+                    ->label('API Key')
+                    ->disabled(),
+            ]);
+    }
 
     public static function table(Table $table): Table
     {
