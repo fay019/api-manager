@@ -8,6 +8,35 @@
  * Access: /install.php
  */
 
+// Force error display for debugging
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
+
+// Set error and exception handlers to log and display
+set_error_handler(function($errno, $errstr, $errfile, $errline) {
+    global $output, $errors;
+    $msg = "[$errno] $errstr in $errfile:$errline";
+    $errors[] = $msg;
+    $output[] = [
+        'time' => date('H:i:s'),
+        'message' => "⚠️ PHP Error: " . $msg,
+        'type' => 'error'
+    ];
+    return true;
+});
+
+set_exception_handler(function($exception) {
+    global $output, $errors;
+    $msg = "Exception: " . $exception->getMessage();
+    $errors[] = $msg;
+    $output[] = [
+        'time' => date('H:i:s'),
+        'message' => "❌ " . $msg,
+        'type' => 'error'
+    ];
+});
+
 // Prevent caching
 header('Cache-Control: no-cache, no-store, must-revalidate');
 header('Pragma: no-cache');
@@ -18,6 +47,7 @@ $basePath = dirname(__DIR__);
 $output = [];
 $errors = [];
 $success = false;
+$startTime = microtime(true);
 
 // Simple logging function
 function log_step($message) {
@@ -51,7 +81,21 @@ function log_success($message) {
 // Start installation
 log_step('🚀 Installation Bootstrap Started');
 log_step('PHP Version: ' . phpversion());
+log_step('PHP SAPI: ' . php_sapi_name());
 log_step('Base Path: ' . $basePath);
+log_step('Current Working Directory: ' . getcwd());
+log_step('Script Filename: ' . __FILE__);
+log_step('Server Software: ' . ($_SERVER['SERVER_SOFTWARE'] ?? 'unknown'));
+log_step('Loaded PHP Extensions: ' . implode(', ', array_slice(get_loaded_extensions(), 0, 10)) . '...');
+
+// Check file system permissions
+$testFile = $basePath . '/.install-test-' . time() . '.txt';
+if (@file_put_contents($testFile, 'test')) {
+    log_success('File system is writable');
+    @unlink($testFile);
+} else {
+    log_error('⚠️ File system is NOT writable - permissions issues expected');
+}
 
 // Step 1: Create directories
 log_step('📁 Creating required directories...');
@@ -211,12 +255,40 @@ if (file_exists($autoload)) {
 // Determine success
 $success = count($errors) === 0 && is_dir($vendorPath) && file_exists($envPath);
 
+$elapsedTime = microtime(true) - $startTime;
 log_step('');
+log_step(sprintf('Execution time: %.2f seconds', $elapsedTime));
+
 if ($success) {
     log_success('✅ Installation bootstrap completed successfully!');
     log_step('You can now visit: ' . $_SERVER['HTTP_HOST']);
 } else {
     log_error('❌ Installation has issues. Please fix the errors above.');
+}
+
+// Write diagnostic log to file for server debugging
+try {
+    $logDir = $basePath . '/storage/logs';
+    if (!is_dir($logDir)) {
+        @mkdir($logDir, 0755, true);
+    }
+
+    $logFile = $logDir . '/install-diagnostic.log';
+    $logContent = date('Y-m-d H:i:s') . " - Installation Bootstrap Diagnostic\n";
+    $logContent .= "URL: " . ($_SERVER['HTTP_HOST'] ?? 'unknown') . "\n";
+    $logContent .= "Success: " . ($success ? 'yes' : 'no') . "\n";
+    $logContent .= "Execution Time: " . sprintf('%.2f seconds', $elapsedTime) . "\n";
+    $logContent .= "Errors: " . count($errors) . "\n";
+    $logContent .= "PHP Version: " . phpversion() . "\n";
+    $logContent .= "\n--- Log Output ---\n";
+
+    foreach ($output as $log) {
+        $logContent .= "[{$log['time']}] [{$log['type']}] {$log['message']}\n";
+    }
+
+    file_put_contents($logFile, $logContent, FILE_APPEND);
+} catch (Exception $e) {
+    // Silently ignore log file write errors
 }
 
 ?>
