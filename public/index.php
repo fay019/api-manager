@@ -9,6 +9,10 @@ define('LARAVEL_START', microtime(true));
 // This prevents "No environment file" and directory permission errors
 ensureApplicationReady();
 
+// ⭐ Ensure APP_KEY is set BEFORE Laravel's encryption service loads
+// This prevents "No application encryption key has been specified" error
+ensureAppKeyExists();
+
 // ⭐ Ensure database tables exist BEFORE Laravel's service providers run
 // This prevents cache/session/queue table errors on fresh deployment
 try {
@@ -38,6 +42,49 @@ function ensureApplicationReady(): void
 
     // 2. Ensure .env file exists
     ensureEnvFileExists($basePath);
+}
+
+/**
+ * Ensure APP_KEY is set in .env file.
+ * Generates a random key if not present, preventing encryption service errors.
+ */
+function ensureAppKeyExists(): void
+{
+    $basePath = dirname(__DIR__);
+    $envPath = $basePath . '/.env';
+
+    // .env must exist first
+    if (!file_exists($envPath)) {
+        return;
+    }
+
+    // Read .env file
+    $content = file_get_contents($envPath);
+
+    // Check if APP_KEY is already set
+    if (preg_match('/^APP_KEY=/m', $content)) {
+        // APP_KEY already exists
+        return;
+    }
+
+    // Generate a new APP_KEY (base64 encoded random string)
+    $key = 'base64:' . base64_encode(random_bytes(32));
+
+    // Add APP_KEY to .env
+    if (preg_match('/^APP_ENV=/m', $content)) {
+        // Insert after APP_ENV
+        $content = preg_replace('/^(APP_ENV=.*?)$/m', '$1' . "\nAPP_KEY=" . $key, $content);
+    } else {
+        // Append to end
+        $content .= "\nAPP_KEY=" . $key . "\n";
+    }
+
+    // Write back to .env
+    try {
+        @file_put_contents($envPath, $content);
+    } catch (Throwable $e) {
+        // Silently ignore - user can set manually
+    }
 }
 
 /**
