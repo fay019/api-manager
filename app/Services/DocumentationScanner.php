@@ -65,70 +65,70 @@ class DocumentationScanner
     }
 
     /**
-     * Get metadata for all available docs
+     * Get metadata for a documentation
+     * Reads icon from database, generates label and description
      */
     public static function getMetadata(string $docName): array
     {
+        // Get the documentation record from database
+        $doc = \App\Models\DocumentationSetting::where('doc_name', $docName)->first();
+
+        // Use database icon if available, otherwise use default
+        $icon = $doc?->icon ?? \App\Models\DocumentationSetting::getDefaultIcon($docName);
+
+        // Predefined labels and descriptions (static, not in DB)
         $metadata = [
             'readme' => [
                 'label' => 'README Documentation',
-                'icon' => '📖',
                 'description' => 'Quick start guide with project overview',
             ],
             'installation' => [
                 'label' => 'Installation Guide',
-                'icon' => '⚙️',
                 'description' => 'Complete installation guide with Setup Wizard and CLI options',
             ],
             'setup_wizard' => [
                 'label' => 'Setup Wizard',
-                'icon' => '🧙',
                 'description' => 'Interactive web-based installation for first-time setup',
             ],
             'module_creation' => [
                 'label' => 'Module Creation Guide',
-                'icon' => '📦',
                 'description' => 'Tutorial for creating custom modules and extending the application',
             ],
             'api' => [
                 'label' => 'API Documentation',
-                'icon' => '📡',
                 'description' => 'Complete endpoint reference',
             ],
             'database' => [
                 'label' => 'Database Documentation',
-                'icon' => '🗄️',
                 'description' => 'Database schema and relationships',
             ],
             'deployment' => [
                 'label' => 'Deployment Documentation',
-                'icon' => '🚀',
                 'description' => 'Deployment guide for shared hosting',
             ],
             'clients' => [
                 'label' => 'API Clients Management',
-                'icon' => '🔑',
                 'description' => 'Guide for managing API clients and generating API keys',
             ],
             'promos' => [
                 'label' => 'Promotions System',
-                'icon' => '🎯',
                 'description' => 'Documentation for the promotional banners system',
             ],
         ];
 
-        return $metadata[$docName] ?? [
+        $base = $metadata[$docName] ?? [
             'label' => ucfirst(str_replace('_', ' ', $docName)) . ' Documentation',
-            'icon' => '📄',
             'description' => ucfirst($docName) . ' documentation',
         ];
+
+        return array_merge($base, ['icon' => $icon]);
     }
 
     /**
      * Sync documentation files with database
      * Creates/updates entries for all discovered docs
      * IMPORTANT: New documents are created with is_visible = false (user must enable manually)
-     * Existing documents preserve their visibility setting
+     * Existing documents preserve their visibility and icon settings
      */
     public static function sync(): void
     {
@@ -138,14 +138,15 @@ class DocumentationScanner
             $existing = \App\Models\DocumentationSetting::where('doc_name', $doc['doc_name'])->first();
 
             if ($existing) {
-                // Update only the path for existing records - preserve is_visible setting
+                // Update only the path for existing records - preserve is_visible and icon settings
                 $existing->update(['path' => $doc['path']]);
             } else {
-                // Create new record with is_visible = false (user must manually enable)
+                // Create new record with is_visible = false and default icon
                 \App\Models\DocumentationSetting::create([
                     'doc_name' => $doc['doc_name'],
                     'path' => $doc['path'],
                     'is_visible' => false,
+                    'icon' => \App\Models\DocumentationSetting::getDefaultIcon($doc['doc_name']),
                 ]);
             }
         }

@@ -37,6 +37,7 @@
                     <thead>
                         <tr style="border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
                             <th style="text-align: left; padding: 1rem; font-weight: 600; color: #111827; font-size: 0.875rem;">Documentation</th>
+                            <th style="text-align: center; padding: 1rem; font-weight: 600; color: #111827; font-size: 0.875rem;">Icon</th>
                             <th style="text-align: left; padding: 1rem; font-weight: 600; color: #111827; font-size: 0.875rem;">File Path</th>
                             <th style="text-align: center; padding: 1rem; font-weight: 600; color: #111827; font-size: 0.875rem;">Status</th>
                             <th style="text-align: center; padding: 1rem; font-weight: 600; color: #111827; font-size: 0.875rem;">Visible</th>
@@ -55,17 +56,31 @@
                             <tr style="border-bottom: {{ $isLast ? 'none' : '1px solid #e5e7eb' }}; background: {{ $index % 2 === 0 ? 'white' : '#f9fafb' }};">
                                 <!-- Documentation Name -->
                                 <td style="padding: 1rem; vertical-align: middle;">
-                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                        <span style="font-size: 1.5rem;">{{ $metadata['icon'] ?? '📄' }}</span>
-                                        <div>
-                                            <p style="font-weight: 500; color: #111827; margin: 0;">
-                                                {{ $metadata['label'] ?? ucfirst($doc->doc_name) }}
-                                            </p>
-                                            <p style="font-size: 0.75rem; color: #6b7280; margin: 0.25rem 0 0 0;">
-                                                {{ $metadata['description'] ?? '' }}
-                                            </p>
-                                        </div>
+                                    <div>
+                                        <p style="font-weight: 500; color: #111827; margin: 0;">
+                                            {{ $metadata['label'] ?? ucfirst($doc->doc_name) }}
+                                        </p>
+                                        <p style="font-size: 0.75rem; color: #6b7280; margin: 0.25rem 0 0 0;">
+                                            {{ $metadata['description'] ?? '' }}
+                                        </p>
                                     </div>
+                                </td>
+
+                                <!-- Icon Selector -->
+                                <td style="padding: 1rem; vertical-align: middle; text-align: center;">
+                                    @php
+                                        $curatedIcons = \App\Models\DocumentationSetting::getCuratedIcons();
+                                    @endphp
+                                    <select
+                                        wire:change="updateDocumentationIcon('{{ $doc->doc_name }}', $event.target.value)"
+                                        style="padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; background-color: white; cursor: pointer; font-size: 1rem; min-width: 60px;"
+                                    >
+                                        @foreach ($curatedIcons as $icon => $label)
+                                            <option value="{{ $icon }}" @if($doc->icon === $icon) selected @endif>
+                                                {{ $icon }} {{ $label }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 </td>
 
                                 <!-- File Path -->

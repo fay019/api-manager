@@ -13,6 +13,7 @@ class DocumentationSetting extends Model
         'doc_name',
         'path',
         'is_visible',
+        'icon',
     ];
 
     protected $casts = [
@@ -56,8 +57,26 @@ class DocumentationSetting extends Model
                 'doc_name' => $doc->doc_name,
                 'path' => $doc->path,
                 'is_visible' => $doc->is_visible,
+                'icon' => $doc->icon,
             ];
         })->toArray();
+    }
+
+    /**
+     * Get curated list of available icons
+     */
+    public static function getCuratedIcons(): array
+    {
+        return config('documentation-icons.curated', []);
+    }
+
+    /**
+     * Get default icon for a documentation name
+     */
+    public static function getDefaultIcon(string $docName): string
+    {
+        $defaults = config('documentation-icons.defaults', []);
+        return $defaults[$docName] ?? config('documentation-icons.fallback', '📄');
     }
 
     /**

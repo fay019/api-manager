@@ -143,4 +143,27 @@ class ManageAppSettings extends Page implements HasForms
         }
     }
 
+    public function updateDocumentationIcon(string $docName, string $icon): void
+    {
+        try {
+            $doc = DocumentationSetting::where('doc_name', $docName)->first();
+
+            if ($doc) {
+                $doc->update(['icon' => $icon]);
+
+                Notification::make()
+                    ->success()
+                    ->title('Icon updated')
+                    ->body('Icon for ' . $doc->doc_name . ' has been updated.')
+                    ->send();
+            }
+        } catch (\Exception $e) {
+            Notification::make()
+                ->danger()
+                ->title('Error')
+                ->body('Failed to update icon: ' . $e->getMessage())
+                ->send();
+        }
+    }
+
 }
