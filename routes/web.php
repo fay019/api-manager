@@ -2,7 +2,20 @@
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\DocsController;
+use App\Http\Controllers\SetupController;
 use Illuminate\Support\Facades\Route;
+
+// Setup Routes (Installation Wizard)
+Route::prefix('setup')->name('setup.')->group(function () {
+    Route::get('/', [SetupController::class, 'index'])->name('index');
+    Route::get('/general', [SetupController::class, 'stepGeneral'])->name('general');
+    Route::post('/save-general', [SetupController::class, 'saveGeneral'])->name('save-general');
+    Route::get('/database', [SetupController::class, 'stepDatabase'])->name('database');
+    Route::post('/test-database', [SetupController::class, 'testDatabase'])->name('test-database');
+    Route::post('/save-database', [SetupController::class, 'saveDatabase'])->name('save-database');
+    Route::get('/confirm', [SetupController::class, 'stepConfirm'])->name('confirm');
+    Route::post('/finish', [SetupController::class, 'finish'])->name('finish');
+});
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 

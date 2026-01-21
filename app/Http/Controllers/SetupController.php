@@ -1,0 +1,319 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+
+/**
+ * Controller pour le Setup Wizard (première installation).
+ *
+ * Affiche un formulaire pour configurer l'application
+ * à la première visite.
+ */
+class SetupController extends Controller
+{
+    /**
+     * Affiche la page d'installation.
+     */
+    public function index()
+    {
+        // Si déjà installé, rediriger vers home
+        if ($this->isInstalled()) {
+            return redirect()->route('home');
+        }
+
+        return view('setup.index');
+    }
+
+    /**
+     * Étape 1: Infos générales.
+     */
+    public function stepGeneral()
+    {
+        if ($this->isInstalled()) {
+            return redirect()->route('home');
+        }
+
+        return view('setup.step-general');
+    }
+
+    /**
+     * Sauvegarde infos générales (étape 1).
+     */
+    public function saveGeneral(Request $request)
+    {
+        $validated = $request->validate([
+            'site_name' => 'required|string|min:3|max:255',
+            'site_url' => 'required|url',
+            'admin_email' => 'required|email',
+            'admin_password' => 'required|string|min:8|confirmed',
+        ], [
+            'site_name.required' => 'Le nom du site est requis',
+            'site_url.required' => 'L\'URL du site est requise',
+            'site_url.url' => 'L\'URL doit être valide',
+            'admin_email.required' => 'L\'email admin est requis',
+            'admin_email.email' => 'L\'email doit être valide',
+            'admin_password.required' => 'Le mot de passe est requis',
+            'admin_password.min' => 'Le mot de passe doit faire au moins 8 caractères',
+            'admin_password.confirmed' => 'Les mots de passe ne correspondent pas',
+        ]);
+
+        // Stocker en session
+        session(['setup.site_name' => $validated['site_name']]);
+        session(['setup.site_url' => $validated['site_url']]);
+        session(['setup.admin_email' => $validated['admin_email']]);
+        session(['setup.admin_password' => $validated['admin_password']]);
+
+        return redirect()->route('setup.database');
+    }
+
+    /**
+     * Étape 2: Configuration base de données.
+     */
+    public function stepDatabase()
+    {
+        if ($this->isInstalled()) {
+            return redirect()->route('home');
+        }
+
+        $databases = ['sqlite', 'mysql', 'pgsql'];
+
+        return view('setup.step-database', [
+            'databases' => $databases,
+            'current_db' => config('database.default'),
+        ]);
+    }
+
+    /**
+     * Teste la connexion base de données.
+     */
+    public function testDatabase(Request $request)
+    {
+        $validated = $request->validate([
+            'db_connection' => 'required|in:sqlite,mysql,pgsql',
+            'db_host' => 'nullable|string',
+            'db_port' => 'nullable|integer',
+            'db_database' => 'required|string',
+            'db_username' => 'nullable|string',
+            'db_password' => 'nullable|string',
+        ]);
+
+        try {
+            // Tester la connexion
+            $config = [
+                'driver' => $validated['db_connection'],
+            ];
+
+            if ($validated['db_connection'] !== 'sqlite') {
+                $config['host'] = $validated['db_host'] ?? 'localhost';
+                $config['port'] = $validated['db_port'] ?? 3306;
+                $config['database'] = $validated['db_database'];
+                $config['username'] = $validated['db_username'] ?? 'root';
+                $config['password'] = $validated['db_password'] ?? '';
+            } else {
+                $config['database'] = database_path($validated['db_database']);
+            }
+
+            // Tenter une connexion
+            DB::purge('setup_test');
+            DB::addConnection($config, 'setup_test');
+            DB::connection('setup_test')->getPdo();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Connexion réussie!',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur de connexion: ' . $e->getMessage(),
+            ], 400);
+        }
+    }
+
+    /**
+     * Sauvegarde config base de données (étape 2).
+     */
+    public function saveDatabase(Request $request)
+    {
+        $validated = $request->validate([
+            'db_connection' => 'required|in:sqlite,mysql,pgsql',
+            'db_host' => 'nullable|string',
+            'db_port' => 'nullable|integer',
+            'db_database' => 'required|string',
+            'db_username' => 'nullable|string',
+            'db_password' => 'nullable|string',
+        ]);
+
+        // Stocker en session
+        session(['setup.db_connection' => $validated['db_connection']]);
+        session(['setup.db_host' => $validated['db_host'] ?? 'localhost']);
+        session(['setup.db_port' => $validated['db_port'] ?? ($validated['db_connection'] === 'mysql' ? 3306 : 5432)]);
+        session(['setup.db_database' => $validated['db_database']]);
+        session(['setup.db_username' => $validated['db_username'] ?? 'root']);
+        session(['setup.db_password' => $validated['db_password'] ?? '']);
+
+        return redirect()->route('setup.confirm');
+    }
+
+    /**
+     * Étape 3: Confirmation et installation.
+     */
+    public function stepConfirm()
+    {
+        if ($this->isInstalled()) {
+            return redirect()->route('home');
+        }
+
+        $setup = session()->only([
+            'setup.site_name',
+            'setup.site_url',
+            'setup.admin_email',
+            'setup.db_connection',
+            'setup.db_host',
+            'setup.db_port',
+            'setup.db_database',
+            'setup.db_username',
+        ]);
+
+        // Vérifier que tout est rempli
+        if (count(array_filter($setup)) < 5) {
+            return redirect()->route('setup.general');
+        }
+
+        return view('setup.step-confirm', ['setup' => $setup]);
+    }
+
+    /**
+     * Finalise l'installation.
+     */
+    public function finish(Request $request)
+    {
+        if ($this->isInstalled()) {
+            return redirect()->route('home');
+        }
+
+        try {
+            // Récupérer la config depuis la session
+            $siteName = session('setup.site_name', 'API Manager');
+            $siteUrl = session('setup.site_url', 'http://localhost:8000');
+            $adminEmail = session('setup.admin_email');
+            $adminPassword = session('setup.admin_password');
+            $dbConnection = session('setup.db_connection', 'sqlite');
+            $dbHost = session('setup.db_host', 'localhost');
+            $dbPort = session('setup.db_port', 3306);
+            $dbDatabase = session('setup.db_database');
+            $dbUsername = session('setup.db_username', 'root');
+            $dbPassword = session('setup.db_password', '');
+
+            // Mettre à jour .env
+            $this->updateEnv([
+                'APP_NAME' => $siteName,
+                'APP_URL' => $siteUrl,
+                'DB_CONNECTION' => $dbConnection,
+                'DB_HOST' => $dbConnection === 'sqlite' ? null : $dbHost,
+                'DB_PORT' => $dbConnection === 'sqlite' ? null : $dbPort,
+                'DB_DATABASE' => $dbConnection === 'sqlite' ? database_path($dbDatabase) : $dbDatabase,
+                'DB_USERNAME' => $dbConnection === 'sqlite' ? null : $dbUsername,
+                'DB_PASSWORD' => $dbConnection === 'sqlite' ? null : $dbPassword,
+            ]);
+
+            // Exécuter les migrations
+            Artisan::call('migrate', ['--force' => true]);
+
+            // Créer l'utilisateur admin
+            $admin = User::firstOrCreate(
+                ['email' => $adminEmail],
+                [
+                    'name' => 'Administrator',
+                    'password' => Hash::make($adminPassword),
+                    'is_admin' => true,
+                    'email_verified_at' => now(),
+                ]
+            );
+
+            // Créer le fichier installed.lock
+            $this->markAsInstalled();
+
+            // Nettoyer la session
+            session()->forget('setup');
+
+            // Rediriger vers login
+            return redirect()->route('filament.admin.auth.login')
+                ->with('success', 'Installation réussie! Veuillez vous connecter avec vos identifiants.');
+        } catch (\Exception $e) {
+            return back()
+                ->withErrors(['error' => 'Erreur lors de l\'installation: ' . $e->getMessage()])
+                ->withInput();
+        }
+    }
+
+    /**
+     * Met à jour le fichier .env.
+     */
+    protected function updateEnv(array $values): void
+    {
+        $envPath = base_path('.env');
+
+        if (!file_exists($envPath)) {
+            copy(base_path('.env.example'), $envPath);
+        }
+
+        $content = file_get_contents($envPath);
+
+        foreach ($values as $key => $value) {
+            if ($value === null) {
+                continue;
+            }
+
+            // Échapper les valeurs
+            if (str_contains($value, ' ')) {
+                $value = "\"{$value}\"";
+            }
+
+            // Remplacer ou ajouter la ligne
+            if (preg_match("/^{$key}=/m", $content)) {
+                $content = preg_replace("/^{$key}=.*/m", "{$key}={$value}", $content);
+            } else {
+                $content .= "\n{$key}={$value}";
+            }
+        }
+
+        file_put_contents($envPath, $content);
+    }
+
+    /**
+     * Crée le fichier installed.lock.
+     */
+    protected function markAsInstalled(): void
+    {
+        $lockFile = storage_path('app/installed.lock');
+
+        // Créer le répertoire s'il n'existe pas
+        if (!is_dir(dirname($lockFile))) {
+            mkdir(dirname($lockFile), 0755, true);
+        }
+
+        // Créer le fichier avec metadata
+        $data = [
+            'installed_at' => now()->toIso8601String(),
+            'php_version' => PHP_VERSION,
+            'laravel_version' => app()->version(),
+            'database' => config('database.default'),
+        ];
+
+        file_put_contents($lockFile, json_encode($data, JSON_PRETTY_PRINT));
+    }
+
+    /**
+     * Vérifie si l'application est installée.
+     */
+    protected function isInstalled(): bool
+    {
+        return file_exists(storage_path('app/installed.lock'));
+    }
+}

@@ -13,6 +13,10 @@ return Application::configure(basePath: dirname(__DIR__))
         apiPrefix: 'api',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->web(prepend: [
+            \App\Http\Middleware\CheckInstallation::class,
+        ]);
+
         $middleware->alias([
             'api.key' => \App\Http\Middleware\ApiKeyAuthentication::class,
             'cors.client' => \App\Http\Middleware\CorsPerClient::class,
