@@ -7,6 +7,7 @@ Ce document décrit le système d'installation modulaire et robuste de l'applica
 ## Table des matières
 
 - [Installation Rapide](#installation-rapide)
+- [Installation Interactive (Setup Wizard)](#installation-interactive-setup-wizard)
 - [Installation depuis GitHub](#installation-depuis-github)
 - [Installation Détaillée](#installation-détaillée)
 - [Installation par Étapes](#installation-par-étapes)
@@ -57,6 +58,147 @@ Accédez à:
 - **Admin Panel**: http://localhost:8000/admin
 - **Documentation**: http://localhost:8000/docs
 - **Health Check**: http://localhost:8000/api/v1/health
+
+---
+
+## Installation Interactive (Setup Wizard)
+
+### 🧙 Nouvelle méthode: Interface Web
+
+À la place d'utiliser la CLI, vous pouvez maintenant installer l'application via une interface web interactive!
+
+#### Comment ça marche?
+
+**Première visite → Auto-détection → Setup Wizard s'affiche**
+
+```
+1. Cloner le projet
+   git clone https://github.com/fay019/api-manager.git
+   cd api-manager
+
+2. Installer les dépendances
+   composer install
+
+3. Démarrer le serveur
+   php artisan serve
+
+4. Visiter http://localhost:8000
+   ↓
+   ✨ Setup Wizard s'affiche automatiquement!
+```
+
+#### Les 3 Étapes du Wizard
+
+**Étape 1: Infos Générales**
+```
+├─ Nom du Site (ex: "Mon API Manager")
+├─ URL de l'Application (ex: "https://api.example.com")
+├─ Email Admin (ex: "admin@example.com")
+└─ Mot de Passe Admin (min 8 caractères)
+```
+
+**Étape 2: Configuration Base de Données**
+```
+Choisir le type de BD:
+
+┌─ SQLite (pour développement)
+│  └─ Chemin: database/database.sqlite
+│
+├─ MySQL (production)
+│  ├─ Hôte: localhost
+│  ├─ Port: 3306
+│  ├─ Base: api_manager
+│  ├─ User: root
+│  └─ Password: ••••••••
+│  └─ Bouton "Test Connexion" ✅
+│
+└─ PostgreSQL (production)
+   ├─ Hôte: localhost
+   ├─ Port: 5432
+   ├─ Base: api_manager
+   ├─ User: postgres
+   └─ Password: ••••••••
+```
+
+**Étape 3: Confirmation**
+```
+Récapitulatif de la configuration:
+├─ Nom du Site
+├─ URL
+├─ Type de BD
+├─ Hôte & Base
+└─ Bouton "Finaliser" → Installation automatique!
+```
+
+#### Après le Setup Wizard
+
+L'application effectue automatiquement:
+1. ✅ Mise à jour du fichier `.env`
+2. ✅ Exécution des migrations (création tables)
+3. ✅ Création de l'utilisateur admin
+4. ✅ Création du flag `storage/app/installed.lock`
+5. ✅ Redirection vers `/admin/login`
+
+**Vous êtes alors redirigé vers le login admin!**
+
+#### Identifiants
+
+```
+Email: admin@example.com        (celui rempli dans le formulaire)
+Password: (celui rempli dans le formulaire)
+```
+
+---
+
+### 🔄 Comment fonctionne la détection?
+
+**Middleware CheckInstallation** vérifie à chaque requête:
+
+```
+Requête Web
+    ↓
+[CheckInstallation Middleware]
+    ↓
+Fichier storage/app/installed.lock existe?
+    ├─ OUI  → App normale ✅
+    └─ NON  → Redirige vers /setup 🧙
+```
+
+**Le flag file** (`storage/app/installed.lock`):
+```json
+{
+  "installed_at": "2026-01-21T13:00:00Z",
+  "php_version": "8.3.30",
+  "laravel_version": "12.0.0",
+  "database": "mysql"
+}
+```
+
+### 📱 Interface Responsive
+
+Le Setup Wizard est entièrement responsive:
+- ✅ Desktop
+- ✅ Tablette
+- ✅ Mobile
+
+Avec design moderne et intuitif!
+
+### 🔗 Routes Setup
+
+```
+GET  /setup                 → Page d'accueil Setup
+GET  /setup/general        → Étape 1 (formulaire)
+POST /setup/save-general   → Sauvegarde étape 1
+GET  /setup/database       → Étape 2 (configuration BD)
+POST /setup/test-database  → Test connexion BD (AJAX)
+POST /setup/save-database  → Sauvegarde étape 2
+GET  /setup/confirm        → Étape 3 (confirmation)
+POST /setup/finish         → Finalise l'installation
+```
+
+### 📖 Documentation Complète
+
+Pour plus de détails sur le Setup Wizard, voir: [SETUP_WIZARD.md](./SETUP_WIZARD.md)
 
 ---
 

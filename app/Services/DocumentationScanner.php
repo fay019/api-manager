@@ -75,6 +75,21 @@ class DocumentationScanner
                 'icon' => '📖',
                 'description' => 'Quick start guide with project overview',
             ],
+            'installation' => [
+                'label' => 'Installation Guide',
+                'icon' => '⚙️',
+                'description' => 'Complete installation guide with Setup Wizard and CLI options',
+            ],
+            'setup_wizard' => [
+                'label' => 'Setup Wizard',
+                'icon' => '🧙',
+                'description' => 'Interactive web-based installation for first-time setup',
+            ],
+            'module_creation' => [
+                'label' => 'Module Creation Guide',
+                'icon' => '📦',
+                'description' => 'Tutorial for creating custom modules and extending the application',
+            ],
             'api' => [
                 'label' => 'API Documentation',
                 'icon' => '📡',
@@ -89,6 +104,16 @@ class DocumentationScanner
                 'label' => 'Deployment Documentation',
                 'icon' => '🚀',
                 'description' => 'Deployment guide for shared hosting',
+            ],
+            'clients' => [
+                'label' => 'API Clients Management',
+                'icon' => '🔑',
+                'description' => 'Guide for managing API clients and generating API keys',
+            ],
+            'promos' => [
+                'label' => 'Promotions System',
+                'icon' => '🎯',
+                'description' => 'Documentation for the promotional banners system',
             ],
         ];
 
