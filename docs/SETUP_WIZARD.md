@@ -19,38 +19,44 @@ Au lieu d'exécuter `php artisan install` via CLI, vous pouvez désormais:
 
 ### Étape 1: Infos Générales
 ```
-Nom du Site        → "Mon API Manager"
-URL de l'App       → "https://api.example.com"
-Email Admin        → "admin@example.com"
-Mot de Passe Admin → "••••••••" (min 8 caractères)
+Type Base de Données → Choisir: SQLite / MySQL / PostgreSQL ⭐
+Nom du Site         → "Mon API Manager"
+URL de l'App        → "https://api.example.com"
+Email Admin         → "admin@example.com"
+Mot de Passe Admin  → "••••••••" (min 8 caractères)
 ```
 
-### Étape 2: Base de Données
-Choix entre:
-- **SQLite** (simple, pour dev)
-  ```
-  Chemin: database/database.sqlite
-  ```
+**Note:** Le type de base de données est choisi à l'étape 1 pour déterminer la suite du wizard:
+- **Si SQLite** → Passe directement à l'étape 3 (Confirmation)
+- **Si MySQL/PostgreSQL** → Affiche l'étape 2 pour rentrer les identifiants
 
-- **MySQL** (production)
-  ```
-  Hôte: localhost
-  Port: 3306
-  Base: api_manager
-  User: root
-  Password: ••••••••
+### Étape 2: Base de Données (si MySQL ou PostgreSQL)
 
-  Test de connexion intégré ✅
-  ```
+Uniquement affichée si vous avez choisi **MySQL** ou **PostgreSQL** à l'étape 1.
 
-- **PostgreSQL** (production)
-  ```
-  Hôte: localhost
-  Port: 5432
-  Base: api_manager
-  User: postgres
-  Password: ••••••••
-  ```
+#### Si MySQL
+```
+Hôte:     localhost
+Port:     3306
+Base:     api_manager
+User:     root
+Password: ••••••••
+
+Bouton: Tester la connexion ✅
+```
+
+#### Si PostgreSQL
+```
+Hôte:     localhost
+Port:     5432
+Base:     api_manager
+User:     postgres
+Password: ••••••••
+
+Bouton: Tester la connexion ✅
+```
+
+**Test de connexion:** Validez votre config avant de continuer (clique sur "Tester")
 
 ### Étape 3: Confirmation
 Vérification complète avant installation:
@@ -228,17 +234,41 @@ Forms\Components\Tabs\Tab::make('Email')
 [Middleware CheckInstallation]
     ↓
     ├─ installed.lock existe?
-    │   ├─ OUI → App normale
+    │   ├─ OUI → App normale ✅
     │   └─ NON → Redirige /setup
     ↓
-[Setup Wizard]
-    ├─ Étape 1: Infos générales
-    │   └─ Session::setup.site_name
-    │   └─ Session::setup.admin_email
-    ├─ Étape 2: Base de données
-    │   └─ Session::setup.db_connection
-    │   └─ Session::setup.db_host
-    └─ Étape 3: Confirmation
+[Setup Wizard - Étape 1: Infos générales + Type BD]
+    ├─ Remplir formulaire
+    │   ├─ Nom du site
+    │   ├─ URL app
+    │   ├─ Email admin
+    │   ├─ Mot de passe admin
+    │   └─ Type base de données ⭐
+    └─ Sauvegarder en session
+        ├─ Session::setup.site_name
+        ├─ Session::setup.admin_email
+        ├─ Session::setup.db_connection ← SQLite, MySQL, ou PostgreSQL
+        ↓
+    ┌─────────────────┬──────────────────┬──────────────────┐
+    │ SQLite choisi?  │ MySQL choisi?    │ PostgreSQL?      │
+    └─────────────────┴──────────────────┴──────────────────┘
+          ↓ OUI             ↓ OUI              ↓ OUI
+    [Passer à         [Étape 2:         [Étape 2:
+     Étape 3]         Infos MySQL]      Infos PgSQL]
+                      ├─ Host
+                      ├─ Port
+                      ├─ Database
+                      ├─ User
+                      ├─ Password
+                      └─ Test connexion
+                            ↓
+                      [Étape 3]
+
+    ↓ (quelque soit le chemin)
+[Setup Wizard - Étape 3: Confirmation]
+    ├─ Vérifier la config complète
+    ├─ Afficher résumé
+    └─ Bouton "Finaliser l'installation"
         └─ SetupController::finish()
             ├─ Mettre à jour .env
             ├─ Exécuter migrations
@@ -246,7 +276,7 @@ Forms\Components\Tabs\Tab::make('Email')
             ├─ Créer installed.lock
             └─ Redirige vers /admin/login
                 ↓
-            [Installation complète!]
+            [Installation complète! ✅]
 ```
 
 ---
