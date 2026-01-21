@@ -57,11 +57,6 @@ class Promo extends Model
         return $this->hasMany(PromoVersion::class);
     }
 
-    public function events(): HasMany
-    {
-        return $this->hasMany(PromoEvent::class);
-    }
-
     public function scopeActive($query)
     {
         return $query

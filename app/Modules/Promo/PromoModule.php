@@ -9,7 +9,6 @@ use App\Modules\BaseModule;
  *
  * Ce module fournit:
  * - Gestion des promotions (create, read, update, delete)
- * - Tracking des événements promotionnels (impressions, clics)
  * - Cache et optimisation des performances
  * - Admin panel Filament intégré
  */
@@ -17,7 +16,7 @@ class PromoModule extends BaseModule
 {
     protected string $moduleName = 'Promo';
 
-    protected string $description = 'Système de gestion des promotions avec tracking d\'événements';
+    protected string $description = 'Système de gestion des promotions';
 
     protected string $version = '1.0.0';
 
@@ -47,7 +46,6 @@ class PromoModule extends BaseModule
             'middleware' => ['api', 'throttle:api', 'cors-per-client'],
         ], function ($router) {
             $router->get('/promo/banner.json', 'App\\Modules\\Promo\\Http\\Controllers\\PromoBannerController@show');
-            $router->post('/promo/event', 'App\\Modules\\Promo\\Http\\Controllers\\PromoEventController@store');
         });
     }
 
@@ -76,13 +74,9 @@ class PromoModule extends BaseModule
     {
         $errors = [];
 
-        // Vérifier que les modèles existent
+        // Vérifier que le modèle existe
         if (!class_exists(\App\Models\Promo::class)) {
             $errors[] = 'Model Promo introuvable';
-        }
-
-        if (!class_exists(\App\Models\PromoEvent::class)) {
-            $errors[] = 'Model PromoEvent introuvable';
         }
 
         return [

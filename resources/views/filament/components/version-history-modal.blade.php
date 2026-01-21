@@ -113,7 +113,7 @@
                             </div>
 
                             <!-- Diff section -->
-                            @if(!$isCurrentVersion && $diff && count($diff) > 0)
+                            @if($diff && count($diff) > 0)
                                 <details style="cursor: pointer; margin-top: 0.5rem; border-top: 1px solid #e5e7eb; padding-top: 0.5rem;">
                                     <summary style="
                                         list-style: none;
@@ -127,7 +127,11 @@
                                         user-select: none;
                                     ">
                                         <span style="display: inline-block; transition: transform 0.2s;">📝</span>
-                                        Changes ({{ count($diff) }} field{{ count($diff) !== 1 ? 's' : '' }})
+                                        @if($isCurrentVersion)
+                                            Latest changes
+                                        @else
+                                            Changes ({{ count($diff) }} field{{ count($diff) !== 1 ? 's' : '' }})
+                                        @endif
                                     </summary>
 
                                     <div style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem;">

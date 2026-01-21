@@ -15,6 +15,11 @@ class PromoObserver
 
     public function updated(Promo $promo): void
     {
+        \Log::info('PromoObserver@updated triggered', [
+            'promo_id' => $promo->id,
+            'dirty_attributes' => $promo->getDirty(),
+        ]);
+
         $latestVersion = $promo->versions()->latest('version')->first();
         $nextVersion = ($latestVersion?->version ?? 0) + 1;
 
