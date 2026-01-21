@@ -236,6 +236,42 @@ class SetupController extends Controller
         // Augmenter le timeout pour les longues opérations (migrations, seeders)
         set_time_limit(300);
 
+        // Créer les tables de session et cache AVANT les migrations
+        // Cela prévient les erreurs de session pendant l'installation
+        try {
+            $basePath = base_path();
+            $dbPath = database_path('database.sqlite');
+
+            if (file_exists($dbPath)) {
+                $pdo = new \PDO("sqlite:{$dbPath}");
+                $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ATTR_ERRMODE_EXCEPTION);
+
+                // Créer tables de session et cache
+                $pdo->exec('CREATE TABLE IF NOT EXISTS sessions (
+                    id TEXT PRIMARY KEY,
+                    user_id INTEGER,
+                    ip_address VARCHAR(45),
+                    user_agent TEXT,
+                    payload LONGTEXT,
+                    last_activity INTEGER
+                )');
+
+                $pdo->exec('CREATE TABLE IF NOT EXISTS cache (
+                    key TEXT PRIMARY KEY,
+                    value LONGTEXT,
+                    expiration INTEGER
+                )');
+
+                $pdo->exec('CREATE TABLE IF NOT EXISTS cache_locks (
+                    key TEXT PRIMARY KEY,
+                    owner TEXT,
+                    expiration INTEGER
+                )');
+            }
+        } catch (\Exception $e) {
+            // Ignorer - les migrations créeront les tables
+        }
+
         try {
             // Récupérer la config depuis la session
             $siteName = session('setup.site_name', 'API Manager');
