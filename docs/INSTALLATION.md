@@ -87,59 +87,87 @@ Accédez à:
    ✨ Setup Wizard s'affiche automatiquement!
 ```
 
-#### Les 3 Étapes du Wizard
+#### Les Étapes du Wizard (Flux Adaptatif)
 
-**Étape 1: Infos Générales**
+**Étape 1: Infos Générales + Choix Base de Données**
 ```
 ├─ Nom du Site (ex: "Mon API Manager")
 ├─ URL de l'Application (ex: "https://api.example.com")
 ├─ Email Admin (ex: "admin@example.com")
-└─ Mot de Passe Admin (min 8 caractères)
-```
-
-**Étape 2: Configuration Base de Données**
-```
-Choisir le type de BD:
-
-┌─ SQLite (pour développement)
-│  └─ Chemin: database/database.sqlite
+├─ Mot de Passe Admin (min 8 caractères)
 │
-├─ MySQL (production)
-│  ├─ Hôte: localhost
-│  ├─ Port: 3306
-│  ├─ Base: api_manager
-│  ├─ User: root
-│  └─ Password: ••••••••
-│  └─ Bouton "Test Connexion" ✅
-│
-└─ PostgreSQL (production)
-   ├─ Hôte: localhost
-   ├─ Port: 5432
-   ├─ Base: api_manager
-   ├─ User: postgres
-   └─ Password: ••••••••
+└─ ✨ Sélection du type de base de données:
+   ├─ SQLite (Développement/Test - aucune config supplémentaire)
+   ├─ MySQL (Production - nécessite une deuxième étape)
+   └─ PostgreSQL (Production - nécessite une deuxième étape)
 ```
 
-**Étape 3: Confirmation**
+**Étape 2: Configuration Base de Données (si MySQL/PostgreSQL)**
+
+*Cette étape s'affiche SEULEMENT si vous avez choisi MySQL ou PostgreSQL*
+
 ```
-Récapitulatif de la configuration:
+Pour MySQL:
+├─ Hôte: localhost
+├─ Port: 3306
+├─ Base de données: api_manager
+├─ Utilisateur: root
+├─ Mot de passe: ••••••••
+└─ Bouton "Test Connexion" ✅ (avant de continuer)
+
+Pour PostgreSQL:
+├─ Hôte: localhost
+├─ Port: 5432
+├─ Base de données: api_manager
+├─ Utilisateur: postgres
+├─ Mot de passe: ••••••••
+└─ Bouton "Test Connexion" ✅ (avant de continuer)
+```
+
+**Étape 2 ou 3: Confirmation**
+
+*Pour SQLite: Étape 2 | Pour MySQL/PostgreSQL: Étape 3*
+
+```
+Récapitulatif final:
 ├─ Nom du Site
-├─ URL
+├─ URL de l'Application
 ├─ Type de BD
-├─ Hôte & Base
-└─ Bouton "Finaliser" → Installation automatique!
+├─ Configuration BD
+└─ Bouton "Finaliser l'Installation" → Tout se configure automatiquement!
 ```
 
 #### Après le Setup Wizard
 
-L'application effectue automatiquement:
-1. ✅ Mise à jour du fichier `.env`
-2. ✅ Exécution des migrations (création tables)
-3. ✅ Création de l'utilisateur admin
-4. ✅ Création du flag `storage/app/installed.lock`
-5. ✅ Redirection vers `/admin/login`
+L'application effectue automatiquement TOUT ce qui est nécessaire:
 
-**Vous êtes alors redirigé vers le login admin!**
+1. ✅ **Composer Install** - Installe les dépendances PHP si `vendor/` n'existe pas
+2. ✅ **APP_KEY** - Génère la clé de chiffrement si absente
+3. ✅ **Répertoires** - Crée `storage/`, `bootstrap/cache/` et tous les sous-répertoires
+4. ✅ **Fichier SQLite** - Crée la BD SQLite + table sessions (si SQLite choisi)
+5. ✅ **Mise à jour .env** - Configure tous les paramètres (DB, URL, etc.)
+6. ✅ **Migrations** - Exécute la création de toutes les tables
+7. ✅ **Seeders** - Lance les seeders pour initialiser les données
+8. ✅ **Admin User** - Crée l'utilisateur administrateur avec les identifiants saisis
+9. ✅ **Flag Installation** - Crée `storage/app/installed.lock` pour marquer comme installé
+
+**Puis vous êtes redirigé vers le login admin!**
+
+### ⚡ Middleware de Pré-Installation
+
+Un nouveau middleware `EnsureDatabaseExists` s'exécute **avant tout le reste** pour:
+
+1. **Créer le fichier `.env`** depuis `.env.example` si manquant
+   - Évite les erreurs "No environment file" au premier accès
+   - Prépare la configuration par défaut
+
+2. **Créer le fichier SQLite** s'il manque
+   - Prépare la base de données pour la session
+
+3. **Créer la table sessions** automatiquement
+   - Évite les erreurs "Sessions table not found"
+
+**Résultat:** Aucune erreur 500 au premier accès! ✅
 
 #### Identifiants
 
@@ -187,14 +215,28 @@ Avec design moderne et intuitif!
 
 ```
 GET  /setup                 → Page d'accueil Setup
-GET  /setup/general        → Étape 1 (formulaire)
+GET  /setup/general        → Étape 1 (formulaire infos + sélection BD)
 POST /setup/save-general   → Sauvegarde étape 1
-GET  /setup/database       → Étape 2 (configuration BD)
+GET  /setup/database       → Étape 2 (SEULEMENT si MySQL/PostgreSQL)
 POST /setup/test-database  → Test connexion BD (AJAX)
 POST /setup/save-database  → Sauvegarde étape 2
-GET  /setup/confirm        → Étape 3 (confirmation)
-POST /setup/finish         → Finalise l'installation
+GET  /setup/confirm        → Confirmation (Étape 2 ou 3 selon BD)
+POST /setup/finish         → Finalise l'installation complète
 ```
+
+### ✨ Problèmes Résolus
+
+| Problème | Solution |
+|----------|----------|
+| **Erreur 500 au premier accès** | Middleware crée `.env` depuis `.env.example` avant tout le reste |
+| **".env file not found"** | Middleware `EnsureDatabaseExists` le crée automatiquement |
+| **"Database file does not exist"** | Middleware crée le fichier + table sessions avant session loading |
+| **"Sessions table not found"** | Middleware prépare la table sessions automatiquement |
+| **"Composer not found"** | Setup installe Composer automatiquement si `vendor/` manque |
+| **"Permission denied" sur storage/** | Setup crée tous les répertoires avec permissions correctes |
+| **"APP_KEY not set"** | Setup génère APP_KEY automatiquement |
+| **Oublier les infos SQLite** | SQLite est créé automatiquement, aucune config manuelle nécessaire |
+| **Configuration MySQL oubliée** | Setup demande TOUT d'abord avant de procéder |
 
 ### 📖 Documentation Complète
 

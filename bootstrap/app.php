@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(prepend: [
+            \App\Http\Middleware\EnsureDatabaseExists::class,
             \App\Http\Middleware\CheckInstallation::class,
         ]);
 

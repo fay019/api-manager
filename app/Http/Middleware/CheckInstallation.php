@@ -46,6 +46,7 @@ class CheckInstallation
             'livewire',
             'filament',
             'storage',
+            'maintenance.html',
         ];
 
         foreach ($excluded as $exclude) {

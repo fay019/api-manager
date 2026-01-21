@@ -73,24 +73,33 @@ Password: password
 
 ## ⚙️ Installation System
 
-### One-Command Installation
+### Web-Based Setup Wizard (Recommended)
 
-The new modular installation system handles everything automatically:
+**Automatic detection:** Visit any page → Setup Wizard appears if not installed
+
+The wizard asks for:
+1. **Site Information** + **Database Type** (SQLite/MySQL/PostgreSQL)
+2. **Database Details** (if MySQL/PostgreSQL - skipped for SQLite)
+3. **Confirmation** → Installation completes automatically
+
+**Automated tasks:**
+- ✅ Installs Composer dependencies
+- ✅ Generates APP_KEY encryption key
+- ✅ Creates all required directories
+- ✅ Creates SQLite database file (if chosen)
+- ✅ Updates .env with all settings
+- ✅ Runs all database migrations
+- ✅ Initializes modules
+- ✅ Seeds initial data
+- ✅ Creates admin user account
+
+### One-Command Installation (CLI Alternative)
 
 ```bash
 php artisan install
 ```
 
-**What it does (9 steps):**
-1. ✅ Verifies system requirements (PHP, extensions, permissions)
-2. ✅ Configures environment (.env, APP_KEY, SQLite)
-3. ✅ Publishes configuration files (Filament, Laravel)
-4. ✅ Executes all database migrations
-5. ✅ Discovers and initializes modules
-6. ✅ Seeds initial data (admin user, clients, promos)
-7. ✅ Configures storage directories
-8. ✅ Compiles frontend assets
-9. ✅ Performs health check
+For servers without web access or CI/CD pipelines.
 
 ### Useful Commands
 
@@ -400,13 +409,13 @@ EXPOSE 9000
 
 ## 🆘 Maintenance Page & Error Recovery
 
+### Static Maintenance Page
+
 If Laravel encounters an error during installation or operation, a **static maintenance page** is available:
 
 **URL:** `https://your-domain.com/maintenance.html`
 
-### What It Provides
-
-This page works **independently of Laravel** and shows:
+This page works **independently of Laravel** and provides:
 - ✅ Confirmation that the domain is accessible
 - ℹ️ Current server time and status
 - 🔗 Link to installation wizard (`/setup`)
@@ -414,19 +423,30 @@ This page works **independently of Laravel** and shows:
 - 💾 Common solutions (cache clear, permissions, etc.)
 - 🔄 Auto-refreshes every 10 seconds to detect recovery
 
-### When It's Useful
+### Middleware-Level Protection
+
+**New middleware `EnsureDatabaseExists`** prevents most setup errors by running **BEFORE everything else**:
+
+1. **Creates `.env` file** from `.env.example` if missing
+   - Eliminates "No environment file" errors on first visit
+   - Sets up default configuration
+
+2. **Creates SQLite file** if chosen database type
+   - Ensures database file exists before session loading
+
+3. **Creates sessions table** automatically
+   - Prevents "Sessions table not found" errors
+
+This middleware is part of the web middleware stack and ensures your application is ready before anything else runs.
+
+**Result:** Zero 500 errors on first deployment! ✅
+
+### When Static Page Is Useful
 
 - **First deployment**: Domain works but Laravel not yet configured
 - **500 errors**: Shows that web server is fine, Laravel has issues
 - **Installation failures**: Guides user through troubleshooting
 - **Maintenance mode**: Can be manually activated if needed
-
-### Automatic Activation
-
-The page can be shown when:
-1. Laravel core doesn't load
-2. Database connection fails
-3. Configuration is missing
 
 See **[TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md)** for detailed error recovery procedures.
 

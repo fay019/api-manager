@@ -36,19 +36,36 @@ Si vous accédez au domaine et voyez une erreur 500 Laravel:
 
 ---
 
-### "Database file at path does not exist"
+### "Database file at path does not exist" (Résolu ✅)
 
-**Cause:** La base de données SQLite n'a pas été créée
+**Cause:** La base de données SQLite n'a pas été créée avant le premier accès
 
-**Solutions:**
+**Pourquoi ça ne devrait plus arriver:**
+
+Le middleware `EnsureDatabaseExists` crée maintenant automatiquement:
+- ✅ Le fichier `database/database.sqlite`
+- ✅ La table `sessions` requise par Laravel
+- ✅ Cela se fait **AVANT** le chargement de la session
+
+**Si vous rencontrez encore cette erreur:**
 
 #### Option 1: Via l'assistant d'installation (Recommandé)
-- Accédez à `/setup` - cela créera tout automatiquement
+- Accédez à `/setup` - le middleware crée tout automatiquement
+- Suivez les étapes du wizard
 
-#### Option 2: Manuellement en SSH
+#### Option 2: Vérifier les permissions
+```bash
+# S'assurer que database/ est accessible
+chmod -R 755 database/
+ls -la database/
+```
+
+#### Option 3: Manuellement en SSH (si le middleware ne fonctionne pas)
 ```bash
 # Créer le fichier database.sqlite
+mkdir -p database
 touch database/database.sqlite
+chmod 666 database/database.sqlite
 
 # Exécuter les migrations
 php artisan migrate
@@ -56,6 +73,40 @@ php artisan migrate
 # Lancer les seeders
 php artisan db:seed
 ```
+
+---
+
+### Erreur ".env file not found" ou ".env: No such file" (Résolu ✅)
+
+**Symptôme:** 500 error au premier accès avec "No environment file"
+
+**Cause:** Laravel ne trouve pas le fichier `.env`
+
+**Résolution:**
+
+Le middleware `EnsureDatabaseExists` crée maintenant automatiquement `.env` depuis `.env.example`:
+- S'exécute AVANT CheckInstallation
+- S'exécute AVANT la session middleware
+- Crée `.env` si `.env.example` existe
+
+**Résultat:** Aucune erreur "env file not found" au premier accès! ✅
+
+---
+
+### Erreur lors du chargement de la session (résolu ✅)
+
+**Symptôme:** 500 error sur `/setup` avec message "select * from sessions"
+
+**Cause:** Avant, Laravel essayait de charger la session depuis la base de données avant que SQLite existe
+
+**Résolution:**
+
+Le middleware `EnsureDatabaseExists` s'exécute maintenant **AVANT** la session:
+- Crée `.env` depuis `.env.example`
+- Crée le fichier SQLite si manquant
+- Crée la table sessions automatiquement
+
+**Résultat:** Aucun risque de "sessions table not found" au premier accès! ✅
 
 ---
 
