@@ -73,21 +73,35 @@ Password: password
 
 ## ⚙️ Installation System
 
-### 🆘 Bootstrap Page (If Something Goes Wrong)
+### 🆘 Bootstrap Diagnostics (If Something Goes Wrong)
 
-If you see a 500 error, visit:
+If you see a **500 error on first access**, visit one of these completely independent pages:
+
+**Plain Text Diagnostic** (ultra-simple, works if HTML fails):
+```
+https://your-domain.com/diagnostic.php
+```
+
+**Full HTML Installation Page** (interactive with UI):
 ```
 https://your-domain.com/install.php
 ```
 
-This **completely independent installation page** will:
-- ✅ Show diagnostic information
-- ✅ Create directories
-- ✅ Create .env file
-- ✅ Run Composer automatically
-- ✅ Create SQLite database
-- ✅ Provide detailed error messages and solutions
-- ✅ Works even if Laravel is broken!
+Both pages will:
+- ✅ **Show diagnostic information** (PHP version, extensions, permissions)
+- ✅ **Create missing directories** automatically
+- ✅ **Create .env file** from .env.example
+- ✅ **Test filesystem permissions** and report issues
+- ✅ **Detect Composer status** and run install if needed
+- ✅ **Create SQLite database** and sessions table
+- ✅ **Write detailed logs** to `storage/logs/install-diagnostic.log`
+- ✅ **Work even if Laravel is completely broken!**
+
+**Why these exist:**
+- These files have **zero Laravel dependencies**
+- They run **before Laravel bootstraps**
+- They execute **even if .env is missing or directories don't exist**
+- They **capture all PHP errors** and log them for debugging
 
 ### Web-Based Setup Wizard (Recommended)
 

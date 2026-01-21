@@ -17,23 +17,38 @@ Ce document décrit le système d'installation modulaire et robuste de l'applica
 
 ---
 
-## 🆘 Troubleshooting Rapid - Erreur 500?
+## 🆘 Troubleshooting Rapide - Erreur 500?
 
-Si vous voyez une **erreur 500 au premier accès**, accédez à:
+Si vous voyez une **erreur 500 au premier accès**, accédez à l'une de ces pages:
 
+### Option 1: Diagnostic Simple (Texte brut)
+```
+https://your-domain.com/diagnostic.php
+```
+Ultra-simple, texte brut, fonctionne si tout échoue.
+
+### Option 2: Page d'Installation Interactive (HTML)
 ```
 https://your-domain.com/install.php
 ```
+Interface graphique complète avec tous les détails.
 
-Cette page **indépendante de Laravel** va:
-- ✅ Afficher les diagnostiques
-- ✅ Créer les répertoires manquants
-- ✅ Créer le fichier `.env`
-- ✅ Lancer Composer automatiquement
-- ✅ Créer la base de données SQLite
-- ✅ Proposer des solutions aux erreurs
+Ces pages **indépendantes de Laravel** vont:
+- ✅ Afficher les diagnostiques (PHP version, extensions, permissions)
+- ✅ Créer les répertoires manquants automatiquement
+- ✅ Créer le fichier `.env` depuis `.env.example`
+- ✅ Tester les permissions du système de fichiers
+- ✅ Lancer Composer automatiquement si disponible
+- ✅ Créer la base de données SQLite et table sessions
+- ✅ Écrire les logs détaillés dans `storage/logs/install-diagnostic.log`
+- ✅ Proposer des solutions spécifiques aux erreurs
 
-**Elle fonctionne même si Laravel est cassé!**
+**Elles fonctionnent même si Laravel est complètement cassé!**
+
+Les logs de diagnostic sont disponibles via SSH:
+```bash
+tail -f storage/logs/install-diagnostic.log
+```
 
 ---
 

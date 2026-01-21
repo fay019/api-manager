@@ -14,13 +14,27 @@ Si vous accédez au domaine et voyez une erreur 500 Laravel:
 
 **Solution:**
 
-1. **Allez à la page d'installation:**
+1. **First, check diagnostics** (these work even if Laravel is broken):
+   ```
+   https://your-domain.com/diagnostic.php    (plain text version)
+   https://your-domain.com/install.php       (HTML version with UI)
+   ```
+
+   These pages will:
+   - ✅ Show current server status
+   - ✅ Create missing directories
+   - ✅ Create .env file from .env.example
+   - ✅ Test filesystem permissions
+   - ✅ Detect Composer status
+   - ✅ Provide detailed error messages
+
+2. **Then, complete setup via web wizard** (if diagnostics pass):
    ```
    https://your-domain.com/setup
    ```
    Cette page démarre l'assistant d'installation automatique.
 
-2. **Attendez que l'installation se termine** - Elle va:
+3. **Installation steps** - L'assistant va:
    - Installer les dépendances Composer
    - Générer la clé APP_KEY
    - Créer les répertoires nécessaires
@@ -29,9 +43,10 @@ Si vous accédez au domaine et voyez une erreur 500 Laravel:
    - Lancer les seeders
    - Créer l'utilisateur administrateur
 
-3. **Si l'erreur persiste**, consultez le fichier de log:
+4. **If errors persist**, consultez les logs:
    ```bash
    tail -f storage/logs/laravel.log
+   tail -f storage/logs/install-diagnostic.log
    ```
 
 ---
