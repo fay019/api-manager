@@ -189,16 +189,16 @@ class SetupController extends Controller
             return redirect()->route('home');
         }
 
-        $setup = session()->only([
-            'setup.site_name',
-            'setup.site_url',
-            'setup.admin_email',
-            'setup.db_connection',
-            'setup.db_host',
-            'setup.db_port',
-            'setup.db_database',
-            'setup.db_username',
-        ]);
+        // Récupérer les données depuis la session (clés imbriquées)
+        $setup = [];
+        $setup['setup.site_name'] = session('setup.site_name');
+        $setup['setup.site_url'] = session('setup.site_url');
+        $setup['setup.admin_email'] = session('setup.admin_email');
+        $setup['setup.db_connection'] = session('setup.db_connection');
+        $setup['setup.db_host'] = session('setup.db_host');
+        $setup['setup.db_port'] = session('setup.db_port');
+        $setup['setup.db_database'] = session('setup.db_database');
+        $setup['setup.db_username'] = session('setup.db_username');
 
         // Vérifier que les informations générales sont remplies
         if (!session('setup.site_name') || !session('setup.site_url') || !session('setup.admin_email') || !session('setup.db_connection')) {
