@@ -233,6 +233,9 @@ class SetupController extends Controller
             return redirect()->route('home');
         }
 
+        // Augmenter le timeout pour les longues opérations (migrations, seeders)
+        set_time_limit(300);
+
         try {
             // Récupérer la config depuis la session
             $siteName = session('setup.site_name', 'API Manager');
