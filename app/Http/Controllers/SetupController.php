@@ -213,6 +213,9 @@ class SetupController extends Controller
             // Installer les dépendances Composer si nécessaire
             $this->ensureComposerDependencies();
 
+            // Générer la clé APP_KEY si nécessaire
+            $this->ensureAppKey();
+
             // Créer les répertoires nécessaires
             $this->ensureDirectoriesExist();
 
@@ -267,6 +270,20 @@ class SetupController extends Controller
                 ->withErrors(['error' => 'Erreur lors de l\'installation: ' . $e->getMessage()])
                 ->withInput();
         }
+    }
+
+    /**
+     * Génère la clé APP_KEY si nécessaire.
+     */
+    protected function ensureAppKey(): void
+    {
+        // Vérifier si APP_KEY est déjà définie
+        if (config('app.key') && config('app.key') !== 'base64:') {
+            return;
+        }
+
+        // Générer la clé
+        Artisan::call('key:generate');
     }
 
     /**

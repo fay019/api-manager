@@ -398,19 +398,55 @@ EXPOSE 9000
 
 ---
 
+## 🆘 Maintenance Page & Error Recovery
+
+If Laravel encounters an error during installation or operation, a **static maintenance page** is available:
+
+**URL:** `https://your-domain.com/maintenance.html`
+
+### What It Provides
+
+This page works **independently of Laravel** and shows:
+- ✅ Confirmation that the domain is accessible
+- ℹ️ Current server time and status
+- 🔗 Link to installation wizard (`/setup`)
+- 📋 Troubleshooting steps
+- 💾 Common solutions (cache clear, permissions, etc.)
+- 🔄 Auto-refreshes every 10 seconds to detect recovery
+
+### When It's Useful
+
+- **First deployment**: Domain works but Laravel not yet configured
+- **500 errors**: Shows that web server is fine, Laravel has issues
+- **Installation failures**: Guides user through troubleshooting
+- **Maintenance mode**: Can be manually activated if needed
+
+### Automatic Activation
+
+The page can be shown when:
+1. Laravel core doesn't load
+2. Database connection fails
+3. Configuration is missing
+
+See **[TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md)** for detailed error recovery procedures.
+
+---
+
 ## 📚 Documentation
 
 ### Complete Documentation Suite
 
 | Document | Purpose |
 |----------|---------|
-| [**INSTALLATION.md**](./docs/INSTALLATION.md) | 🆕 Complete installation guide, deployment, troubleshooting |
-| [**MODULE_CREATION.md**](./docs/MODULE_CREATION.md) | 🆕 Create custom modules (tutorial + examples) |
+| [**TROUBLESHOOTING.md**](./docs/TROUBLESHOOTING.md) | 🆕 Common issues, debugging, error solutions |
+| [**INSTALLATION.md**](./docs/INSTALLATION.md) | Complete installation guide, deployment, troubleshooting |
+| [**MODULE_CREATION.md**](./docs/MODULE_CREATION.md) | Create custom modules (tutorial + examples) |
 | [**API.md**](./docs/API.md) | Complete API reference with endpoints, authentication, examples |
 | [**DATABASE.md**](./docs/DATABASE.md) | Database schema, relationships, migrations, queries |
 | [**DEPLOYMENT.md**](./docs/DEPLOYMENT.md) | Production deployment guide for shared hosting |
 | [**CLIENTS.md**](./docs/CLIENTS.md) | API client management and configuration |
 | [**PROMOS.md**](./docs/PROMOS.md) | Promotional banners system |
+| [**ANALYTICS.md**](./docs/ANALYTICS.md) | API analytics, monitoring, request logs |
 
 ### Accessing Documentation
 
@@ -514,7 +550,20 @@ PROMO_EVENT_RETENTION_DAYS=180
 
 ## 🤝 Support & Troubleshooting
 
-### Common Issues
+### Getting Help
+
+**For detailed troubleshooting guides, see:** [**TROUBLESHOOTING.md**](./docs/TROUBLESHOOTING.md)
+
+That document covers:
+- ✅ 500 errors and Laravel crashes
+- ✅ Database connection issues
+- ✅ Permission problems
+- ✅ Installation failures
+- ✅ API issues (401, 429, etc.)
+- ✅ Server configuration (Nginx, Apache)
+- ✅ Debugging with logs and commands
+
+### Quick Common Issues
 
 **500 Error on Admin Panel**
 ```bash
@@ -543,7 +592,8 @@ php artisan tinker
 >>> DB::connection()->getPdo();
 ```
 
-For comprehensive troubleshooting, see **[DEPLOYMENT.md](./docs/DEPLOYMENT.md#troubleshooting)**
+**Domain works but getting 500 error?**
+→ Visit `https://your-domain.com/maintenance.html` for guided troubleshooting
 
 ---
 

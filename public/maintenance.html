@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Manager - Maintenance</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .status-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            border-radius: 6px;
+        }
+
+        .status-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-value {
+            color: #666;
+            font-size: 16px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            word-break: break-all;
+        }
+
+        .message {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .info-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 3px solid #667eea;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 16px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .next-steps {
+            background: #f0f7ff;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 6px;
+            margin-top: 25px;
+        }
+
+        .next-steps h3 {
+            color: #667eea;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .next-steps ol {
+            margin-left: 20px;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .next-steps li {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .footer {
+            border-top: 1px solid #e9ecef;
+            padding: 20px 30px;
+            background: #f8f9fa;
+            text-align: center;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .link:hover {
+            text-decoration: underline;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e9ecef;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #dee2e6;
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .content {
+                padding: 30px 20px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="icon">⚙️</div>
+            <h1>API Manager</h1>
+            <p>Installation en cours ou maintenance</p>
+        </div>
+
+        <div class="content">
+            <p class="message">
+                Le domaine est accessible, mais l'application Laravel rencontre actuellement un problème.
+                Cela peut être normal lors de la première installation.
+            </p>
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">📍 URL</div>
+                    <div class="info-value" id="domain">api-manager.local</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">⏰ Heure</div>
+                    <div class="info-value" id="time">--:--:--</div>
+                </div>
+            </div>
+
+            <div class="status-box">
+                <div class="status-label">✓ Statut de la connexion</div>
+                <div class="status-value">Le serveur web répond - domaine fonctionnel</div>
+            </div>
+
+            <div class="next-steps">
+                <h3>Que faire ?</h3>
+                <ol>
+                    <li>Vérifiez que la première installation a bien été lancée sur <a href="/setup" class="link">/setup</a></li>
+                    <li>Consultez les logs d'erreur: <code style="background: #fff; padding: 2px 5px; border-radius: 3px;">storage/logs/laravel.log</code></li>
+                    <li>Assurez-vous que:
+                        <ul style="margin-left: 20px; margin-top: 5px;">
+                            <li>Les permissions des répertoires sont correctes (chmod -R 775 storage bootstrap/cache)</li>
+                            <li>La base de données est créée et accessible</li>
+                            <li>Les migrations ont été exécutées</li>
+                            <li>APP_KEY est défini dans .env</li>
+                        </ul>
+                    </li>
+                    <li>Si le problème persiste, essayez:
+                        <ul style="margin-left: 20px; margin-top: 5px;">
+                            <li><code style="background: #fff; padding: 2px 5px; border-radius: 3px;">php artisan cache:clear</code></li>
+                            <li><code style="background: #fff; padding: 2px 5px; border-radius: 3px;">php artisan config:clear</code></li>
+                            <li><code style="background: #fff; padding: 2px 5px; border-radius: 3px;">composer dump-autoload</code></li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+
+            <div class="button-group">
+                <a href="/setup" class="btn btn-primary">Aller à l'installation</a>
+                <a href="/" class="btn btn-secondary">Réessayer</a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>
+                💡 <strong>Astuce:</strong> Si vous n'êtes pas l'administrateur, veuillez contacter le support technique.
+            </p>
+            <p style="margin-top: 10px;">
+                <a href="https://github.com/anthropics/api-manager" class="link">Documentation</a> •
+                <a href="#" class="link">Support</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Afficher le domaine
+        document.getElementById('domain').textContent = window.location.hostname;
+
+        // Mettre à jour l'heure en temps réel
+        function updateTime() {
+            const now = new Date();
+            const time = now.toLocaleTimeString('fr-FR');
+            document.getElementById('time').textContent = time;
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // Auto-refresh toutes les 10 secondes
+        setTimeout(() => {
+            window.location.reload();
+        }, 10000);
+    </script>
+</body>
+</html>
