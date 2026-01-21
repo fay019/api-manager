@@ -11,7 +11,7 @@ The Promos module allows you to manage promotional or informative banners that a
 Promotional banners are announcements with:
 - **Title**: What the promo is about
 - **Content**: Detailed description
-- **Image**: Visual representation (URL)
+- **Image**: Visual representation (`full_image_url` generated for API, `image_url` for internal storage)
 - **Call-to-Action (CTA)**: Button text and link
 
 ### Key Capabilities
@@ -37,7 +37,7 @@ Promotional banners are announcements with:
 2. **Fill in details:**
    - **Title**: Give your promo a name
    - **Content**: Detailed description
-   - **Image URL**: Link to banner image
+   - **Image**: Upload a file (API will receive `full_image_url`)
    - **CTA Text**: Button text (e.g., "Shop Now", "Learn More")
    - **CTA URL**: Where the button links to
 
@@ -46,9 +46,11 @@ Promotional banners are announcements with:
    - **Ends At** (optional): When to stop showing it
    - Leave both empty for infinite duration
 
-4. **Set priority:** 1-10 scale (10 = highest priority)
+4. **Upload Image**: Upload a file in the "Média" section. The system will automatically generate a full public URL for the API (`full_image_url`) and store the relative path in the database (`image_url`).
 
-5. **Save**
+5. **Set priority:** 1-10 scale (10 = highest priority)
+
+6. **Save**
 
 ---
 
@@ -97,6 +99,11 @@ Draft (manual edit only)
 ✅ `ends_at` must be ≥ `starts_at` (if both set)
 ✅ Dates use server time for exact scheduling
 ✅ No tolerance or grace period (precise timing)
+
+### API Preview
+
+- **JSON Preview**: A "Aperçu JSON" button in the promotions table and on the edit page allows you to see exactly what the API response will look like for a specific promo.
+- **Success & Error cases**: The modal shows the successful 200 OK response, the 401 Unauthorized error (if security is enabled), the 404 Not Found error (when no promo is active), and the 429 Too Many Requests error (rate limiting).
 
 ---
 

@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use App\Enums\PromoStatus;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
 class Promo extends Model
 {
@@ -30,6 +32,19 @@ class Promo extends Model
             'ends_at' => 'datetime',
             'priority' => 'integer',
         ];
+    }
+
+    protected function fullImageUrl(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $value = $this->getAttributes()['image_url'] ?? null;
+                if (!$value) return null;
+                if (str_starts_with($value, 'http')) return $value;
+
+                return Storage::disk('public')->url($value);
+            }
+        );
     }
 
     public function creator(): BelongsTo

@@ -95,6 +95,7 @@ class PromoForm
                         FileUpload::make('image_url')
                             ->label('Image')
                             ->image()
+                            ->disk('public')
                             ->directory('promos')
                             ->visibility('public'),
                     ]),

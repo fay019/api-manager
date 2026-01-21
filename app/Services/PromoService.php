@@ -33,7 +33,7 @@ class PromoService
             'id' => $promo->id,
             'title' => $promo->title,
             'content' => $promo->content,
-            'image_url' => $promo->image_url,
+            'image_url' => $promo->full_image_url,
             'cta_text' => $promo->cta_text,
             'cta_url' => $promo->cta_url,
             'priority' => $promo->priority,
