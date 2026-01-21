@@ -224,7 +224,38 @@ if (!file_exists($dbPath)) {
                 last_activity INTEGER
             )');
 
-            log_success('Sessions table created');
+            $pdo->exec('CREATE TABLE IF NOT EXISTS cache (
+                key TEXT PRIMARY KEY,
+                value LONGTEXT,
+                expiration INTEGER
+            )');
+
+            $pdo->exec('CREATE TABLE IF NOT EXISTS cache_locks (
+                key TEXT PRIMARY KEY,
+                owner TEXT,
+                expiration INTEGER
+            )');
+
+            $pdo->exec('CREATE TABLE IF NOT EXISTS jobs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                queue TEXT,
+                payload LONGTEXT,
+                attempts INTEGER,
+                reserved_at INTEGER,
+                available_at INTEGER,
+                created_at INTEGER
+            )');
+
+            $pdo->exec('CREATE TABLE IF NOT EXISTS failed_jobs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                connection TEXT,
+                queue TEXT,
+                payload LONGTEXT,
+                exception LONGTEXT,
+                failed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )');
+
+            log_success('Required tables created (sessions, cache, cache_locks, jobs, failed_jobs)');
         } catch (Exception $e) {
             log_error('Failed to create sessions table: ' . $e->getMessage());
         }

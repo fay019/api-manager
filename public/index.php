@@ -9,6 +9,14 @@ define('LARAVEL_START', microtime(true));
 // This prevents "No environment file" and directory permission errors
 ensureApplicationReady();
 
+// ⭐ Ensure database tables exist BEFORE Laravel's service providers run
+// This prevents cache/session/queue table errors on fresh deployment
+try {
+    ensureRequiredDatabaseTables();
+} catch (Throwable $e) {
+    // Silently ignore - tables will be created by migrations
+}
+
 // Determine if the application is in maintenance mode...
 if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
     require $maintenance;
@@ -79,6 +87,72 @@ function ensureEnvFileExists(string $basePath): void
     } catch (Throwable $e) {
         // Silently ignore - permissions or other issues
         // User will see the maintenance page and can fix manually
+    }
+}
+
+/**
+ * Ensure required database tables exist before Laravel boots.
+ * Creates tables needed for sessions, cache, and queue operations.
+ */
+function ensureRequiredDatabaseTables(): void
+{
+    $basePath = dirname(__DIR__);
+    $dbPath = $basePath . '/database/database.sqlite';
+
+    // Database file doesn't exist yet - nothing to do
+    if (!file_exists($dbPath)) {
+        return;
+    }
+
+    try {
+        $pdo = new PDO("sqlite:{$dbPath}");
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        // Always create sessions table (default SESSION_DRIVER=database)
+        $pdo->exec('CREATE TABLE IF NOT EXISTS sessions (
+            id TEXT PRIMARY KEY,
+            user_id INTEGER,
+            ip_address VARCHAR(45),
+            user_agent TEXT,
+            payload LONGTEXT,
+            last_activity INTEGER
+        )');
+
+        // Create cache tables (used by Livewire and other components)
+        $pdo->exec('CREATE TABLE IF NOT EXISTS cache (
+            key TEXT PRIMARY KEY,
+            value LONGTEXT,
+            expiration INTEGER
+        )');
+
+        $pdo->exec('CREATE TABLE IF NOT EXISTS cache_locks (
+            key TEXT PRIMARY KEY,
+            owner TEXT,
+            expiration INTEGER
+        )');
+
+        // Create jobs tables (for QUEUE_CONNECTION=database)
+        $pdo->exec('CREATE TABLE IF NOT EXISTS jobs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            queue TEXT,
+            payload LONGTEXT,
+            attempts INTEGER,
+            reserved_at INTEGER,
+            available_at INTEGER,
+            created_at INTEGER
+        )');
+
+        $pdo->exec('CREATE TABLE IF NOT EXISTS failed_jobs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            connection TEXT,
+            queue TEXT,
+            payload LONGTEXT,
+            exception LONGTEXT,
+            failed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )');
+    } catch (Throwable $e) {
+        // Silently ignore - tables will be created by migrations
+        // or the bootstrap page will handle it
     }
 }
 

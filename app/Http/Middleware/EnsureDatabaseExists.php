@@ -55,7 +55,7 @@ class EnsureDatabaseExists
             // Créer le fichier vide
             touch($dbPath);
 
-            // Créer les tables minimales pour la session
+            // Créer les tables minimales nécessaires au démarrage
             try {
                 $pdo = new \PDO("sqlite:{$dbPath}");
                 $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
@@ -69,6 +69,49 @@ class EnsureDatabaseExists
                         user_agent TEXT,
                         payload LONGTEXT,
                         last_activity INTEGER
+                    )
+                ');
+
+                // Table cache (pour CACHE_STORE=database)
+                $pdo->exec('
+                    CREATE TABLE IF NOT EXISTS cache (
+                        key TEXT PRIMARY KEY,
+                        value LONGTEXT,
+                        expiration INTEGER
+                    )
+                ');
+
+                // Table cache_locks (pour atomic operations)
+                $pdo->exec('
+                    CREATE TABLE IF NOT EXISTS cache_locks (
+                        key TEXT PRIMARY KEY,
+                        owner TEXT,
+                        expiration INTEGER
+                    )
+                ');
+
+                // Table jobs (pour QUEUE_CONNECTION=database)
+                $pdo->exec('
+                    CREATE TABLE IF NOT EXISTS jobs (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        queue TEXT,
+                        payload LONGTEXT,
+                        attempts INTEGER,
+                        reserved_at INTEGER,
+                        available_at INTEGER,
+                        created_at INTEGER
+                    )
+                ');
+
+                // Table failed_jobs (pour les jobs échoués)
+                $pdo->exec('
+                    CREATE TABLE IF NOT EXISTS failed_jobs (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        connection TEXT,
+                        queue TEXT,
+                        payload LONGTEXT,
+                        exception LONGTEXT,
+                        failed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                     )
                 ');
             } catch (\Exception $e) {
