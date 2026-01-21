@@ -73,6 +73,22 @@ Password: password
 
 ## ⚙️ Installation System
 
+### 🆘 Bootstrap Page (If Something Goes Wrong)
+
+If you see a 500 error, visit:
+```
+https://your-domain.com/install.php
+```
+
+This **completely independent installation page** will:
+- ✅ Show diagnostic information
+- ✅ Create directories
+- ✅ Create .env file
+- ✅ Run Composer automatically
+- ✅ Create SQLite database
+- ✅ Provide detailed error messages and solutions
+- ✅ Works even if Laravel is broken!
+
 ### Web-Based Setup Wizard (Recommended)
 
 **Automatic detection:** Visit any page → Setup Wizard appears if not installed

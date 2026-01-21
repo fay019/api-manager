@@ -17,6 +17,26 @@ Ce document décrit le système d'installation modulaire et robuste de l'applica
 
 ---
 
+## 🆘 Troubleshooting Rapid - Erreur 500?
+
+Si vous voyez une **erreur 500 au premier accès**, accédez à:
+
+```
+https://your-domain.com/install.php
+```
+
+Cette page **indépendante de Laravel** va:
+- ✅ Afficher les diagnostiques
+- ✅ Créer les répertoires manquants
+- ✅ Créer le fichier `.env`
+- ✅ Lancer Composer automatiquement
+- ✅ Créer la base de données SQLite
+- ✅ Proposer des solutions aux erreurs
+
+**Elle fonctionne même si Laravel est cassé!**
+
+---
+
 ## Installation Rapide
 
 ### Prérequis
