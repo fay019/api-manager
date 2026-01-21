@@ -139,15 +139,22 @@ function ensureEnvFileExists(string $basePath): void
 /**
  * Ensure required database tables exist before Laravel boots.
  * Creates tables needed for sessions, cache, and queue operations.
+ * Creates the database file if it doesn't exist yet.
  */
 function ensureRequiredDatabaseTables(): void
 {
     $basePath = dirname(__DIR__);
     $dbPath = $basePath . '/database/database.sqlite';
+    $dbDir = dirname($dbPath);
 
-    // Database file doesn't exist yet - nothing to do
+    // Ensure database directory exists
+    if (!is_dir($dbDir)) {
+        @mkdir($dbDir, 0755, true);
+    }
+
+    // Create database file if it doesn't exist
     if (!file_exists($dbPath)) {
-        return;
+        @touch($dbPath);
     }
 
     try {
