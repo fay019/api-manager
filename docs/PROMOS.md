@@ -19,8 +19,7 @@ Promotional banners are announcements with:
 ✅ **Schedule promotions** with start and end dates
 ✅ **Priority system** to control which promo shows when multiple are active
 ✅ **Status management** with automatic state transitions
-✅ **Event tracking** (impressions, clicks, dismissals)
-✅ **Version history** for audit trail and rollback
+✅ **Version history** with full audit trail and change tracking
 ✅ **Caching** for performance optimization
 
 ---
@@ -164,82 +163,73 @@ The API returns the **first active promo** that matches:
 
 ---
 
-## 📊 Track Promo Events
+## 📜 Version History & Audit Trail
 
-### Event Tracking Endpoint
+### Overview
 
-**Endpoint:** `POST /api/v1/promo/event`
+Every change to a promotion is automatically tracked and saved in the version history system. This allows you to:
 
-**Required Headers:**
+- 👀 View all previous versions of a promo
+- 📊 See exactly what changed between versions
+- 🔄 Understand who made changes and when
+- 🔍 Track the complete lifecycle of a promotion
+
+### Accessing Version History
+
+1. Go to **Admin Panel** → **Marketing** → **Promotions**
+2. Click on a promo to edit it
+3. In the **edit page**, you'll see a **"Version History"** button in the top-right corner
+4. Click the button to open a modal with the full version timeline
+
+### Version Timeline
+
+The modal displays:
+
+- **Version number** (v1, v2, v3, etc.)
+- **Current version indicator** - Shows which version is currently live
+- **Created by** - Who made the change
+- **Timestamp** - Exact date and time of the change
+- **Changes** - Expandable section showing field-by-field changes
+
+### Viewing Changes
+
+For each version (except the first), you can:
+
+1. Click **"Latest changes"** or **"Changes (n fields)"** to expand
+2. See a **Before/After comparison** with:
+   - **Red strikethrough text** = Old value
+   - **Green text** = New value
+
+### Fields Tracked
+
+All fields are versioned:
+- Title, Content, Image URL
+- CTA Text and CTA URL
+- Status, Start Date, End Date
+- Priority
+- Created By (user)
+
+### Example
+
 ```
-X-API-KEY: apk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-Content-Type: application/json
+v5 (CURRENT)
+├─ Latest changes (2 fields)
+│  ├─ Title: "Summer Sale" → "Summer Mega Sale"
+│  └─ Priority: 5 → 10
+│
+v4
+├─ Changes (3 fields)
+│  ├─ Status: draft → published
+│  ├─ Starts At: 2026-01-15 → 2026-01-20
+│  └─ Ends At: 2026-02-15 → 2026-02-28
 ```
 
-**Request Body:**
-```json
-{
-  "promo_id": 1,
-  "event_type": "impression",
-  "session_id": "user-session-abc123",
-  "url": "https://client-site.com/landing"
-}
-```
+### Technical Details
 
-### Parameters
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `promo_id` | integer | ✅ Yes | ID of the promo |
-| `event_type` | string | ✅ Yes | One of: `impression`, `click`, `dismiss` |
-| `session_id` | string | ❌ No | Session identifier (hashed) |
-| `url` | string | ❌ No | Referring URL |
-
-### Event Types Explained
-
-- **Impression**: Promo was displayed to the user
-- **Click**: User clicked the CTA button
-- **Dismiss**: User closed/dismissed the promo
-
-### Success Response (201 Created)
-
-```json
-{
-  "success": true,
-  "data": {
-    "message": "Event tracked successfully"
-  }
-}
-```
-
-### Error Responses
-
-| Status | Code | Reason |
-|--------|------|--------|
-| 422 | `VALIDATION_ERROR` | Invalid `promo_id` or `event_type` |
-| 404 | `NOT_FOUND` | Promo doesn't exist |
-| 429 | `RATE_LIMIT_EXCEEDED` | Too many requests |
-| 401 | `UNAUTHORIZED` | Invalid/missing API key |
-| 403 | `FORBIDDEN` | Origin not in allowed list |
-
----
-
-## 🔒 Privacy & Security
-
-### Data Hashing
-
-All sensitive data is hashed with SHA256:
-
-- **Session ID**: `SHA256(session_id)`
-- **IP Address**: `SHA256(ip_address)`
-- **User-Agent**: `SHA256(user_agent)`
-
-**Raw values NEVER stored** - only hashes for privacy compliance.
-
-### Stored Data
-
-- `referer`: HTTP Referer header (as-is)
-- `origin`: HTTP Origin header (as-is)
+- **Automatic tracking**: Changes are captured by the `PromoObserver`
+- **Storage**: Each version is stored in the `promo_versions` table
+- **Immutable**: Historical versions cannot be edited
+- **No versioning overhead**: Uses efficient JSON storage
 
 ---
 
@@ -266,36 +256,6 @@ Cache is **automatically cleared** when you:
 
 ---
 
-## 📈 Analytics Dashboard
-
-### View Promo Performance
-
-In **Admin Panel** → **Marketing** → **Promotions**:
-
-- **View counts**: Total impressions
-- **Click counts**: Total clicks
-- **Dismiss counts**: Total dismissals
-- **Click-through rate (CTR)**: `clicks / impressions * 100`
-- **Trend graphs**: Activity over time
-
-### Example Query
-
-```php
-// Get event counts by type
-$promo = Promo::find($id);
-$stats = $promo->events()
-    ->selectRaw('event_type, count(*) as count')
-    ->groupBy('event_type')
-    ->get();
-
-// Calculate CTR
-$impressions = $promo->events()->where('event_type', 'impression')->count();
-$clicks = $promo->events()->where('event_type', 'click')->count();
-$ctr = ($impressions > 0) ? ($clicks / $impressions) * 100 : 0;
-```
-
----
-
 ## 🔧 Configuration
 
 ### Environment Variables
@@ -303,16 +263,6 @@ $ctr = ($impressions > 0) ? ($clicks / $impressions) * 100 : 0;
 ```env
 # Cache duration in seconds (default: 60)
 PROMO_CACHE_TTL=60
-
-# Event retention in days (default: 180)
-PROMO_EVENT_RETENTION_DAYS=180
-```
-
-### Prune Old Events
-
-```bash
-# Delete events older than 180 days
-php artisan promo:prune-events --days=180
 ```
 
 ---
@@ -333,41 +283,19 @@ const data = await response.json();
 if (data.success) {
   // Display banner
   console.log(data.data); // { id, title, content, image_url, cta_text, cta_url }
+
+  // Display the banner UI
+  const banner = document.createElement('div');
+  banner.innerHTML = `
+    <div class="promo-banner">
+      <img src="${data.data.image_url}" alt="${data.data.title}">
+      <h3>${data.data.title}</h3>
+      <p>${data.data.content}</p>
+      <a href="${data.data.cta_url}" class="cta-button">${data.data.cta_text}</a>
+    </div>
+  `;
+  document.body.appendChild(banner);
 }
-
-// Track impression
-await fetch('https://api.example.com/api/v1/promo/event', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'X-API-KEY': 'apk_your_key_here'
-  },
-  body: JSON.stringify({
-    promo_id: data.data.id,
-    event_type: 'impression',
-    session_id: sessionStorage.getItem('session-id'),
-    url: window.location.href
-  })
-});
-
-// Track click
-document.getElementById('cta-button').addEventListener('click', async () => {
-  await fetch('https://api.example.com/api/v1/promo/event', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-API-KEY': 'apk_your_key_here'
-    },
-    body: JSON.stringify({
-      promo_id: data.data.id,
-      event_type: 'click',
-      session_id: sessionStorage.getItem('session-id'),
-      url: window.location.href
-    })
-  });
-  // Navigate to CTA URL
-  window.location.href = data.data.cta_url;
-});
 ```
 
 ### cURL
@@ -376,17 +304,6 @@ document.getElementById('cta-button').addEventListener('click', async () => {
 # Get active promo
 curl -H "X-API-KEY: apk_xxx" \
   https://api.example.com/api/v1/promo/banner.json
-
-# Track event
-curl -X POST https://api.example.com/api/v1/promo/event \
-  -H "Content-Type: application/json" \
-  -H "X-API-KEY: apk_xxx" \
-  -d '{
-    "promo_id": 1,
-    "event_type": "impression",
-    "session_id": "user123",
-    "url": "https://example.com"
-  }'
 ```
 
 ### PHP (Guzzle)
@@ -403,19 +320,13 @@ $response = $client->get('https://api.example.com/api/v1/promo/banner.json', [
 
 $promo = json_decode($response->getBody(), true);
 
-// Track event
-$client->post('https://api.example.com/api/v1/promo/event', [
-    'headers' => [
-        'X-API-KEY' => 'apk_your_key',
-        'Content-Type' => 'application/json'
-    ],
-    'json' => [
-        'promo_id' => $promo['data']['id'],
-        'event_type' => 'impression',
-        'session_id' => session_id(),
-        'url' => $_SERVER['HTTP_REFERER'] ?? null
-    ]
-]);
+if ($promo['success']) {
+    // Display promo
+    echo $promo['data']['title'];
+    echo $promo['data']['content'];
+    echo '<img src="' . $promo['data']['image_url'] . '">';
+    echo '<a href="' . $promo['data']['cta_url'] . '">' . $promo['data']['cta_text'] . '</a>';
+}
 ```
 
 ---
@@ -441,25 +352,16 @@ $client->post('https://api.example.com/api/v1/promo/event', [
 - Higher priority value (e.g., 10) shows first
 - Verify dates don't exclude the expected promo
 
-### Events Not Tracking
-
-**Problem:** Events endpoint returns errors
-
-**Solutions:**
-1. ✅ Verify `promo_id` exists
-2. ✅ Verify `event_type` is one of: impression, click, dismiss
-3. ✅ Check API key is valid
-4. ✅ Verify origin is in client's allowed list
-
 ---
 
 ## 📚 Related Documentation
 
 - [API Documentation](./API.md) - Complete API reference
+- [Analytics Dashboard](./ANALYTICS.md) - API request analytics and monitoring
 - [Database Schema](./DATABASE.md) - Promo tables and relationships
 - [Deployment Guide](./DEPLOYMENT.md) - Production setup
 
 ---
 
-**Last Updated:** 2026-01-20
-**Module:** Promos v1.0
+**Last Updated:** 2026-01-21
+**Module:** Promos v1.1
