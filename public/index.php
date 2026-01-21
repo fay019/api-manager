@@ -46,7 +46,7 @@ function ensureApplicationReady(): void
 
 /**
  * Ensure APP_KEY is set in .env file.
- * Generates a random key if not present, preventing encryption service errors.
+ * Generates a random key if not present or empty, preventing encryption service errors.
  */
 function ensureAppKeyExists(): void
 {
@@ -61,22 +61,21 @@ function ensureAppKeyExists(): void
     // Read .env file
     $content = file_get_contents($envPath);
 
-    // Check if APP_KEY is already set
-    if (preg_match('/^APP_KEY=/m', $content)) {
-        // APP_KEY already exists
+    // Check if APP_KEY is already set with a non-empty value
+    if (preg_match('/^APP_KEY=base64:/', $content)) {
+        // APP_KEY already has a base64 value
         return;
     }
 
     // Generate a new APP_KEY (base64 encoded random string)
     $key = 'base64:' . base64_encode(random_bytes(32));
 
-    // Add APP_KEY to .env
-    if (preg_match('/^APP_ENV=/m', $content)) {
-        // Insert after APP_ENV
-        $content = preg_replace('/^(APP_ENV=.*?)$/m', '$1' . "\nAPP_KEY=" . $key, $content);
+    // Replace existing APP_KEY= line (even if empty) with the new key
+    if (preg_match('/^APP_KEY=.*$/m', $content)) {
+        $content = preg_replace('/^APP_KEY=.*$/m', 'APP_KEY=' . $key, $content);
     } else {
-        // Append to end
-        $content .= "\nAPP_KEY=" . $key . "\n";
+        // APP_KEY doesn't exist, add it after APP_ENV
+        $content = preg_replace('/^(APP_ENV=.*?)$/m', '$1' . "\nAPP_KEY=" . $key, $content);
     }
 
     // Write back to .env
