@@ -2,6 +2,10 @@
 
 A production-ready, modular API hub system for centralizing multiple APIs with secure API key authentication, CORS per-client control, comprehensive logging, and a Filament v5 admin panel on shared hosting.
 
+**📦 GitHub Repository**: [fay019/api-manager](https://github.com/fay019/api-manager)
+**🔗 Clone & Deploy**: `git clone https://github.com/fay019/api-manager.git`
+**⭐ Version**: 1.0.0 | **✨ Installation**: 1 command (`php artisan install`)
+
 ---
 
 ## ✨ Core Features
@@ -23,35 +27,33 @@ A production-ready, modular API hub system for centralizing multiple APIs with s
 
 ### Prerequisites
 
-- **PHP 8.4+** with required extensions (bcmath, ctype, json, mbstring, openssl, pdo, tokenizer, xml)
-- **MySQL 5.7+** or **SQLite**
+- **PHP 8.2+** with required extensions (bcmath, ctype, json, mbstring, openssl, pdo, tokenizer, xml)
+- **MySQL 5.7+** or **SQLite** (for local development)
 - **Composer** installed globally
-- **Git** (for version control)
+- **Node.js** 18+ (optional, for frontend assets)
 
-### Installation Steps
+### Installation from GitHub (Recommended)
 
 ```bash
-# 1. Clone or download the project
-git clone <repository-url>
+# 1. Clone from GitHub
+git clone https://github.com/fay019/api-manager.git
 cd api-manager
 
 # 2. Install dependencies
 composer install
 
-# 3. Copy environment file
-cp .env.example .env
+# 3. Automated installation (handles everything in 9 steps!)
+php artisan install
+```
 
-# 4. Generate application key
-php artisan key:generate
+**That's it!** Your application is ready. ✨
 
-# 5. Create database and run migrations
-php artisan migrate
+### Start Development Server
 
-# 6. Seed default admin user
-php artisan db:seed
-
-# 7. Start development server
+```bash
 php artisan serve
+# Or use composer dev (includes queue + logs)
+composer dev
 ```
 
 **Access the application:**
@@ -66,6 +68,70 @@ Password: password
 
 ⚠️ IMPORTANT: Change this password immediately in production!
 ```
+
+---
+
+## ⚙️ Installation System
+
+### One-Command Installation
+
+The new modular installation system handles everything automatically:
+
+```bash
+php artisan install
+```
+
+**What it does (9 steps):**
+1. ✅ Verifies system requirements (PHP, extensions, permissions)
+2. ✅ Configures environment (.env, APP_KEY, SQLite)
+3. ✅ Publishes configuration files (Filament, Laravel)
+4. ✅ Executes all database migrations
+5. ✅ Discovers and initializes modules
+6. ✅ Seeds initial data (admin user, clients, promos)
+7. ✅ Configures storage directories
+8. ✅ Compiles frontend assets
+9. ✅ Performs health check
+
+### Useful Commands
+
+```bash
+# Validate installation
+php artisan validate:install
+
+# Discover modules
+php artisan discover:modules
+
+# Step-by-step installation (for CI/CD)
+php artisan install --step=requirements
+php artisan install --step=database
+php artisan install --step=modules
+
+# Development
+php artisan serve
+composer dev        # Concurrent: server + queue + logs + Vite
+
+# Testing
+composer test
+```
+
+### Creating New Modules
+
+The architecture is **fully modular**. Add features by creating modules:
+
+```bash
+mkdir -p app/Modules/YourModule/Models
+mkdir -p app/Modules/YourModule/Migrations
+mkdir -p app/Modules/YourModule/Http/Controllers
+
+# Create YourModuleModule.php (extends BaseModule)
+# Add migrations - auto-discovered!
+# Add routes - auto-registered!
+
+# Reinstall
+php artisan install
+```
+
+See [MODULE_CREATION.md](./docs/MODULE_CREATION.md) for complete guide.
 
 ---
 
@@ -254,6 +320,34 @@ For detailed schema information, see **[DATABASE.md](./docs/DATABASE.md)**
 
 ## 🚀 Deployment
 
+### Deploy from GitHub (Recommended)
+
+```bash
+# 1. Clone from GitHub
+git clone https://github.com/fay019/api-manager.git
+cd api-manager
+
+# 2. Install dependencies (production mode)
+composer install --no-dev --optimize-autoloader
+
+# 3. Configure environment
+cp .env.example .env
+nano .env  # Set DB_CONNECTION=mysql, DB_HOST, etc.
+
+# 4. Run installation
+php artisan install --force --skip-seeds=dev
+
+# 5. Optimize for production
+php artisan optimize
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+
+# 6. Set permissions
+chmod -R 755 storage bootstrap/cache
+chown -R www-data:www-data .
+```
+
 ### Production Deployment
 
 For complete deployment guide to shared hosting:
@@ -272,17 +366,34 @@ See **[DEPLOYMENT.md](./docs/DEPLOYMENT.md)** for:
 
 ```bash
 # Before pushing to production:
-- [ ] PHP 8.4+ with all extensions
+- [ ] PHP 8.2+ with all extensions
 - [ ] Database created and accessible
 - [ ] .env configured for production
-- [ ] Migrations run: php artisan migrate --force
-- [ ] Seeds run: php artisan db:seed --force
+- [ ] php artisan install --force completed
 - [ ] Storage permissions: chmod -R 755 storage bootstrap/cache
 - [ ] Cron job configured (runs every minute)
 - [ ] HTTPS enabled
 - [ ] Admin password changed
 - [ ] APP_DEBUG = false
 - [ ] APP_ENV = production
+```
+
+### Docker Deployment
+
+```dockerfile
+FROM php:8.2-fpm
+
+RUN docker-php-ext-install bcmath json pdo pdo_mysql
+
+COPY . /var/www/html
+WORKDIR /var/www/html
+
+RUN composer install --no-dev --optimize-autoloader
+RUN php artisan install --force
+
+RUN chown -R www-data:www-data /var/www/html/storage
+
+EXPOSE 9000
 ```
 
 ---
@@ -293,6 +404,8 @@ See **[DEPLOYMENT.md](./docs/DEPLOYMENT.md)** for:
 
 | Document | Purpose |
 |----------|---------|
+| [**INSTALLATION.md**](./docs/INSTALLATION.md) | 🆕 Complete installation guide, deployment, troubleshooting |
+| [**MODULE_CREATION.md**](./docs/MODULE_CREATION.md) | 🆕 Create custom modules (tutorial + examples) |
 | [**API.md**](./docs/API.md) | Complete API reference with endpoints, authentication, examples |
 | [**DATABASE.md**](./docs/DATABASE.md) | Database schema, relationships, migrations, queries |
 | [**DEPLOYMENT.md**](./docs/DEPLOYMENT.md) | Production deployment guide for shared hosting |
@@ -450,8 +563,33 @@ Private - Internal use only
 
 ---
 
-**Last Updated:** 2026-01-20
-**Version:** 1.0.0
-**Framework:** Laravel 12
-**Admin Panel:** Filament v5
-**Database:** MySQL 5.7+ / SQLite
+---
+
+## 🔗 Quick Links
+
+- **GitHub Repository**: [fay019/api-manager](https://github.com/fay019/api-manager)
+- **Clone**: `git clone https://github.com/fay019/api-manager.git`
+- **Issues & Bugs**: [GitHub Issues](https://github.com/fay019/api-manager/issues)
+- **Start Installation**: `php artisan install`
+
+---
+
+## 📊 Project Stats
+
+| Metric | Value |
+|--------|-------|
+| **Version** | 1.0.0 |
+| **Framework** | Laravel 12 |
+| **Admin Panel** | Filament v5 |
+| **PHP Minimum** | 8.2 |
+| **Database** | MySQL 5.7+ / SQLite |
+| **Installation Steps** | 9 (automated) |
+| **Installation Time** | < 2 minutes |
+| **Modules** | Promo (built-in) + Custom |
+| **Commands** | 50+ Artisan commands |
+
+---
+
+**Last Updated:** 2026-01-21
+**Installation System**: v1.0.0 (Modular, Idempotent, Auto-Discovery)
+**Status**: ✅ Production Ready
