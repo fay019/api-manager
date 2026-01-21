@@ -369,6 +369,41 @@ Cette page s'affiche automatiquement si Laravel plante et peut être consultée 
 
 ---
 
+### ⏰ Erreur 419 "Session expirée" au Setup Wizard (⚠️ EN COURS DE CORRECTION)
+
+**Symptôme:** Lors du remplissage de l'étape 1 du Setup Wizard, un clic sur "Suivant" affiche:
+```
+419 Votre session a expiré. Veuillez rafraîchir la page et réessayer.
+```
+
+**Cause:** Le middleware de session essaie d'accéder à la table `sessions` en base de données, mais:
+- La table n'existe pas encore (première visite)
+- Le fichier `database.sqlite` n'a pas été créé
+
+**Status:** 🔧 Investigation en cours
+- Commit 75e7a21: Augmentation SESSION_LIFETIME (120 → 2880 min)
+- Commit 1791434: Création du fichier database.sqlite en bootstrap
+- **À vérifier demain:** Ordre d'exécution du bootstrap, permissions, PDO/SQLite disponibilité
+
+**Workaround temporaire:**
+1. Créer manuellement le fichier `database/database.sqlite`:
+   ```bash
+   mkdir -p database
+   touch database/database.sqlite
+   chmod 666 database/database.sqlite
+   ```
+
+2. Exécuter les migrations manuellement:
+   ```bash
+   php artisan migrate --force
+   ```
+
+3. Puis relancer le setup wizard à `/setup`
+
+**Détails complets:** Voir `DEBUG_419_SESSION_ERROR.md` pour le diagnostic détaillé et les prochaines étapes de correction.
+
+---
+
 ## 📞 Besoin d'aide supplémentaire?
 
 1. **Consultez les logs:** `storage/logs/laravel.log`
