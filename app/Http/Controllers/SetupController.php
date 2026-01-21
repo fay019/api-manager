@@ -210,6 +210,20 @@ class SetupController extends Controller
             $dbUsername = session('setup.db_username', 'root');
             $dbPassword = session('setup.db_password', '');
 
+            // Installer les dépendances Composer si nécessaire
+            $this->ensureComposerDependencies();
+
+            // Créer les répertoires nécessaires
+            $this->ensureDirectoriesExist();
+
+            // Créer la base de données SQLite si nécessaire
+            if ($dbConnection === 'sqlite') {
+                $dbPath = database_path($dbDatabase);
+                if (!file_exists($dbPath)) {
+                    touch($dbPath);
+                }
+            }
+
             // Mettre à jour .env
             $this->updateEnv([
                 'APP_NAME' => $siteName,
@@ -224,6 +238,9 @@ class SetupController extends Controller
 
             // Exécuter les migrations
             Artisan::call('migrate', ['--force' => true]);
+
+            // Lancer les seeders
+            Artisan::call('db:seed', ['--force' => true]);
 
             // Créer l'utilisateur admin
             $admin = User::firstOrCreate(
@@ -249,6 +266,52 @@ class SetupController extends Controller
             return back()
                 ->withErrors(['error' => 'Erreur lors de l\'installation: ' . $e->getMessage()])
                 ->withInput();
+        }
+    }
+
+    /**
+     * Installe les dépendances Composer si nécessaire.
+     */
+    protected function ensureComposerDependencies(): void
+    {
+        // Vérifier si vendor/ existe déjà
+        if (is_dir(base_path('vendor'))) {
+            return;
+        }
+
+        // Déterminer si on est en production ou développement
+        $isDev = app()->environment('local', 'development');
+        $cmd = $isDev ? 'composer install' : 'composer install --no-dev --optimize-autoloader';
+
+        // Exécuter composer install
+        $output = shell_exec("{$cmd} 2>&1");
+
+        if ($output === null) {
+            throw new \Exception('Impossible de lancer composer install. Assurez-vous que Composer est installé.');
+        }
+    }
+
+    /**
+     * Vérifie et crée les répertoires nécessaires.
+     */
+    protected function ensureDirectoriesExist(): void
+    {
+        $directories = [
+            'storage/framework/cache',
+            'storage/framework/data',
+            'storage/framework/sessions',
+            'storage/framework/views',
+            'storage/framework/testing',
+            'storage/logs',
+            'storage/app',
+            'bootstrap/cache',
+        ];
+
+        foreach ($directories as $dir) {
+            $path = base_path($dir);
+            if (!is_dir($path)) {
+                mkdir($path, 0755, true);
+            }
         }
     }
 
