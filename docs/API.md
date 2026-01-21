@@ -135,19 +135,113 @@ API keys are encrypted with AES-256 reversible encryption:
 GET /health
 ```
 
-**Response:**
+#### Overview
+
+The health check endpoint provides system diagnostics for monitoring application health. It performs configurable checks on:
+- Cache functionality (write/read test)
+- Logs directory writeability
+- Available disk space
+- Storage directories writeability
+
+#### Response Format
+
 ```json
 {
   "success": true,
   "data": {
     "status": "ok",
-    "timestamp": "2026-01-20T10:30:00Z",
-    "version": "1.0"
-  }
+    "timestamp": "2026-01-21T15:01:23Z",
+    "checks": {
+      "cache": {
+        "status": "ok",
+        "message": "Cache is working"
+      },
+      "logs": {
+        "status": "ok",
+        "message": "Logs directory is writable"
+      },
+      "disk_space": {
+        "status": "ok",
+        "message": "Disk space is healthy",
+        "free_gb": 644.01,
+        "total_gb": 651.93,
+        "percent_used": 1.21
+      },
+      "storage": {
+        "status": "ok",
+        "message": "All storage directories are writable"
+      }
+    }
+  },
+  "meta": []
 }
 ```
 
-**Use Case:** Health monitoring, uptime checks, CI/CD pipelines
+#### Check Status Values
+
+| Status | Meaning | Color |
+|--------|---------|-------|
+| **ok** | Check passed | 🟢 Green |
+| **warning** | Check passed with concerns (e.g., disk > 90% used) | 🟠 Orange |
+| **error** | Check failed | 🔴 Red |
+
+#### Individual Checks
+
+##### Cache Check
+- **What it checks:** Tests cache write/read functionality
+- **Response includes:** Status and message
+- **Fails if:** Cache driver is not working
+
+##### Logs Check
+- **What it checks:** Verifies logs directory exists and is writable
+- **Response includes:** Status and message
+- **Fails if:** Directory missing or not writable
+
+##### Disk Space Check
+- **What it checks:** Monitors available disk space
+- **Response includes:** Free GB, Total GB, Percent used
+- **Warning if:** More than 90% of disk is used
+- **Note:** Important for shared hosting environments
+
+##### Storage Check
+- **What it checks:** Verifies all storage directories are writable
+- **Directories checked:**
+  - `storage/logs`
+  - `storage/app`
+  - `storage/framework/cache`
+  - `storage/framework/sessions`
+- **Fails if:** Any directory is missing or not writable
+
+#### Configuration
+
+The health checks are configurable from the admin panel at `/admin/health-check-api`. You can enable/disable individual checks as needed.
+
+**To configure:**
+1. Login to admin panel
+2. Go to System → Health Check API
+3. Toggle each check on/off
+4. Click "Test Health Check" to verify configuration
+
+#### Example Usage
+
+```bash
+# Test endpoint
+curl https://api.example.com/api/v1/health
+
+# Monitor specific checks
+curl https://api.example.com/api/v1/health | jq '.data.checks.disk_space'
+
+# Check in CI/CD pipeline
+curl -f https://api.example.com/api/v1/health || exit 1
+```
+
+#### Use Cases
+- ✅ Health monitoring services (Uptime Robot, New Relic)
+- ✅ Load balancer liveness probes
+- ✅ Kubernetes health checks
+- ✅ CI/CD pipeline verification
+- ✅ Shared hosting diagnostics
+- ✅ System monitoring dashboards
 
 ---
 
