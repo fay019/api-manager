@@ -77,12 +77,17 @@ class SetupController extends Controller
         session(['setup.admin_password' => $validated['admin_password']]);
         session(['setup.db_connection' => $validated['db_connection']]);
 
-        // Si SQLite, passer à la confirmation
-        // Si MySQL/PostgreSQL, demander les détails de connexion
+        // Si SQLite, définir les valeurs par défaut et passer à la confirmation
         if ($validated['db_connection'] === 'sqlite') {
+            session(['setup.db_database' => 'database/database.sqlite']);
+            session(['setup.db_host' => 'localhost']);
+            session(['setup.db_port' => null]);
+            session(['setup.db_username' => null]);
+            session(['setup.db_password' => null]);
             return redirect()->route('setup.confirm');
         }
 
+        // Si MySQL/PostgreSQL, demander les détails de connexion
         return redirect()->route('setup.database');
     }
 
