@@ -553,13 +553,79 @@ Private - Internal use only
 
 ---
 
+## 🐛 Debugging & Troubleshooting
+
+### Enhanced Error Pages
+
+The application includes **custom error pages** that provide clear information when something goes wrong:
+
+| Error Code | Page | What It Shows |
+|-----------|------|---------------|
+| **500** | Server Error | Recent logs when `APP_DEBUG=true` |
+| **404** | Not Found | Page doesn't exist |
+| **403** | Forbidden | Permission denied |
+| **401** | Unauthorized | Authentication required |
+| **419** | Session Expired | CSRF token expired |
+| **503** | Service Unavailable | Application in maintenance |
+
+### Enabling Debug Mode
+
+To see detailed error information and logs in the browser:
+
+```bash
+# In .env file
+APP_DEBUG=true
+```
+
+**When enabled:**
+- ✅ Error pages display the last 20 log entries
+- ✅ Shows exception class, message, file, and line number
+- ✅ Displays request URL, method, and user information
+- ✅ Links to the complete log file
+
+**Important:** Disable in production:
+```bash
+# In .env file
+APP_DEBUG=false
+```
+
+### Viewing Logs
+
+**Real-time logs:**
+```bash
+tail -f storage/logs/laravel.log
+```
+
+**Last 50 lines:**
+```bash
+tail -50 storage/logs/laravel.log
+```
+
+**Search for errors:**
+```bash
+grep -i "error" storage/logs/laravel.log
+grep -i "exception" storage/logs/laravel.log
+```
+
+### Common Issues
+
+| Issue | Solution |
+|-------|----------|
+| 500 error on first visit | Enable APP_DEBUG=true to see details in error page |
+| Logs not showing | Check file permissions: `chmod 666 storage/logs/laravel.log` |
+| Page keeps redirecting | Check if already installed: `storage/app/installed.lock` exists |
+| Database connection error | Verify DB_* values in .env or check `/admin/manage-app-settings` |
+
+---
+
 ## 🙋 Need Help?
 
-1. Check the relevant documentation file (see above)
-2. Review application logs: `tail -f storage/logs/laravel.log`
-3. Test endpoints with curl or Postman
-4. Check admin panel for detailed error messages
-5. Contact your system administrator
+1. **Enable Debug Mode** - Set `APP_DEBUG=true` in .env to see detailed errors
+2. **Check Error Pages** - Visit the page that errors to see logs in browser
+3. **Review Application Logs** - `tail -f storage/logs/laravel.log`
+4. **Check Documentation** - See relevant documentation files above
+5. **Check Admin Panel** - Review detailed error messages in `/admin`
+6. **Contact Administrator** - Reach out for production support
 
 ---
 
