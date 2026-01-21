@@ -25,7 +25,12 @@ class DocumentationSetting extends Model
      */
     public static function getByName(string $name): ?self
     {
-        return self::where('doc_name', $name)->first();
+        try {
+            return self::where('doc_name', $name)->first();
+        } catch (\Exception $e) {
+            // Table doesn't exist yet (fresh database before migrations)
+            return null;
+        }
     }
 
     /**
@@ -33,9 +38,14 @@ class DocumentationSetting extends Model
      */
     public static function visible(): array
     {
-        return self::where('is_visible', true)
-            ->pluck('doc_name')
-            ->toArray();
+        try {
+            return self::where('is_visible', true)
+                ->pluck('doc_name')
+                ->toArray();
+        } catch (\Exception $e) {
+            // Table doesn't exist yet (fresh database before migrations)
+            return [];
+        }
     }
 
     /**
@@ -43,8 +53,13 @@ class DocumentationSetting extends Model
      */
     public static function isDocVisible(string $docName): bool
     {
-        $doc = self::where('doc_name', $docName)->first();
-        return $doc ? (bool) $doc->is_visible : false;
+        try {
+            $doc = self::where('doc_name', $docName)->first();
+            return $doc ? (bool) $doc->is_visible : false;
+        } catch (\Exception $e) {
+            // Table doesn't exist yet (fresh database before migrations)
+            return true; // Default to visible until table is created
+        }
     }
 
     /**
@@ -52,14 +67,19 @@ class DocumentationSetting extends Model
      */
     public static function getAllDocs(): array
     {
-        return self::all()->map(function ($doc) {
-            return [
-                'doc_name' => $doc->doc_name,
-                'path' => $doc->path,
-                'is_visible' => $doc->is_visible,
-                'icon' => $doc->icon,
-            ];
-        })->toArray();
+        try {
+            return self::all()->map(function ($doc) {
+                return [
+                    'doc_name' => $doc->doc_name,
+                    'path' => $doc->path,
+                    'is_visible' => $doc->is_visible,
+                    'icon' => $doc->icon,
+                ];
+            })->toArray();
+        } catch (\Exception $e) {
+            // Table doesn't exist yet (fresh database before migrations)
+            return [];
+        }
     }
 
     /**
@@ -77,6 +97,23 @@ class DocumentationSetting extends Model
     {
         $defaults = config('documentation-icons.defaults', []);
         return $defaults[$docName] ?? config('documentation-icons.fallback', '📄');
+    }
+
+    /**
+     * Check if admin credentials should be shown
+     */
+    public static function shouldShowCredentials(): bool
+    {
+        try {
+            // Only show credentials in local environment
+            if (! app()->environment('local')) {
+                return false;
+            }
+            // Default to false if table doesn't exist yet
+            return false;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
     /**
