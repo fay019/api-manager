@@ -8,12 +8,14 @@
  * Access: /install.php
  */
 
-// Force error display for debugging
-ini_set('display_errors', '1');
-ini_set('display_startup_errors', '1');
+// Start output buffering to handle headers safely
+ob_start();
+
+// Error reporting (don't display in headers)
+ini_set('display_errors', '0');
 error_reporting(E_ALL);
 
-// Set error and exception handlers to log and display
+// Set error and exception handlers to log (not display)
 set_error_handler(function($errno, $errstr, $errfile, $errline) {
     global $output, $errors;
     $msg = "[$errno] $errstr in $errfile:$errline";
@@ -37,11 +39,13 @@ set_exception_handler(function($exception) {
     ];
 });
 
-// Prevent caching
-header('Cache-Control: no-cache, no-store, must-revalidate');
-header('Pragma: no-cache');
-header('Expires: 0');
-header('Content-Type: text/html; charset=utf-8');
+// Try to set cache headers, ignore if already sent
+if (!headers_sent()) {
+    header('Cache-Control: no-cache, no-store, must-revalidate');
+    header('Pragma: no-cache');
+    header('Expires: 0');
+    header('Content-Type: text/html; charset=utf-8');
+}
 
 $basePath = dirname(__DIR__);
 $output = [];

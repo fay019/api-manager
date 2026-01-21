@@ -7,9 +7,7 @@ use App\Http\Controllers\BootstrapController;
 use App\Http\Controllers\InstallerController;
 use Illuminate\Support\Facades\Route;
 
-// Bootstrap/Diagnostic Routes (Accessible before setup)
-Route::get('/install.php', [InstallerController::class, 'install'])->name('bootstrap.install');
-Route::get('/diagnostic.php', [InstallerController::class, 'diagnostic'])->name('bootstrap.diagnostic');
+// Setup Routes (Installation Wizard)
 Route::get('/setup.php', [BootstrapController::class, 'setup'])->name('bootstrap.setup');
 
 // Setup Routes (Installation Wizard)
