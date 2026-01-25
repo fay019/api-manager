@@ -37,6 +37,8 @@ class PromoService
 
         $data = [
             'id' => $promo->id,
+            'author_name' => $promo->author_name,
+            'author_role' => $promo->author_role,
             'version' => $versionNumber,
         ];
 

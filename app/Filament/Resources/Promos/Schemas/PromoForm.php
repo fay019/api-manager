@@ -48,6 +48,17 @@ class PromoForm
 
                 Section::make('Apparence & Action')
                     ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('author_name')
+                                    ->label('Nom de l\'auteur')
+                                    ->placeholder('Ex: Fayçal Moussouni')
+                                    ->maxLength(255),
+                                TextInput::make('author_role')
+                                    ->label('Rôle de l\'auteur')
+                                    ->placeholder('Ex: Développeur Fullstack')
+                                    ->maxLength(255),
+                            ]),
                         Placeholder::make('public_url')
                             ->label('URL de l\'API')
                             ->content(function (?Promo $record) {

@@ -20,6 +20,8 @@ class PromoApiTest extends TestCase
 
         $promo = Promo::create([
             'slug' => 'test-promo',
+            'author_name' => 'John Doe',
+            'author_role' => 'Designer',
             'title' => 'Test Promo',
             'content' => 'Test Content',
             'status' => PromoStatus::PUBLISHED,
@@ -41,6 +43,8 @@ class PromoApiTest extends TestCase
                 'success',
                 'data' => [
                     'id',
+                    'author_name',
+                    'author_role',
                     'title',
                     'content',
                     'max_impressions',
@@ -52,6 +56,8 @@ class PromoApiTest extends TestCase
             ])
             ->assertJson([
                 'data' => [
+                    'author_name' => 'John Doe',
+                    'author_role' => 'Designer',
                     'max_impressions' => 10,
                     'cooldown_seconds' => 3600,
                     'display_mode' => 'once_per_day',

@@ -13,6 +13,8 @@ class Promo extends Model
 {
     protected $fillable = [
         'slug',
+        'author_name',
+        'author_role',
         'title',
         'content',
         'image_url',
