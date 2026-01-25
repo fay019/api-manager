@@ -47,7 +47,7 @@ php artisan app:danger-reset
 | 🌍 **CORS Control** | Per-client allowed origins list with strict validation |
 | 📊 **Request Logging** | Complete audit trail with filtering and analytics |
 | 🎨 **Filament v5 Admin** | Comprehensive dashboard for managing clients, keys, and logs |
-| 🎯 **Promo API Module** | Smart banner selection, event tracking, version history |
+| 🎯 **Promo API Module** | Multilingual banners (FR, EN, DE, AR), smart selection, tracking, version history |
 | 📦 **Shared Hosting Ready** | No Node.js, minimal dependencies, SQLite/MySQL support |
 | 📚 **Dynamic Documentation** | Markdown to HTML conversion with beautiful styling |
 
@@ -786,6 +786,6 @@ grep -i "exception" storage/logs/laravel.log
 
 ---
 
-**Last Updated:** 2026-01-21
-**Installation System**: v1.0.0 (Modular, Idempotent, Auto-Discovery)
+**Last Updated:** 2026-01-25
+**Installation System**: v1.1.0 (Modular, Idempotent, Auto-Discovery)
 **Status**: ✅ Production Ready

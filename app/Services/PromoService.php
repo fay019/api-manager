@@ -21,7 +21,7 @@ class PromoService
         Cache::forget('promo_active_banner');
     }
 
-    public function getPromoForApi(?Promo $promo = null): array
+    public function getPromoForApi(?Promo $promo = null, ?string $locale = null): array
     {
         $promo = $promo ?? $this->getActivePromo();
 
@@ -29,16 +29,19 @@ class PromoService
             return [];
         }
 
+        $locale = $locale ?? request()->query('lang') ?? app()->getLocale();
+
         // Récupérer le numéro de la version la plus récente
         $versionNumber = $promo->versions()->max('version') ?? 1;
 
         return [
             'id' => $promo->id,
             'version' => $versionNumber,
-            'title' => $promo->title,
-            'content' => $promo->content,
+            'locale' => $locale,
+            'title' => $promo->getTranslation('title', $locale),
+            'content' => $promo->getTranslation('content', $locale),
             'image_url' => $promo->full_image_url,
-            'cta_text' => $promo->cta_text,
+            'cta_text' => $promo->getTranslation('cta_text', $locale),
             'cta_url' => $promo->cta_url,
             'priority' => $promo->priority,
             'max_impressions' => $promo->max_impressions,

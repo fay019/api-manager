@@ -7,13 +7,15 @@ use App\Models\Promo;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Slider;
 use Filament\Forms\Components\Slider\Enums\PipsMode;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\HtmlString;
@@ -24,44 +26,27 @@ class PromoForm
     {
         return $schema
             ->components([
-                Section::make('Informations de la Promo')
+                Section::make('Configuration du Slug')
                     ->schema([
-                        Grid::make(2)
-                            ->schema([
-                                TextInput::make('title')
-                                    ->label('Titre')
-                                    ->required()
-                                    ->maxLength(255)
-                                    ->live(onBlur: true)
-                                    ->afterStateUpdated(function ($set, $state, $context) {
-                                        if ($context === 'create') {
-                                            $set('slug', \Illuminate\Support\Str::slug($state));
-                                        }
-                                    }),
-                                TextInput::make('slug')
-                                    ->label('Slug / Public Path')
-                                    ->unique(Promo::class, 'slug', ignoreRecord: true)
-                                    ->rules(['alpha_dash'])
-                                    ->maxLength(255)
-                                    ->helperText('Utilisé pour l\'URL publique. Ex: banner-hiver. Laissez vide pour utiliser l\'ID.'),
-                            ]),
-                        Textarea::make('content')
-                            ->label('Contenu')
+                        TextInput::make('slug')
+                            ->label('Slug / Public Path')
+                            ->unique(Promo::class, 'slug', ignoreRecord: true)
+                            ->rules(['alpha_dash'])
+                            ->maxLength(255)
                             ->required()
-                            ->columnSpanFull(),
-                        Grid::make(2)
-                            ->schema([
-                                TextInput::make('cta_text')
-                                    ->label('Texte du bouton (CTA)')
-                                    ->maxLength(255),
-                                TextInput::make('cta_url')
-                                    ->label('Lien du bouton (CTA)')
-                                    ->url()
-                                    ->maxLength(255),
-                            ]),
+                            ->helperText('Utilisé pour l\'URL publique. Ex: banner-hiver.'),
                     ]),
 
-                Section::make('Lien public / Endpoint')
+                Tabs::make('Contenu Multilingue')
+                    ->tabs([
+                        self::getLocaleTab('fr', 'Français', '🇫🇷'),
+                        self::getLocaleTab('en', 'English', '🇬🇧'),
+                        self::getLocaleTab('de', 'Deutsch', '🇩🇪'),
+                        self::getLocaleTab('ar', 'العربية', '🇸🇦', 'rtl'),
+                    ])
+                    ->columnSpanFull(),
+
+                Section::make('Apparence & Action')
                     ->schema([
                         Placeholder::make('public_url')
                             ->label('URL de l\'API')
@@ -226,5 +211,39 @@ class PromoForm
 
         // 3. Publié : Si on est dans la période valide ou si pas de dates restrictives
         $set('status', PromoStatus::PUBLISHED->value);
+    }
+
+    protected static function getLocaleTab(string $locale, string $label, string $icon, string $direction = 'ltr'): Tab
+    {
+        return Tab::make($locale)
+            ->label($label)
+            ->icon($icon)
+            ->schema([
+                TextInput::make("title.{$locale}")
+                    ->label("Titre ({$label})")
+                    ->required(fn () => $locale === 'fr')
+                    ->maxLength(255)
+                    ->extraInputAttributes(['dir' => $direction]),
+
+                RichEditor::make("content.{$locale}")
+                    ->label("Contenu ({$label})")
+                    ->required(fn () => $locale === 'fr')
+                    ->columnSpanFull()
+                    ->extraAttributes(['dir' => $direction]),
+
+                Grid::make(2)
+                    ->schema([
+                        TextInput::make("cta_text.{$locale}")
+                            ->label("Texte du bouton ({$label})")
+                            ->maxLength(255)
+                            ->extraInputAttributes(['dir' => $direction]),
+
+                        TextInput::make('cta_url')
+                            ->label('Lien du bouton (URL globale)')
+                            ->url()
+                            ->maxLength(255)
+                            ->helperText('L\'URL est généralement la même pour toutes les langues.'),
+                    ]),
+            ]);
     }
 }

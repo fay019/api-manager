@@ -255,12 +255,17 @@ GET /promo/banner.json
 
 **Authentication:** Required (X-API-KEY header)
 
+**Query Parameters:**
+- `lang` (optional): The language code (`fr`, `en`, `de`, `ar`). Defaults to `fr`.
+
 **Response (200 OK):**
 ```json
 {
   "success": true,
   "data": {
     "id": 1,
+    "version": 3,
+    "locale": "en",
     "title": "Summer Sale",
     "content": "Get 50% off on selected items",
     "image_url": "https://cdn.example.com/summer-banner.jpg",
@@ -280,6 +285,9 @@ GET /promo/banner.json
 
 | Field | Type | Description |
 |-------|------|-------------|
+| **id** | integer | Unique identifier |
+| **version** | integer | Version number of the promo |
+| **locale** | string | Language code of the returned content |
 | **max_impressions** | integer | Max number of views before disappearing |
 | **cooldown_seconds** | integer | Wait time (seconds) after manual close |
 | **display_mode** | string | `fixed_count`, `unlimited`, `once_per_day`, `once_per_week` |
@@ -716,6 +724,6 @@ For API issues:
 
 ---
 
-**Last Updated:** 2026-01-20
-**Version:** v1.0
+**Last Updated:** 2026-01-25
+**Version:** v1.1
 **Base URL:** https://api.moussouni.dev/api/v1

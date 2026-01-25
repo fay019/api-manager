@@ -31,6 +31,9 @@ class Promo extends Model
     protected function casts(): array
     {
         return [
+            'title' => 'array',
+            'content' => 'array',
+            'cta_text' => 'array',
             'status' => PromoStatus::class,
             'starts_at' => 'datetime',
             'ends_at' => 'datetime',
@@ -38,6 +41,21 @@ class Promo extends Model
             'max_impressions' => 'integer',
             'cooldown_seconds' => 'integer',
         ];
+    }
+
+    /**
+     * Get translation for a field
+     */
+    public function getTranslation(string $field, ?string $locale = null): ?string
+    {
+        $locale = $locale ?? app()->getLocale();
+        $translations = $this->{$field} ?? [];
+
+        if (! is_array($translations)) {
+            return $translations;
+        }
+
+        return $translations[$locale] ?? $translations[config('app.fallback_locale')] ?? array_values($translations)[0] ?? null;
     }
 
     protected function fullImageUrl(): Attribute

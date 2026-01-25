@@ -9,10 +9,10 @@ The Promos module allows you to manage promotional or informative banners that a
 ### What Are Promos?
 
 Promotional banners are announcements with:
-- **Title**: What the promo is about
-- **Content**: Detailed description
+- **Title**: What the promo is about (Multilingual: FR, EN, DE, AR)
+- **Content**: Detailed description (Multilingual: FR, EN, DE, AR)
 - **Image**: Visual representation (`full_image_url` generated for API, `image_url` for internal storage)
-- **Call-to-Action (CTA)**: Button text and link
+- **Call-to-Action (CTA)**: Button text (Multilingual) and link
 
 ### Key Capabilities
 
@@ -33,23 +33,27 @@ Promotional banners are announcements with:
 ### Creating a Promotion
 
 1. **Click** "Create" button
-2. **Fill in details:**
-   - **Title**: Give your promo a name
-   - **Content**: Detailed description
-   - **Image**: Upload a file (API will receive `full_image_url`)
-   - **CTA Text**: Button text (e.g., "Shop Now", "Learn More")
-   - **CTA URL**: Where the button links to
+2. **Fill in details using the Multilingual Tabs:**
+   - The interface provides tabs for **Français**, **English**, **Deutsch**, and **العربية (Arabic)**.
+   - **Title**: Give your promo a name for each language.
+   - **Content**: Detailed description for each language.
+   - **CTA Text**: Button text (e.g., "Shop Now", "Learn More") for each language.
+   - Note: Arabic support includes **RTL (Right-to-Left)** layout for better editing experience.
 
-3. **Set dates:**
+3. **General Settings:**
+   - **Image**: Upload a file (API will receive `full_image_url`).
+   - **CTA URL**: Where the button links to (same for all languages).
+
+4. **Set dates:**
    - **Starts At** (optional): When to show this promo
    - **Ends At** (optional): When to stop showing it
    - Leave both empty for infinite duration
 
-4. **Upload Image**: Upload a file in the "Média" section. The system will automatically generate a full public URL for the API (`full_image_url`) and store the relative path in the database (`image_url`).
+5. **Upload Image**: Upload a file in the "Média" section. The system will automatically generate a full public URL for the API (`full_image_url`) and store the relative path in the database (`image_url`).
 
-5. **Set priority:** 1-10 scale (10 = highest priority)
+6. **Set priority:** 1-10 scale (10 = highest priority)
 
-6. **Save**
+7. **Save**
 
 ---
 
@@ -112,6 +116,9 @@ Draft (manual edit only)
 
 **Endpoint:** `GET /api/v1/promo/banner.json`
 
+**Query Parameters:**
+- `lang` (optional): The language code (`fr`, `en`, `de`, `ar`). Defaults to `fr`. If a translation is missing, it falls back to the default locale.
+
 **Required Headers:**
 ```
 X-API-KEY: apk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -120,7 +127,7 @@ X-API-KEY: apk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 **Request Example:**
 ```bash
 curl -H "X-API-KEY: apk_xxx" \
-  https://api.moussouni.dev/api/v1/promo/banner.json
+  https://api.example.com/api/v1/promo/banner.json?lang=en
 ```
 
 **Success Response (200 OK):**
@@ -129,6 +136,8 @@ curl -H "X-API-KEY: apk_xxx" \
   "success": true,
   "data": {
     "id": 1,
+    "version": 3,
+    "locale": "en",
     "title": "Summer Sale",
     "content": "Get 50% off on selected items",
     "image_url": "https://cdn.example.com/summer-banner.jpg",
@@ -148,6 +157,9 @@ curl -H "X-API-KEY: apk_xxx" \
 
 | Field | Type | Description |
 |-------|------|-------------|
+| **id** | integer | Unique identifier |
+| **version** | integer | Version number of the promo |
+| **locale** | string | Language code of the returned content |
 | **max_impressions** | integer | Max number of views before disappearing |
 | **cooldown_seconds** | integer | Wait time (seconds) after manual close |
 | **display_mode** | string | `fixed_count`, `unlimited`, `once_per_day`, `once_per_week` |
@@ -287,8 +299,8 @@ PROMO_CACHE_TTL=60
 ### JavaScript/Fetch
 
 ```javascript
-// Get active banner
-const response = await fetch('https://api.example.com/api/v1/promo/banner.json', {
+// Get active banner in English
+const response = await fetch('https://api.example.com/api/v1/promo/banner.json?lang=en', {
   headers: {
     'X-API-KEY': 'apk_your_key_here'
   }
@@ -316,9 +328,9 @@ if (data.success) {
 ### cURL
 
 ```bash
-# Get active promo
+# Get active promo in Arabic
 curl -H "X-API-KEY: apk_xxx" \
-  https://api.example.com/api/v1/promo/banner.json
+  https://api.example.com/api/v1/promo/banner.json?lang=ar
 ```
 
 ### PHP (Guzzle)
@@ -326,8 +338,9 @@ curl -H "X-API-KEY: apk_xxx" \
 ```php
 $client = new GuzzleHttp\Client();
 
-// Get banner
+// Get banner in German
 $response = $client->get('https://api.example.com/api/v1/promo/banner.json', [
+    'query' => ['lang' => 'de'],
     'headers' => [
         'X-API-KEY' => 'apk_your_key'
     ]
@@ -378,5 +391,5 @@ if ($promo['success']) {
 
 ---
 
-**Last Updated:** 2026-01-21
-**Module:** Promos v1.1
+**Last Updated:** 2026-01-25
+**Module:** Promos v1.2

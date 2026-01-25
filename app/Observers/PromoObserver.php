@@ -58,6 +58,7 @@ class PromoObserver
                     'starts_at' => $promo->starts_at?->toIso8601String(),
                     'ends_at' => $promo->ends_at?->toIso8601String(),
                     'priority' => $promo->priority,
+                    'display_mode' => $promo->display_mode,
                 ],
                 'created_by' => $promo->created_by,
                 'created_at' => now(),
