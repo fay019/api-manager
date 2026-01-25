@@ -7,6 +7,13 @@ use App\Services\PromoService;
 
 class PromoObserver
 {
+    public function creating(Promo $promo): void
+    {
+        if (auth()->check() && ! $promo->created_by) {
+            $promo->created_by = auth()->id();
+        }
+    }
+
     public function created(Promo $promo): void
     {
         $this->createVersion($promo, 1);
