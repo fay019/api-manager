@@ -41,7 +41,7 @@ class PromoForm
                                 TextInput::make('slug')
                                     ->label('Slug / Public Path')
                                     ->unique(Promo::class, 'slug', ignoreRecord: true)
-                                    ->alpha_dash()
+                                    ->rules(['alpha_dash'])
                                     ->maxLength(255)
                                     ->helperText('Utilisé pour l\'URL publique. Ex: banner-hiver. Laissez vide pour utiliser l\'ID.'),
                             ]),

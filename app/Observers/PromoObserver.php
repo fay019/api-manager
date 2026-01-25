@@ -12,6 +12,11 @@ class PromoObserver
         if (auth()->check() && ! $promo->created_by) {
             $promo->created_by = auth()->id();
         }
+
+        // Si toujours vide (ex: production/seeder), mettre le premier admin par défaut
+        if (! $promo->created_by) {
+            $promo->created_by = \App\Models\User::where('is_admin', true)->first()?->id ?? 1;
+        }
     }
 
     public function created(Promo $promo): void
