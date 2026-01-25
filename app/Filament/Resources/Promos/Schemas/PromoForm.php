@@ -39,10 +39,10 @@ class PromoForm
 
                 Tabs::make('Contenu Multilingue')
                     ->tabs([
-                        self::getLocaleTab('fr', 'Français', '🇫🇷'),
-                        self::getLocaleTab('en', 'English', '🇬🇧'),
-                        self::getLocaleTab('de', 'Deutsch', '🇩🇪'),
-                        self::getLocaleTab('ar', 'العربية', '🇸🇦', 'rtl'),
+                        self::getLocaleTab('fr', 'Français'),
+                        self::getLocaleTab('en', 'English'),
+                        self::getLocaleTab('de', 'Deutsch'),
+                        self::getLocaleTab('ar', 'العربية', 'rtl'),
                     ])
                     ->columnSpanFull(),
 
@@ -213,11 +213,10 @@ class PromoForm
         $set('status', PromoStatus::PUBLISHED->value);
     }
 
-    protected static function getLocaleTab(string $locale, string $label, string $icon, string $direction = 'ltr'): Tab
+    protected static function getLocaleTab(string $locale, string $label, string $direction = 'ltr'): Tab
     {
         return Tab::make($locale)
             ->label($label)
-            ->icon($icon)
             ->schema([
                 TextInput::make("title.{$locale}")
                     ->label("Titre ({$label})")
