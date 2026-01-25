@@ -16,6 +16,7 @@ class ApiRequestLog extends Model
         'path',
         'status_code',
         'ip',
+        'hostname',
         'user_agent',
         'origin',
         'referer',

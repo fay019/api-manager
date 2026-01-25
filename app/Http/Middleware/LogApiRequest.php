@@ -30,13 +30,23 @@ class LogApiRequest
             $origin = $request->header('Origin');
             $referer = $request->header('Referer');
 
+            $ip = $request->ip();
+            $hostname = null;
+            if ($ip) {
+                $hostname = gethostbyaddr($ip);
+                if ($hostname === $ip) {
+                    $hostname = null;
+                }
+            }
+
             ApiRequestLog::create([
                 'api_client_id' => $apiClient?->id,
                 'api_key_id' => $apiKey?->id,
                 'method' => $request->method(),
                 'path' => $request->path(),
                 'status_code' => $response->status(),
-                'ip' => $request->ip(),
+                'ip' => $ip,
+                'hostname' => $hostname,
                 'user_agent' => $request->header('User-Agent'),
                 'origin' => $origin ?? $referer,
                 'referer' => $referer,

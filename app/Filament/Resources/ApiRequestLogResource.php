@@ -55,6 +55,10 @@ class ApiRequestLogResource extends Resource
                     ->label('IP Address')
                     ->disabled(),
 
+                TextInput::make('hostname')
+                    ->label('Hostname')
+                    ->disabled(),
+
                 TextInput::make('user_agent')
                     ->label('User Agent')
                     ->disabled(),
@@ -125,8 +129,9 @@ class ApiRequestLogResource extends Resource
                     ->placeholder('(public)'),
 
                 TextColumn::make('ip')
-                    ->label('IP Address')
-                    ->searchable()
+                    ->label('Source')
+                    ->description(fn (ApiRequestLog $record): ?string => $record->hostname)
+                    ->searchable(['ip', 'hostname'])
                     ->sortable()
                     ->limit(20),
 
