@@ -70,9 +70,16 @@ class PromoForm
                                     return 'L\'URL sera générée après la création.';
                                 }
 
-                                $url = $record->slug
-                                    ? route('api.v1.promo.by-slug', ['slug' => $record->slug])
-                                    : route('api.v1.promo.banner');
+                                try {
+                                    $url = $record->slug
+                                        ? route('api.v1.promo.by-slug', ['slug' => $record->slug])
+                                        : route('api.v1.promo.banner');
+                                } catch (\Exception $e) {
+                                    $baseUrl = config('app.url');
+                                    $url = $record->slug
+                                        ? "{$baseUrl}/api/v1/promo/{$record->slug}.json"
+                                        : "{$baseUrl}/api/v1/promo/banner.json";
+                                }
 
                                 return new HtmlString("
                                     <div class='flex items-center gap-2'>

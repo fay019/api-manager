@@ -20,10 +20,14 @@ class EditPromo extends EditRecord
     public function getTitle(): string
     {
         $record = $this->getRecord();
-        $latestVersion = $record->versions()->orderBy('version', 'desc')->first();
-        $versionNumber = $latestVersion ? $latestVersion->version : 1;
+        try {
+            $latestVersion = $record->versions()->orderBy('version', 'desc')->first();
+            $versionNumber = $latestVersion ? $latestVersion->version : 1;
 
-        return "{$record->title} (v{$versionNumber})";
+            return "{$record->title} (v{$versionNumber})";
+        } catch (\Exception $e) {
+            return $record->title ?? 'Edit Promotion';
+        }
     }
 
     public function toggleVersionHistory(): void
