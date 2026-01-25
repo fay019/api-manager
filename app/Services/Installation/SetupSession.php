@@ -8,7 +8,9 @@ use Illuminate\Support\Str;
 class SetupSession
 {
     protected string $storagePath;
+
     protected ?string $token = null;
+
     protected array $data = [];
 
     public function __construct()
@@ -41,7 +43,7 @@ class SetupSession
         \Log::channel('installation')->info('📁 Création du fichier de session', [
             'token' => $this->token,
             'filename' => $this->getFilename(),
-            'csrf_secret' => $this->data['csrf_secret']
+            'csrf_secret' => $this->data['csrf_secret'],
         ]);
 
         // On force le cookie immédiatement pour les redirections suivantes
@@ -74,6 +76,7 @@ class SetupSession
                 @unlink($filename);
                 $this->token = null;
                 $this->data = [];
+
                 return;
             }
 
@@ -86,7 +89,7 @@ class SetupSession
         } else {
             \Log::channel('installation')->warning('❓ Fichier de session manquant pour le token fourni', [
                 'token' => $this->token,
-                'expected_filename' => $filename
+                'expected_filename' => $filename,
             ]);
         }
     }
@@ -151,7 +154,7 @@ class SetupSession
      */
     protected function getFilename(): string
     {
-        return $this->storagePath . '/progress_' . hash('sha256', $this->token) . '.json';
+        return $this->storagePath.'/progress_'.hash('sha256', $this->token).'.json';
     }
 
     public function getToken(): ?string

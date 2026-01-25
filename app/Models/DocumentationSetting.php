@@ -55,6 +55,7 @@ class DocumentationSetting extends Model
     {
         try {
             $doc = self::where('doc_name', $docName)->first();
+
             return $doc ? (bool) $doc->is_visible : false;
         } catch (\Exception $e) {
             // Table doesn't exist yet (fresh database before migrations)
@@ -96,6 +97,7 @@ class DocumentationSetting extends Model
     public static function getDefaultIcon(string $docName): string
     {
         $defaults = config('documentation-icons.defaults', []);
+
         return $defaults[$docName] ?? config('documentation-icons.fallback', '📄');
     }
 
@@ -109,6 +111,7 @@ class DocumentationSetting extends Model
             if (! app()->environment('local')) {
                 return false;
             }
+
             // Default to false if table doesn't exist yet
             return false;
         } catch (\Exception $e) {

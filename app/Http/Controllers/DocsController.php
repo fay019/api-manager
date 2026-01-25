@@ -7,9 +7,7 @@ use Illuminate\Routing\Controller;
 
 class DocsController extends Controller
 {
-    public function __construct(private AppSettingService $settingService)
-    {
-    }
+    public function __construct(private AppSettingService $settingService) {}
 
     public function index()
     {
@@ -17,6 +15,7 @@ class DocsController extends Controller
         // Empty state will guide users
         $visibleDocs = $this->settingService->getVisibleDocs();
         $allDocs = $this->settingService->getAllDocs();
+
         return view('docs.index', compact('visibleDocs', 'allDocs'));
     }
 
@@ -28,19 +27,19 @@ class DocsController extends Controller
     public function show(string $docName)
     {
         // Check visibility
-        if (!$this->settingService->isDocumentationVisible($docName)) {
+        if (! $this->settingService->isDocumentationVisible($docName)) {
             abort(404);
         }
 
         // Get path from database
         $path = $this->settingService->getDocPath($docName);
-        if (!$path) {
+        if (! $path) {
             abort(404);
         }
 
         // Read file content
         $filePath = base_path($path);
-        if (!file_exists($filePath)) {
+        if (! file_exists($filePath)) {
             abort(404);
         }
 
@@ -54,7 +53,7 @@ class DocsController extends Controller
         ]);
         $content = $converter->convert($markdownContent)->getContent();
 
-        $title = ucfirst($docName) . ' Documentation';
+        $title = ucfirst($docName).' Documentation';
 
         return view('docs.show', compact('title', 'content'));
     }

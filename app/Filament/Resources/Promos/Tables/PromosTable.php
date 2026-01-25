@@ -3,11 +3,10 @@
 namespace App\Filament\Resources\Promos\Tables;
 
 use App\Enums\PromoStatus;
-use App\Http\Responses\ApiResponse;
 use App\Models\Promo;
+use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;

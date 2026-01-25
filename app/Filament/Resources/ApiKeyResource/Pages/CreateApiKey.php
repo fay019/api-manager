@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\ApiKeyResource\Pages;
 
 use App\Filament\Resources\ApiKeyResource;
-use App\Models\ApiKey;
 use App\Services\ApiKeyService;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
@@ -16,7 +15,7 @@ class CreateApiKey extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $generatedKey = (new ApiKeyService())->generateKey();
+        $generatedKey = (new ApiKeyService)->generateKey();
 
         $data['key_encrypted'] = $generatedKey['encrypted'];
         $data['key_prefix'] = $generatedKey['prefix'];

@@ -3,8 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\File;
 
 class DangerResetCommand extends Command
 {
@@ -32,18 +32,21 @@ class DangerResetCommand extends Command
 
         if (app()->environment('production') && ! $this->option('force')) {
             $this->error('Reset is FORBIDDEN in production environment.');
+
             return 1;
         }
 
         if (! $this->option('force')) {
             if (! $this->confirm('Are you ABSOLUTELY sure you want to reset the entire application?', false)) {
                 $this->info('Reset aborted.');
+
                 return 0;
             }
 
             $confirmation = $this->ask('Type "CONFIRMER" to execute the reset');
             if ($confirmation !== 'CONFIRMER') {
                 $this->error('Reset canceled (incorrect confirmation string).');
+
                 return 0;
             }
         }
@@ -91,7 +94,19 @@ class DangerResetCommand extends Command
             $this->line('✓ logs truncated');
         }
 
-        // 6. Clear caches
+        // 6. Purge sessions (driver file)
+        $sessionDir = storage_path('framework/sessions');
+        if (File::isDirectory($sessionDir)) {
+            $files = File::files($sessionDir);
+            foreach ($files as $file) {
+                if ($file->getFilename() !== '.gitignore') {
+                    File::delete($file);
+                }
+            }
+            $this->line('✓ sessions cleared');
+        }
+
+        // 7. Clear caches
         Artisan::call('optimize:clear');
         $this->line('✓ caches cleared');
 

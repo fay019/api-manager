@@ -60,6 +60,7 @@ class AppSetting extends Model
     public function isDocVisible(string $docName): bool
     {
         $visibleDocs = $this->visible_docs ?? [];
+
         return in_array($docName, $visibleDocs);
     }
 
@@ -77,6 +78,7 @@ class AppSetting extends Model
     public function setVisibleDocs(array $docs): self
     {
         $this->visible_docs = $docs;
+
         return $this;
     }
 

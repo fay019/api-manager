@@ -4,24 +4,21 @@ namespace App\Filament\Resources;
 
 use App\Models\ApiKey;
 use App\Services\ApiKeyService;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Section;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Toggle;
+use BackedEnum;
 use Filament\Actions\Action as FormAction;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Toggle;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Filament\Notifications\Notification;
-use BackedEnum;
-use UnitEnum;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\HtmlString;
+use UnitEnum;
 
 class ApiKeyResource extends Resource
 {
@@ -123,7 +120,7 @@ class ApiKeyResource extends Resource
                                                 alert('Clé copiée !');
                                             }
                                             return false;
-                                        "
+                                        ",
                                     ])
                             )
                             ->columnSpanFull(),
@@ -172,13 +169,13 @@ class ApiKeyResource extends Resource
 
                 TextColumn::make('key_prefix')
                     ->label('Key Prefix')
-                    ->formatStateUsing(fn($state) => $state . '****'),
+                    ->formatStateUsing(fn ($state) => $state.'****'),
 
                 TextColumn::make('is_active')
                     ->label('Status')
                     ->badge()
-                    ->getStateUsing(fn(ApiKey $record): string => match(true) {
-                        !$record->is_active => 'revoked',
+                    ->getStateUsing(fn (ApiKey $record): string => match (true) {
+                        ! $record->is_active => 'revoked',
                         $record->starts_at && $record->starts_at->isFuture() => 'scheduled',
                         $record->expires_at && $record->expires_at->isPast() => 'expired',
                         default => 'active',
@@ -235,7 +232,7 @@ class ApiKeyResource extends Resource
                     ->modalDescription('Êtes-vous sûr de vouloir régénérer cette clé ? L\'ancienne clé cessera immédiatement de fonctionner.')
                     ->modalSubmitActionLabel('Régénérer')
                     ->action(function (ApiKey $record) {
-                        $generatedKey = (new ApiKeyService())->generateKey();
+                        $generatedKey = (new ApiKeyService)->generateKey();
 
                         $record->update([
                             'key_encrypted' => $generatedKey['encrypted'],
@@ -290,7 +287,7 @@ class ApiKeyResource extends Resource
                     ->label('Revoke')
                     ->icon('heroicon-m-x-mark')
                     ->color('danger')
-                    ->visible(fn(ApiKey $record) => $record->is_active)
+                    ->visible(fn (ApiKey $record) => $record->is_active)
                     ->action(function (ApiKey $record) {
                         $record->update(['is_active' => false]);
                         Notification::make()
@@ -302,7 +299,7 @@ class ApiKeyResource extends Resource
                     ->requiresConfirmation(),
 
                 \Filament\Actions\DeleteAction::make()
-                    ->visible(fn(ApiKey $record) => !$record->is_active),
+                    ->visible(fn (ApiKey $record) => ! $record->is_active),
             ])
             ->bulkActions([
                 \Filament\Actions\BulkActionGroup::make([

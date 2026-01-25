@@ -58,7 +58,7 @@
                class="form-control @if(isset($errors['admin_password'])) is-invalid @endif"
                placeholder="Minimum 8 caractères" value="" required
                onchange="updatePasswordStrength()" onkeyup="updatePasswordStrength()">
-        <span class="password-toggle" onclick="togglePassword('admin-password')">👁️</span>
+        <span class="password-toggle" onclick="togglePassword(event, 'admin-password')">👁️</span>
         @if(isset($errors['admin_password'])) <span class="error">{{ is_array($errors['admin_password']) ? $errors['admin_password'][0] : $errors['admin_password'] }}</span> @endif
 
         <!-- Indicateur force password -->
@@ -109,7 +109,7 @@
         <input type="password" name="admin_password_confirmation" id="admin-password-confirm"
                class="form-control @if(isset($errors['admin_password_confirmation'])) is-invalid @endif"
                placeholder="Répétez le mot de passe" value="" required>
-        <span class="password-toggle" onclick="togglePassword('admin-password-confirm')">👁️</span>
+        <span class="password-toggle" onclick="togglePassword(event, 'admin-password-confirm')">👁️</span>
         @if(isset($errors['admin_password_confirmation'])) <span class="error">{{ is_array($errors['admin_password_confirmation']) ? $errors['admin_password_confirmation'][0] : $errors['admin_password_confirmation'] }}</span> @endif
     </div>
 

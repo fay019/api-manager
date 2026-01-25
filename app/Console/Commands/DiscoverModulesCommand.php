@@ -21,13 +21,14 @@ class DiscoverModulesCommand extends Command
         $this->info('🔍 Découverte des modules');
         $this->newLine();
 
-        $registry = new ModuleRegistry();
+        $registry = new ModuleRegistry;
 
         // Afficher les modules découverts
         $modules = $registry->all();
 
         if ($modules->isEmpty()) {
             $this->warn('⚠️  Aucun module découvert');
+
             return 1;
         }
 
@@ -83,6 +84,7 @@ class DiscoverModulesCommand extends Command
     protected function displayAsJson(ModuleRegistry $registry): int
     {
         $this->line($registry->toJson());
+
         return 0;
     }
 

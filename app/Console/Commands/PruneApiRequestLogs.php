@@ -8,6 +8,7 @@ use Illuminate\Console\Command;
 class PruneApiRequestLogs extends Command
 {
     protected $signature = 'api:prune-logs {--days=90}';
+
     protected $description = 'Prune API request logs older than N days';
 
     public function handle()

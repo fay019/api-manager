@@ -17,8 +17,11 @@ class ManageAppSettings extends Page implements HasForms
     use InteractsWithForms;
 
     protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-book-open';
+
     protected static string|UnitEnum|null $navigationGroup = 'System';
+
     protected static ?int $navigationSort = 99;
+
     protected static ?string $title = 'Documentation Settings';
 
     protected string $view = 'filament.pages.manage-app-settings';
@@ -47,8 +50,8 @@ class ManageAppSettings extends Page implements HasForms
         $formData = [];
 
         DocumentationSetting::all()->each(function (DocumentationSetting $doc) use (&$formData) {
-            $formData['doc_' . $doc->doc_name . '_visible'] = $doc->is_visible;
-            $formData['path_' . $doc->doc_name] = $doc->path;
+            $formData['doc_'.$doc->doc_name.'_visible'] = $doc->is_visible;
+            $formData['path_'.$doc->doc_name] = $doc->path;
         });
 
         return $formData;
@@ -63,7 +66,7 @@ class ManageAppSettings extends Page implements HasForms
             Notification::make()
                 ->success()
                 ->title('Documentation scannée')
-                ->body('Trouvé ' . count($scanResults) . ' fichier(s) de documentation. Les nouveaux documents sont masqués par défaut.')
+                ->body('Trouvé '.count($scanResults).' fichier(s) de documentation. Les nouveaux documents sont masqués par défaut.')
                 ->send();
 
             $this->redirect(request()->header('Referer') ?? url()->current());
@@ -83,7 +86,7 @@ class ManageAppSettings extends Page implements HasForms
 
             DocumentationSetting::all()->each(function (DocumentationSetting $doc) use (&$deleted) {
                 $filePath = base_path($doc->path);
-                if (!file_exists($filePath) && $doc->doc_name !== 'settings') {
+                if (! file_exists($filePath) && $doc->doc_name !== 'settings') {
                     $deleted[] = $doc->doc_name;
                     $doc->delete();
                 }
@@ -99,7 +102,7 @@ class ManageAppSettings extends Page implements HasForms
                 Notification::make()
                     ->success()
                     ->title('Nettoyage terminé')
-                    ->body('Supprimé ' . count($deleted) . ' enregistrement(s) manquant(s) : ' . implode(', ', $deleted))
+                    ->body('Supprimé '.count($deleted).' enregistrement(s) manquant(s) : '.implode(', ', $deleted))
                     ->send();
 
                 $this->redirect(request()->header('Referer') ?? url()->current());
@@ -125,20 +128,20 @@ class ManageAppSettings extends Page implements HasForms
                     ->update(['is_visible' => $valueToStore]);
 
                 // Update local data to reflect the change
-                $fieldName = 'doc_' . $docName . '_visible';
+                $fieldName = 'doc_'.$docName.'_visible';
                 $this->data[$fieldName] = $isVisible;
 
                 Notification::make()
                     ->success()
                     ->title('Saved')
-                    ->body($doc->doc_name . ' visibility updated.')
+                    ->body($doc->doc_name.' visibility updated.')
                     ->send();
             }
         } catch (\Exception $e) {
             Notification::make()
                 ->danger()
                 ->title('Error')
-                ->body('Failed to update: ' . $e->getMessage())
+                ->body('Failed to update: '.$e->getMessage())
                 ->send();
         }
     }
@@ -154,16 +157,15 @@ class ManageAppSettings extends Page implements HasForms
                 Notification::make()
                     ->success()
                     ->title('Icon updated')
-                    ->body('Icon for ' . $doc->doc_name . ' has been updated.')
+                    ->body('Icon for '.$doc->doc_name.' has been updated.')
                     ->send();
             }
         } catch (\Exception $e) {
             Notification::make()
                 ->danger()
                 ->title('Error')
-                ->body('Failed to update icon: ' . $e->getMessage())
+                ->body('Failed to update icon: '.$e->getMessage())
                 ->send();
         }
     }
-
 }

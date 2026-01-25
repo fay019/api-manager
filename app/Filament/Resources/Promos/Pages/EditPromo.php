@@ -2,13 +2,11 @@
 
 namespace App\Filament\Resources\Promos\Pages;
 
-use App\Enums\PromoStatus;
 use App\Filament\Resources\Promos\PromoResource;
 use App\Models\Promo;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Textarea;
-use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -30,7 +28,7 @@ class EditPromo extends EditRecord
 
     public function toggleVersionHistory(): void
     {
-        $this->showVersionHistory = !$this->showVersionHistory;
+        $this->showVersionHistory = ! $this->showVersionHistory;
     }
 
     /**
@@ -52,7 +50,7 @@ class EditPromo extends EditRecord
         $version1 = $this->getRecord()->versions()->where('version', $v1)->first();
         $version2 = $this->getRecord()->versions()->where('version', $v2)->first();
 
-        if (!$version1 || !$version2) {
+        if (! $version1 || ! $version2) {
             return [];
         }
 

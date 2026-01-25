@@ -12,7 +12,7 @@ class PromoService
         return Cache::remember(
             'promo_active_banner',
             config('api.promo_cache_ttl', 60),
-            fn() => Promo::active()->first()
+            fn () => Promo::active()->first()
         );
     }
 
@@ -25,7 +25,7 @@ class PromoService
     {
         $promo = $this->getActivePromo();
 
-        if (!$promo) {
+        if (! $promo) {
             return [];
         }
 

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Setup;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Setup\AdminRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -101,6 +100,7 @@ class AdminController extends Controller
 
         if ($validator->fails()) {
             $setupSession->set('errors', $validator->errors()->toArray());
+
             return redirect()->back()->withInput();
         }
 

@@ -39,8 +39,12 @@ class Promo extends Model
         return Attribute::make(
             get: function () {
                 $value = $this->getAttributes()['image_url'] ?? null;
-                if (!$value) return null;
-                if (str_starts_with($value, 'http')) return $value;
+                if (! $value) {
+                    return null;
+                }
+                if (str_starts_with($value, 'http')) {
+                    return $value;
+                }
 
                 return Storage::disk('public')->url($value);
             }
@@ -63,11 +67,11 @@ class Promo extends Model
             ->whereIn('status', [PromoStatus::PUBLISHED, PromoStatus::SCHEDULED])
             ->where(function ($q) {
                 $q->whereNull('starts_at')
-                  ->orWhere('starts_at', '<=', now());
+                    ->orWhere('starts_at', '<=', now());
             })
             ->where(function ($q) {
                 $q->whereNull('ends_at')
-                  ->orWhere('ends_at', '>=', now());
+                    ->orWhere('ends_at', '>=', now());
             })
             ->orderByDesc('priority')
             ->orderByDesc('created_at');

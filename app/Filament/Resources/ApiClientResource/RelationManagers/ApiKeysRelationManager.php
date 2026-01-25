@@ -4,17 +4,13 @@ namespace App\Filament\Resources\ApiClientResource\RelationManagers;
 
 use App\Filament\Resources\ApiKeyResource;
 use App\Models\ApiKey;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
-use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
@@ -55,13 +51,13 @@ class ApiKeysRelationManager extends RelationManager
 
                 TextColumn::make('key_prefix')
                     ->label('Préfixe')
-                    ->formatStateUsing(fn($state) => $state . '****'),
+                    ->formatStateUsing(fn ($state) => $state.'****'),
 
                 TextColumn::make('is_active')
                     ->label('Statut')
                     ->badge()
-                    ->getStateUsing(fn(ApiKey $record): string => match(true) {
-                        !$record->is_active => 'revoked',
+                    ->getStateUsing(fn (ApiKey $record): string => match (true) {
+                        ! $record->is_active => 'revoked',
                         $record->starts_at && $record->starts_at->isFuture() => 'scheduled',
                         $record->expires_at && $record->expires_at->isPast() => 'expired',
                         default => 'active',

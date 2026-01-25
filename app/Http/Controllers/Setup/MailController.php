@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Setup;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Setup\MailRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -147,6 +146,7 @@ class MailController extends Controller
 
         if ($validator->fails()) {
             $setupSession->set('errors', $validator->errors()->toArray());
+
             return redirect()->back()->withInput();
         }
 

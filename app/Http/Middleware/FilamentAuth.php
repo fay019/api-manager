@@ -9,7 +9,7 @@ class FilamentAuth
 {
     public function handle(Request $request, Closure $next)
     {
-        if ($request->user() && !$request->user()->is_admin) {
+        if ($request->user() && ! $request->user()->is_admin) {
             auth()->logout();
 
             return redirect('/admin/login')->with('error', 'Unauthorized access');

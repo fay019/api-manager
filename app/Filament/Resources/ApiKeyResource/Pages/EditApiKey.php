@@ -7,7 +7,6 @@ use App\Models\ApiKey;
 use App\Services\ApiKeyService;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Actions\Action;
 
 class EditApiKey extends EditRecord
 {
@@ -25,7 +24,7 @@ class EditApiKey extends EditRecord
                 ->modalDescription('Êtes-vous sûr de vouloir régénérer cette clé ? L\'ancienne clé cessera immédiatement de fonctionner.')
                 ->modalSubmitActionLabel('Régénérer')
                 ->action(function (ApiKey $record) {
-                    $generatedKey = (new ApiKeyService())->generateKey();
+                    $generatedKey = (new ApiKeyService)->generateKey();
 
                     $record->update([
                         'key_encrypted' => $generatedKey['encrypted'],

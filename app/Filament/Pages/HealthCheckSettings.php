@@ -31,16 +31,16 @@ class HealthCheckSettings extends Page
     public function toggleCheck(string $check): void
     {
         $settings = HealthCheckSetting::getInstance();
-        $attribute = $check . '_enabled';
+        $attribute = $check.'_enabled';
 
         if (property_exists($settings, $attribute)) {
-            $settings->{$attribute} = !$settings->{$attribute};
+            $settings->{$attribute} = ! $settings->{$attribute};
             $settings->save();
 
             Notification::make()
                 ->success()
                 ->title('Updated')
-                ->body(ucfirst(str_replace('_', ' ', $check)) . ' check ' . ($settings->{$attribute} ? 'enabled' : 'disabled') . '.')
+                ->body(ucfirst(str_replace('_', ' ', $check)).' check '.($settings->{$attribute} ? 'enabled' : 'disabled').'.')
                 ->send();
         }
     }
@@ -48,7 +48,7 @@ class HealthCheckSettings extends Page
     public function testHealthCheck(): void
     {
         try {
-            $controller = new \App\Http\Controllers\Api\HealthController();
+            $controller = new \App\Http\Controllers\Api\HealthController;
             $response = $controller->index();
             $content = json_decode($response->getContent(), true);
 
@@ -63,7 +63,7 @@ class HealthCheckSettings extends Page
             Notification::make()
                 ->danger()
                 ->title('Health Check Failed')
-                ->body('Error: ' . $e->getMessage())
+                ->body('Error: '.$e->getMessage())
                 ->send();
         }
     }

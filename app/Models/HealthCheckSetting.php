@@ -40,7 +40,8 @@ class HealthCheckSetting extends Model
      */
     public function isCheckEnabled(string $checkName): bool
     {
-        $attribute = $checkName . '_enabled';
+        $attribute = $checkName.'_enabled';
+
         return $this->{$attribute} ?? true;
     }
 }

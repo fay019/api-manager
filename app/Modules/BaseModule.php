@@ -14,36 +14,26 @@ abstract class BaseModule extends ServiceProvider
 {
     /**
      * Nom unique du module.
-     *
-     * @var string
      */
     protected string $moduleName;
 
     /**
      * Description du module.
-     *
-     * @var string
      */
     protected string $description = '';
 
     /**
      * Version du module.
-     *
-     * @var string
      */
     protected string $version = '1.0.0';
 
     /**
      * Chemin racine du module.
-     *
-     * @var string
      */
     protected string $modulePath;
 
     /**
      * Namespace du module.
-     *
-     * @var string
      */
     protected string $moduleNamespace;
 
@@ -53,8 +43,8 @@ abstract class BaseModule extends ServiceProvider
     public function __construct($app)
     {
         parent::__construct($app);
-        $this->modulePath = dirname(__DIR__ . '/Modules/' . $this->getModuleName());
-        $this->moduleNamespace = 'App\Modules\\' . $this->getModuleName();
+        $this->modulePath = dirname(__DIR__.'/Modules/'.$this->getModuleName());
+        $this->moduleNamespace = 'App\Modules\\'.$this->getModuleName();
     }
 
     /**
@@ -129,9 +119,9 @@ abstract class BaseModule extends ServiceProvider
      */
     protected function registerRoutes(): void
     {
-        $routesPath = $this->getModulePath() . '/Routes';
+        $routesPath = $this->getModulePath().'/Routes';
         if (is_dir($routesPath)) {
-            $this->loadRoutesFrom($routesPath . '/routes.php');
+            $this->loadRoutesFrom($routesPath.'/routes.php');
         }
     }
 
@@ -140,7 +130,7 @@ abstract class BaseModule extends ServiceProvider
      */
     protected function registerMigrations(): void
     {
-        $migrationsPath = $this->getModulePath() . '/Migrations';
+        $migrationsPath = $this->getModulePath().'/Migrations';
         if (is_dir($migrationsPath)) {
             $this->loadMigrationsFrom($migrationsPath);
         }
@@ -154,13 +144,13 @@ abstract class BaseModule extends ServiceProvider
         $moduleName = $this->getModuleName();
 
         // Publier les views
-        $viewsPath = $this->getModulePath() . '/Views';
+        $viewsPath = $this->getModulePath().'/Views';
         if (is_dir($viewsPath)) {
             $this->loadViewsFrom($viewsPath, strtolower($moduleName));
         }
 
         // Publier la configuration
-        $configPath = $this->getModulePath() . '/Config';
+        $configPath = $this->getModulePath().'/Config';
         if (is_dir($configPath)) {
             $this->publishes([
                 $configPath => config_path('modules'),
@@ -209,8 +199,6 @@ abstract class BaseModule extends ServiceProvider
 
     /**
      * Obtient les prérequis du module.
-     *
-     * @return array
      */
     public function getRequirements(): array
     {

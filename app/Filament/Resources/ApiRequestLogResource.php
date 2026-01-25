@@ -3,17 +3,16 @@
 namespace App\Filament\Resources;
 
 use App\Models\ApiRequestLog;
+use BackedEnum;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use BackedEnum;
 use UnitEnum;
 
 class ApiRequestLogResource extends Resource
@@ -110,7 +109,7 @@ class ApiRequestLogResource extends Resource
                 TextColumn::make('status_code')
                     ->label('Status')
                     ->badge()
-                    ->getStateUsing(fn(ApiRequestLog $record): int => $record->status_code)
+                    ->getStateUsing(fn (ApiRequestLog $record): int => $record->status_code)
                     ->color(fn (int $state): string => match (true) {
                         $state >= 200 && $state < 300 => 'success',
                         $state >= 300 && $state < 400 => 'warning',
@@ -159,15 +158,15 @@ class ApiRequestLogResource extends Resource
 
                 Filter::make('status_code_2xx')
                     ->label('2xx Success')
-                    ->query(fn(Builder $query) => $query->whereBetween('status_code', [200, 299])),
+                    ->query(fn (Builder $query) => $query->whereBetween('status_code', [200, 299])),
 
                 Filter::make('status_code_4xx')
                     ->label('4xx Errors')
-                    ->query(fn(Builder $query) => $query->whereBetween('status_code', [400, 499])),
+                    ->query(fn (Builder $query) => $query->whereBetween('status_code', [400, 499])),
 
                 Filter::make('status_code_5xx')
                     ->label('5xx Errors')
-                    ->query(fn(Builder $query) => $query->whereBetween('status_code', [500, 599])),
+                    ->query(fn (Builder $query) => $query->whereBetween('status_code', [500, 599])),
 
                 SelectFilter::make('api_client_id')
                     ->relationship('apiClient', 'name')
@@ -182,11 +181,11 @@ class ApiRequestLogResource extends Resource
                         return $query
                             ->when(
                                 $data['created_from'],
-                                fn(Builder $query, $date) => $query->whereDate('created_at', '>=', $date),
+                                fn (Builder $query, $date) => $query->whereDate('created_at', '>=', $date),
                             )
                             ->when(
                                 $data['created_until'],
-                                fn(Builder $query, $date) => $query->whereDate('created_at', '<=', $date),
+                                fn (Builder $query, $date) => $query->whereDate('created_at', '<=', $date),
                             );
                     }),
             ])

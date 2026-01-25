@@ -3,16 +3,15 @@
 namespace App\Filament\Resources\Promos\Schemas;
 
 use App\Enums\PromoStatus;
-use App\Support\FeatureFlag;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Slider;
 use Filament\Forms\Components\Slider\Enums\PipsMode;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
-use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Auth;
 
@@ -114,8 +113,9 @@ class PromoForm
         $endsAtRaw = $get('ends_at');
 
         // Si aucune date n'est définie, on repasse TOUJOURS en Brouillon
-        if (!$startsAtRaw && !$endsAtRaw) {
+        if (! $startsAtRaw && ! $endsAtRaw) {
             $set('status', PromoStatus::DRAFT->value);
+
             return;
         }
 
@@ -132,12 +132,14 @@ class PromoForm
         // 1. Archivé : Si la date de fin est passée
         if ($endsAt && $endsAt->isPast()) {
             $set('status', PromoStatus::ARCHIVED->value);
+
             return;
         }
 
         // 2. Programmé : Si la date de début est dans le futur
         if ($startsAt && $startsAt->isFuture()) {
             $set('status', PromoStatus::SCHEDULED->value);
+
             return;
         }
 

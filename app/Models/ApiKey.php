@@ -48,9 +48,10 @@ class ApiKey extends Model
     public function getIsValidAttribute(): bool
     {
         $now = now();
+
         return $this->is_active
-            && (!$this->starts_at || $this->starts_at->isPast())
-            && (!$this->expires_at || $this->expires_at->isFuture())
+            && (! $this->starts_at || $this->starts_at->isPast())
+            && (! $this->expires_at || $this->expires_at->isFuture())
             && $this->apiClient->is_active;
     }
 }

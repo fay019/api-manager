@@ -51,10 +51,10 @@ function ensureApplicationReady(): void
 function ensureAppKeyExists(): void
 {
     $basePath = dirname(__DIR__);
-    $envPath = $basePath . '/.env';
+    $envPath = $basePath.'/.env';
 
     // .env must exist first
-    if (!file_exists($envPath)) {
+    if (! file_exists($envPath)) {
         return;
     }
 
@@ -68,14 +68,14 @@ function ensureAppKeyExists(): void
     }
 
     // Generate a new APP_KEY (base64 encoded random string)
-    $key = 'base64:' . base64_encode(random_bytes(32));
+    $key = 'base64:'.base64_encode(random_bytes(32));
 
     // Replace existing APP_KEY= line (even if empty) with the new key
     if (preg_match('/^APP_KEY=.*$/m', $content)) {
-        $content = preg_replace('/^APP_KEY=.*$/m', 'APP_KEY=' . $key, $content);
+        $content = preg_replace('/^APP_KEY=.*$/m', 'APP_KEY='.$key, $content);
     } else {
         // APP_KEY doesn't exist, add it after APP_ENV
-        $content = preg_replace('/^(APP_ENV=.*?)$/m', '$1' . "\nAPP_KEY=" . $key, $content);
+        $content = preg_replace('/^(APP_ENV=.*?)$/m', '$1'."\nAPP_KEY=".$key, $content);
     }
 
     // Write back to .env
@@ -102,8 +102,8 @@ function ensureDirectoriesExist(string $basePath): void
     ];
 
     foreach ($directories as $dir) {
-        $path = $basePath . '/' . $dir;
-        if (!is_dir($path)) {
+        $path = $basePath.'/'.$dir;
+        if (! is_dir($path)) {
             @mkdir($path, 0755, true);
         }
     }
@@ -114,8 +114,8 @@ function ensureDirectoriesExist(string $basePath): void
  */
 function ensureEnvFileExists(string $basePath): void
 {
-    $envPath = $basePath . '/.env';
-    $envExamplePath = $basePath . '/.env.example';
+    $envPath = $basePath.'/.env';
+    $envExamplePath = $basePath.'/.env.example';
 
     // .env already exists, nothing to do
     if (file_exists($envPath)) {
@@ -123,7 +123,7 @@ function ensureEnvFileExists(string $basePath): void
     }
 
     // .env.example doesn't exist, can't copy
-    if (!file_exists($envExamplePath)) {
+    if (! file_exists($envExamplePath)) {
         return;
     }
 
@@ -144,16 +144,16 @@ function ensureEnvFileExists(string $basePath): void
 function ensureRequiredDatabaseTables(): void
 {
     $basePath = dirname(__DIR__);
-    $dbPath = $basePath . '/database/database.sqlite';
+    $dbPath = $basePath.'/database/database.sqlite';
     $dbDir = dirname($dbPath);
 
     // Ensure database directory exists
-    if (!is_dir($dbDir)) {
+    if (! is_dir($dbDir)) {
         @mkdir($dbDir, 0755, true);
     }
 
     // Create database file if it doesn't exist
-    if (!file_exists($dbPath)) {
+    if (! file_exists($dbPath)) {
         @touch($dbPath);
     }
 

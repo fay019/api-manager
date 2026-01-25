@@ -11,7 +11,7 @@ class ApiKeyService
     public function generateKey(): array
     {
         $rawKeyPart = Str::random(32);
-        $prefix = 'apk_' . Str::random(4);
+        $prefix = 'apk_'.Str::random(4);
         $fullRawKey = "{$prefix}{$rawKeyPart}";
         $encrypted = Crypt::encryptString($fullRawKey);
 
@@ -44,7 +44,7 @@ class ApiKeyService
                         continue;
                     }
 
-                    if (!$key->apiClient->is_active) {
+                    if (! $key->apiClient->is_active) {
                         continue;
                     }
 

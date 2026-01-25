@@ -27,7 +27,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Setup Session Singleton
         $this->app->singleton(\App\Services\Installation\SetupSession::class, function ($app) {
-            return new \App\Services\Installation\SetupSession();
+            return new \App\Services\Installation\SetupSession;
         });
     }
 

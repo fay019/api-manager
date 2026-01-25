@@ -23,7 +23,7 @@ class ThrottleApiClient
         } else {
             // Unauthenticated request - use strict limit per IP
             $limit = config('api.unauthenticated_rate_limit', 10);
-            $key = "api_ip:" . $request->ip();
+            $key = 'api_ip:'.$request->ip();
         }
 
         if ($this->limiter->tooManyAttempts($key, $limit)) {

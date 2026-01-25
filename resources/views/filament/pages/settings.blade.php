@@ -61,4 +61,22 @@
             </div>
         </div>
     </div>
+    <!-- Danger Zone: Application Reset -->
+    @if(!app()->environment('production'))
+        <div style="background: white; border: 1px solid #fee2e2; border-radius: 0.5rem; overflow: hidden; margin-top: 2rem;">
+            <!-- Header -->
+            <div style="background: #fef2f2; padding: 1rem; border-bottom: 1px solid #fee2e2;">
+                <h3 style="font-size: 1.125rem; font-weight: 600; color: #991b1b; margin: 0 0 0.25rem 0;">Zone de Danger</h3>
+                <p style="font-size: 0.875rem; color: #b91c1c; margin: 0;">Actions destructives pour l'application</p>
+            </div>
+
+            <div style="padding: 1.5rem;">
+                <p style="font-size: 0.875rem; color: #374151; margin-bottom: 1.5rem;">
+                    La réinitialisation supprimera la base de données (si SQLite), les logs, et remettra l'application en mode installation.
+                </p>
+
+                {{ $this->resetApplicationAction }}
+            </div>
+        </div>
+    @endif
 </x-filament-panels::page>

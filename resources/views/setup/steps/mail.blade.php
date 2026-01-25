@@ -99,7 +99,7 @@
             <input type="password" name="mail_password" id="smtp-password"
                    class="form-control @if(isset($errors['mail_password'])) is-invalid @endif"
                    placeholder="" value="{{ $formData['mail_password'] ?? '' }}">
-            <span class="password-toggle" onclick="togglePassword('smtp-password')">👁️</span>
+            <span class="password-toggle" onclick="togglePassword(event, 'smtp-password')">👁️</span>
             @if(isset($errors['mail_password'])) <span class="error">{{ is_array($errors['mail_password']) ? $errors['mail_password'][0] : $errors['mail_password'] }}</span> @endif
         </div>
     </div>
@@ -225,7 +225,7 @@
     }
 
     // Toggle password visibility
-    function togglePassword(fieldId) {
+    function togglePassword(event, fieldId) {
         const field = document.getElementById(fieldId);
         const type = field.type === 'password' ? 'text' : 'password';
         field.type = type;

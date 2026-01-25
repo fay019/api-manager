@@ -67,15 +67,13 @@ class PromoModule extends BaseModule
 
     /**
      * Valide l'installation du module.
-     *
-     * @return array
      */
     public function validateInstallation(): array
     {
         $errors = [];
 
         // Vérifier que le modèle existe
-        if (!class_exists(\App\Models\Promo::class)) {
+        if (! class_exists(\App\Models\Promo::class)) {
             $errors[] = 'Model Promo introuvable';
         }
 
@@ -87,8 +85,6 @@ class PromoModule extends BaseModule
 
     /**
      * Obtient les prérequis du module.
-     *
-     * @return array
      */
     public function getRequirements(): array
     {
@@ -108,7 +104,7 @@ class PromoModule extends BaseModule
             \Illuminate\Support\Facades\Cache::forget('active_promos');
             \Illuminate\Support\Facades\Cache::forget('promo_*');
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::warning('Could not clear promo cache: ' . $e->getMessage());
+            \Illuminate\Support\Facades\Log::warning('Could not clear promo cache: '.$e->getMessage());
         }
     }
 }

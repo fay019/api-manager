@@ -56,7 +56,7 @@ class HealthController extends Controller
     private function checkCache(): array
     {
         try {
-            $testKey = 'health_check_' . microtime(true);
+            $testKey = 'health_check_'.microtime(true);
             Cache::put($testKey, 'ok', 5);
             $value = Cache::get($testKey);
             Cache::forget($testKey);
@@ -68,7 +68,7 @@ class HealthController extends Controller
         } catch (\Exception $e) {
             return [
                 'status' => 'error',
-                'message' => 'Cache error: ' . $e->getMessage(),
+                'message' => 'Cache error: '.$e->getMessage(),
             ];
         }
     }
@@ -81,22 +81,22 @@ class HealthController extends Controller
         try {
             $logsPath = storage_path('logs');
 
-            if (!is_dir($logsPath)) {
+            if (! is_dir($logsPath)) {
                 return [
                     'status' => 'error',
                     'message' => 'Logs directory not found',
                 ];
             }
 
-            if (!is_writable($logsPath)) {
+            if (! is_writable($logsPath)) {
                 return [
                     'status' => 'error',
                     'message' => 'Logs directory not writable',
                 ];
             }
 
-            $logFile = $logsPath . '/laravel.log';
-            if (file_exists($logFile) && !is_writable($logFile)) {
+            $logFile = $logsPath.'/laravel.log';
+            if (file_exists($logFile) && ! is_writable($logFile)) {
                 return [
                     'status' => 'error',
                     'message' => 'Log file not writable',
@@ -110,7 +110,7 @@ class HealthController extends Controller
         } catch (\Exception $e) {
             return [
                 'status' => 'error',
-                'message' => 'Logs check error: ' . $e->getMessage(),
+                'message' => 'Logs check error: '.$e->getMessage(),
             ];
         }
     }
@@ -139,7 +139,7 @@ class HealthController extends Controller
             if ($percentUsed > 90) {
                 return [
                     'status' => 'warning',
-                    'message' => 'Low disk space: ' . $percentUsed . '% used',
+                    'message' => 'Low disk space: '.$percentUsed.'% used',
                     'free_gb' => $freeGB,
                     'total_gb' => $totalGB,
                     'percent_used' => $percentUsed,
@@ -156,7 +156,7 @@ class HealthController extends Controller
         } catch (\Exception $e) {
             return [
                 'status' => 'warning',
-                'message' => 'Disk space check error: ' . $e->getMessage(),
+                'message' => 'Disk space check error: '.$e->getMessage(),
             ];
         }
     }
@@ -176,20 +176,21 @@ class HealthController extends Controller
 
             $issues = [];
             foreach ($directories as $name => $path) {
-                if (!is_dir($path)) {
+                if (! is_dir($path)) {
                     $issues[] = "{$name} directory not found";
+
                     continue;
                 }
 
-                if (!is_writable($path)) {
+                if (! is_writable($path)) {
                     $issues[] = "{$name} directory not writable";
                 }
             }
 
-            if (!empty($issues)) {
+            if (! empty($issues)) {
                 return [
                     'status' => 'error',
-                    'message' => 'Storage issues: ' . implode(', ', $issues),
+                    'message' => 'Storage issues: '.implode(', ', $issues),
                     'issues' => $issues,
                 ];
             }
@@ -201,7 +202,7 @@ class HealthController extends Controller
         } catch (\Exception $e) {
             return [
                 'status' => 'error',
-                'message' => 'Storage check error: ' . $e->getMessage(),
+                'message' => 'Storage check error: '.$e->getMessage(),
             ];
         }
     }

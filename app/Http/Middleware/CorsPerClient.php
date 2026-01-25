@@ -19,7 +19,7 @@ class CorsPerClient
 
             // If Origin header is present, validate it
             if ($origin) {
-                if (!in_array($origin, $allowedOrigins)) {
+                if (! in_array($origin, $allowedOrigins)) {
                     return ApiResponse::forbidden('Origin not allowed');
                 }
             }

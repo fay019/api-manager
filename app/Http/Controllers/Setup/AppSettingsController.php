@@ -125,6 +125,7 @@ class AppSettingsController extends Controller
 
         if ($validator->fails()) {
             $setupSession->set('errors', $validator->errors()->toArray());
+
             return redirect()->back()->withInput();
         }
 
@@ -136,6 +137,7 @@ class AppSettingsController extends Controller
         // Vérifier cohérence: DEBUG=false en production
         if ($validated['app_env'] === 'production' && ($validated['app_debug'] ?? false)) {
             $setupSession->set('errors', ['app_debug' => ['APP_DEBUG doit être false en production']]);
+
             return redirect()->back()->withInput();
         }
 

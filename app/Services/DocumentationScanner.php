@@ -21,7 +21,7 @@ class DocumentationScanner
                 $name = strtolower($file->getFilenameWithoutExtension());
                 $docs[] = [
                     'doc_name' => $name,
-                    'path' => '/' . $file->getFilename(),
+                    'path' => '/'.$file->getFilename(),
                 ];
             }
         }
@@ -38,7 +38,7 @@ class DocumentationScanner
                     $relativePath = str_replace(base_path(), '', $file->getRealPath());
 
                     // Avoid duplicates (if a file exists in both root and docs, which is unlikely but possible)
-                    if (!in_array($name, array_column($docs, 'doc_name'))) {
+                    if (! in_array($name, array_column($docs, 'doc_name'))) {
                         $docs[] = [
                             'doc_name' => $name,
                             'path' => $relativePath,
@@ -105,7 +105,7 @@ class DocumentationScanner
 
         $base = $metadata[$docName] ?? [
             'label' => ucfirst(str_replace('_', ' ', $docName)),
-            'description' => 'Documentation pour ' . $docName,
+            'description' => 'Documentation pour '.$docName,
         ];
 
         return array_merge($base, ['icon' => $icon]);

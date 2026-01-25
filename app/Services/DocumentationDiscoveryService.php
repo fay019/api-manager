@@ -34,7 +34,7 @@ class DocumentationDiscoveryService
 
         foreach ($rootDocs as $doc) {
             if (File::exists(base_path($doc['path']))) {
-                if (!in_array($doc['name'], $docs)) {
+                if (! in_array($doc['name'], $docs)) {
                     $docs[] = $doc['name'];
                 }
             }
@@ -45,8 +45,6 @@ class DocumentationDiscoveryService
 
     /**
      * Get documentation metadata with nice labels
-     *
-     * @return array
      */
     public static function getDocumentationMetadata(): array
     {

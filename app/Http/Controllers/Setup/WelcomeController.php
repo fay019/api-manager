@@ -80,7 +80,7 @@ class WelcomeController extends Controller
 
         // Vérifier que l'installation n'est pas déjà complétée
         if ($this->installationCheck->isInstalled()) {
-            return redirect()->route('home');
+            return redirect('/');
         }
 
         // Exécuter vérifications (cachées 5 minutes)

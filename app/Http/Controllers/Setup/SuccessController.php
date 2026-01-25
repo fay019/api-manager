@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers\Setup;
 
+use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Services\Installation\EnvManager;
-use App\Services\Installation\InstallationCheck;
 use App\Services\Installation\SetupSession;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
-use App\Http\Controllers\Controller;
-use App\Models\User;
 
 /**
  * Contrôleur pour la Phase Finale du wizard: Installation & Success.
@@ -115,15 +115,18 @@ class SuccessController extends Controller
             Artisan::call('migrate', ['--force' => true]);
             $this->createAdminUser($admin);
 
-            // 7. Clear cache
-            Artisan::call('optimize:clear');
-
-            // 8. Lock
+            // 7. Create Lock BEFORE cleaning cache
+            // This ensures InstallationServiceProvider sees the app as installed
+            // when optimize is called.
             $lockData = [
                 'installed_at' => now()->toDateTimeString(),
                 'version' => '1.0.0',
             ];
             file_put_contents(storage_path('app/installed.lock'), json_encode($lockData));
+
+            // 8. Clear cache and Optimize
+            Artisan::call('optimize:clear');
+            Artisan::call('optimize');
 
             // 9. Flush setup session
             $setupSession->flush();
@@ -161,10 +164,18 @@ class SuccessController extends Controller
     {
         $missing = [];
 
-        if (! $appSettings['name']) $missing[] = 'Nom application';
-        if (! $database['driver']) $missing[] = 'Type base de données';
-        if (! $mail['driver']) $missing[] = 'Type email';
-        if (! $admin['name'] || ! $admin['email'] || ! $admin['password']) $missing[] = 'Données administrateur';
+        if (! $appSettings['name']) {
+            $missing[] = 'Nom application';
+        }
+        if (! $database['driver']) {
+            $missing[] = 'Type base de données';
+        }
+        if (! $mail['driver']) {
+            $missing[] = 'Type email';
+        }
+        if (! $admin['name'] || ! $admin['email'] || ! $admin['password']) {
+            $missing[] = 'Données administrateur';
+        }
 
         if (! empty($missing)) {
             throw new \Exception('Données manquantes: '.implode(', ', $missing));

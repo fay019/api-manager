@@ -96,7 +96,7 @@
             <input type="password" name="database_password" id="mysql-password"
                    class="form-control @if(isset($errors['database_password'])) is-invalid @endif"
                    placeholder="(laisser vide si pas de mot de passe)" value="{{ $formData['database_password'] ?? '' }}">
-            <span class="password-toggle" onclick="togglePassword('mysql-password')">👁️</span>
+            <span class="password-toggle" onclick="togglePassword(event, 'mysql-password')">👁️</span>
             @if(isset($errors['database_password'])) <span class="error">{{ is_array($errors['database_password']) ? $errors['database_password'][0] : $errors['database_password'] }}</span> @endif
         </div>
     </div>
@@ -140,7 +140,7 @@
             <input type="password" name="database_password" id="pgsql-password"
                    class="form-control @if(isset($errors['database_password'])) is-invalid @endif"
                    placeholder="(laisser vide si pas de mot de passe)" value="{{ $formData['database_password'] ?? '' }}">
-            <span class="password-toggle" onclick="togglePassword('pgsql-password')">👁️</span>
+            <span class="password-toggle" onclick="togglePassword(event, 'pgsql-password')">👁️</span>
             @if(isset($errors['database_password'])) <span class="error">{{ is_array($errors['database_password']) ? $errors['database_password'][0] : $errors['database_password'] }}</span> @endif
         </div>
     </div>
@@ -203,7 +203,7 @@
     }
 
     // Toggle password visibility
-    function togglePassword(fieldId) {
+    function togglePassword(event, fieldId) {
         const field = document.getElementById(fieldId);
         const type = field.type === 'password' ? 'text' : 'password';
         field.type = type;

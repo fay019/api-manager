@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Setup;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Setup\DatabaseRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -142,6 +141,7 @@ class DatabaseController extends Controller
 
         if ($validator->fails()) {
             $setupSession->set('errors', $validator->errors()->toArray());
+
             return redirect()->back()->withInput();
         }
 

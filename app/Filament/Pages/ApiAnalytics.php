@@ -5,7 +5,6 @@ namespace App\Filament\Pages;
 use App\Models\ApiRequestLog;
 use BackedEnum;
 use Filament\Pages\Page;
-use Illuminate\Support\Facades\DB;
 use UnitEnum;
 
 class ApiAnalytics extends Page
