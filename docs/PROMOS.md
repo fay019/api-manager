@@ -134,10 +134,25 @@ curl -H "X-API-KEY: apk_xxx" \
     "image_url": "https://cdn.example.com/summer-banner.jpg",
     "cta_text": "Shop Now",
     "cta_url": "https://example.com/summer-sale",
-    "priority": 10
+    "priority": 10,
+    "max_impressions": 5,
+    "cooldown_seconds": 86400,
+    "display_mode": "fixed_count",
+    "start_date": "2026-01-25",
+    "end_date": "2026-02-25"
   }
 }
 ```
+
+### Display Configuration Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| **max_impressions** | integer | Max number of views before disappearing |
+| **cooldown_seconds** | integer | Wait time (seconds) after manual close |
+| **display_mode** | string | `fixed_count`, `unlimited`, `once_per_day`, `once_per_week` |
+| **start_date** | string | Campaign start date (YYYY-MM-DD) |
+| **end_date** | string | Campaign end date (YYYY-MM-DD) |
 
 **No Active Promo (404 Not Found):**
 ```json

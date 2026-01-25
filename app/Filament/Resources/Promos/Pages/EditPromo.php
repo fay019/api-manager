@@ -120,6 +120,11 @@ class EditPromo extends EditRecord
                                                 'cta_text' => $record->cta_text,
                                                 'cta_url' => $record->cta_url,
                                                 'priority' => $record->priority,
+                                                'max_impressions' => $record->max_impressions,
+                                                'cooldown_seconds' => $record->cooldown_seconds,
+                                                'display_mode' => $record->display_mode,
+                                                'start_date' => $record->starts_at?->format('Y-m-d'),
+                                                'end_date' => $record->ends_at?->format('Y-m-d'),
                                             ];
 
                                             return json_encode([

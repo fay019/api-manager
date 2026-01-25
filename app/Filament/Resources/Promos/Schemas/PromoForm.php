@@ -142,6 +142,32 @@ class PromoForm
                             ->default(1)
                             ->tooltips()
                             ->helperText('10 est le plus prioritaire, 1 le moins.'),
+                        Grid::make(3)
+                            ->schema([
+                                Select::make('display_mode')
+                                    ->label('Mode d\'affichage')
+                                    ->options([
+                                        'fixed_count' => 'Nombre fixe de vues',
+                                        'unlimited' => 'Illimité',
+                                        'once_per_day' => 'Une fois par jour',
+                                        'once_per_week' => 'Une fois par semaine',
+                                    ])
+                                    ->default('fixed_count')
+                                    ->required()
+                                    ->live(),
+                                TextInput::make('max_impressions')
+                                    ->label('Impressions Max')
+                                    ->numeric()
+                                    ->default(9999)
+                                    ->required()
+                                    ->visible(fn ($get) => $get('display_mode') === 'fixed_count'),
+                                TextInput::make('cooldown_seconds')
+                                    ->label('Délai après fermeture (sec)')
+                                    ->numeric()
+                                    ->default(0)
+                                    ->required()
+                                    ->helperText('86400 = 24h'),
+                            ]),
                     ]),
 
                 Section::make('Média')

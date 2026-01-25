@@ -37,6 +37,11 @@ class PromoService
             'cta_text' => $promo->cta_text,
             'cta_url' => $promo->cta_url,
             'priority' => $promo->priority,
+            'max_impressions' => $promo->max_impressions,
+            'cooldown_seconds' => $promo->cooldown_seconds,
+            'display_mode' => $promo->display_mode,
+            'start_date' => $promo->starts_at?->format('Y-m-d'),
+            'end_date' => $promo->ends_at?->format('Y-m-d'),
         ];
     }
 

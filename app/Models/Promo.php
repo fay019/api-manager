@@ -22,6 +22,9 @@ class Promo extends Model
         'starts_at',
         'ends_at',
         'priority',
+        'max_impressions',
+        'cooldown_seconds',
+        'display_mode',
         'created_by',
     ];
 
@@ -32,6 +35,8 @@ class Promo extends Model
             'starts_at' => 'datetime',
             'ends_at' => 'datetime',
             'priority' => 'integer',
+            'max_impressions' => 'integer',
+            'cooldown_seconds' => 'integer',
         ];
     }
 
