@@ -3,8 +3,11 @@
 namespace App\Filament\Pages;
 
 use App\Models\DocumentationSetting;
+use App\Services\AppSettingService;
 use App\Services\DocumentationScanner;
 use BackedEnum;
+use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
@@ -167,5 +170,50 @@ class ManageAppSettings extends Page implements HasForms
                 ->body('Failed to update icon: '.$e->getMessage())
                 ->send();
         }
+    }
+
+    public function resetAction(): Action
+    {
+        return Action::make('reset')
+            ->label('Réinitialiser l\'application')
+            ->color('danger')
+            ->icon('heroicon-m-exclamation-triangle')
+            ->requiresConfirmation()
+            ->modalHeading('Réinitialisation Complète')
+            ->modalDescription('ATTENTION: Cette action est DESTRUCTIVE. Elle effacera la base de données (si SQLite), supprimera le verrouillage de l\'installation et vous redirigera vers l\'installateur.')
+            ->form([
+                TextInput::make('confirm')
+                    ->label('Saisissez "Confirmer"')
+                    ->placeholder('Confirmer')
+                    ->required()
+                    ->rules(['in:Confirmer']),
+            ])
+            ->action(function (AppSettingService $service) {
+                if (app()->environment('production')) {
+                    Notification::make()
+                        ->danger()
+                        ->title('Action interdite')
+                        ->body('La réinitialisation est interdite en production.')
+                        ->send();
+
+                    return;
+                }
+
+                if ($service->resetApplication()) {
+                    Notification::make()
+                        ->success()
+                        ->title('Application réinitialisée')
+                        ->body('L\'application a été remise à son état initial.')
+                        ->send();
+
+                    return redirect()->to('/setup/welcome');
+                }
+
+                Notification::make()
+                    ->danger()
+                    ->title('Échec de la réinitialisation')
+                    ->body('Une erreur est survenue lors de la réinitialisation.')
+                    ->send();
+            });
     }
 }

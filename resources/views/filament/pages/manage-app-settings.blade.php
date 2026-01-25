@@ -144,5 +144,11 @@
             <span wire:loading.remove>Nettoyer les Fichiers Manquants</span>
             <span wire:loading>Nettoyage...</span>
         </x-filament::button>
+
+        @if(!app()->environment('production'))
+            <div style="margin-left: auto;">
+                {{ $this->resetAction }}
+            </div>
+        @endif
     </div>
 </x-filament-panels::page>
