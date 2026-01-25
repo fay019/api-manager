@@ -9,12 +9,23 @@ class PromoBannerController
 {
     public function show(PromoService $promoService)
     {
-        $promo = $promoService->getPromoForApi();
+        $promoData = $promoService->getPromoForApi();
 
-        if (empty($promo)) {
+        if (empty($promoData)) {
             return ApiResponse::notFound('No active promo available');
         }
 
-        return ApiResponse::success($promo);
+        return ApiResponse::success($promoData);
+    }
+
+    public function showBySlug(string $slug, PromoService $promoService)
+    {
+        $promo = $promoService->getPromoBySlug($slug);
+
+        if (! $promo) {
+            return ApiResponse::notFound("No active promo found for slug: {$slug}");
+        }
+
+        return ApiResponse::success($promoService->getPromoForApi($promo));
     }
 }

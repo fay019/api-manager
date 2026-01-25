@@ -3,8 +3,10 @@
 namespace App\Filament\Resources\Promos\Schemas;
 
 use App\Enums\PromoStatus;
+use App\Models\Promo;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Slider;
 use Filament\Forms\Components\Slider\Enums\PipsMode;
@@ -14,6 +16,7 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\HtmlString;
 
 class PromoForm
 {
@@ -23,10 +26,25 @@ class PromoForm
             ->components([
                 Section::make('Informations de la Promo')
                     ->schema([
-                        TextInput::make('title')
-                            ->label('Titre')
-                            ->required()
-                            ->maxLength(255),
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('title')
+                                    ->label('Titre')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->live(onBlur: true)
+                                    ->afterStateUpdated(function ($set, $state, $context) {
+                                        if ($context === 'create') {
+                                            $set('slug', \Illuminate\Support\Str::slug($state));
+                                        }
+                                    }),
+                                TextInput::make('slug')
+                                    ->label('Slug / Public Path')
+                                    ->unique(Promo::class, 'slug', ignoreRecord: true)
+                                    ->alpha_dash()
+                                    ->maxLength(255)
+                                    ->helperText('Utilisé pour l\'URL publique. Ex: banner-hiver. Laissez vide pour utiliser l\'ID.'),
+                            ]),
                         Textarea::make('content')
                             ->label('Contenu')
                             ->required()
@@ -41,6 +59,36 @@ class PromoForm
                                     ->url()
                                     ->maxLength(255),
                             ]),
+                    ]),
+
+                Section::make('Lien public / Endpoint')
+                    ->schema([
+                        Placeholder::make('public_url')
+                            ->label('URL de l\'API')
+                            ->content(function (?Promo $record) {
+                                if (! $record) {
+                                    return 'L\'URL sera générée après la création.';
+                                }
+
+                                $url = $record->slug
+                                    ? route('api.v1.promo.by-slug', ['slug' => $record->slug])
+                                    : route('api.v1.promo.banner');
+
+                                return new HtmlString("
+                                    <div class='flex items-center gap-2'>
+                                        <code class='p-1 bg-gray-100 dark:bg-gray-800 rounded text-sm break-all'>{$url}</code>
+                                        <button
+                                            type='button'
+                                            onclick='navigator.clipboard.writeText(\"{$url}\"); window.Filament.notifications.show({title: \"URL copiée !\", type: \"success\"})'
+                                            class='p-1 text-gray-500 hover:text-primary-600 transition-colors'
+                                            title='Copier l\'URL'
+                                        >
+                                            <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3'></path></svg>
+                                        </button>
+                                    </div>
+                                ");
+                            })
+                            ->helperText('C\'est l\'URL à utiliser dans votre intégration frontend.'),
                     ]),
 
                 Section::make('Paramètres & Statut')

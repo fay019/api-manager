@@ -21,9 +21,9 @@ class PromoService
         Cache::forget('promo_active_banner');
     }
 
-    public function getPromoForApi(): array
+    public function getPromoForApi(?Promo $promo = null): array
     {
-        $promo = $this->getActivePromo();
+        $promo = $promo ?? $this->getActivePromo();
 
         if (! $promo) {
             return [];
@@ -38,5 +38,12 @@ class PromoService
             'cta_url' => $promo->cta_url,
             'priority' => $promo->priority,
         ];
+    }
+
+    public function getPromoBySlug(string $slug): ?Promo
+    {
+        return Promo::active()
+            ->where('slug', $slug)
+            ->first();
     }
 }

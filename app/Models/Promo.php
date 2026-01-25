@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 class Promo extends Model
 {
     protected $fillable = [
+        'slug',
         'title',
         'content',
         'image_url',

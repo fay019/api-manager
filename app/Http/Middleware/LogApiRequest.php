@@ -26,6 +26,10 @@ class LogApiRequest
             $apiClient = $request->attributes->get('api_client');
             $apiKey = $request->attributes->get('api_key');
 
+            // Origin/Referer dépend du client, pas toujours présent. Fallback: Origin > Referer.
+            $origin = $request->header('Origin');
+            $referer = $request->header('Referer');
+
             ApiRequestLog::create([
                 'api_client_id' => $apiClient?->id,
                 'api_key_id' => $apiKey?->id,
@@ -34,8 +38,8 @@ class LogApiRequest
                 'status_code' => $response->status(),
                 'ip' => $request->ip(),
                 'user_agent' => $request->header('User-Agent'),
-                'origin' => $request->header('Origin'),
-                'referer' => $request->header('Referer'),
+                'origin' => $origin ?? $referer,
+                'referer' => $referer,
                 'duration_ms' => $durationMs,
                 'created_at' => now(),
             ]);
