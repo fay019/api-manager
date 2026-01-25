@@ -12,6 +12,7 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use UnitEnum;
 
 class PromoResource extends Resource
@@ -27,6 +28,15 @@ class PromoResource extends Resource
     protected static ?string $pluralModelLabel = 'Promotions';
 
     protected static ?string $recordTitleAttribute = 'title';
+
+    public static function getRecordTitle(?Model $record): ?string
+    {
+        if (! $record instanceof Promo) {
+            return null;
+        }
+
+        return $record->getTranslation('title') ?? parent::getRecordTitle($record);
+    }
 
     public static function form(Schema $schema): Schema
     {
