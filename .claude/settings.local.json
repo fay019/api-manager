@@ -11,7 +11,20 @@
       "Bash(php -l:*)",
       "Bash(tree:*)",
       "Bash(grep:*)",
-      "Bash(composer dump-autoload:*)"
+      "Bash(composer dump-autoload:*)",
+      "mcp__laravel-boost__application-info",
+      "mcp__laravel-boost__list-routes",
+      "mcp__laravel-boost__last-error",
+      "mcp__laravel-boost__read-log-entries",
+      "mcp__herd__get_site_information",
+      "mcp__laravel-boost__get-absolute-url",
+      "mcp__laravel-boost__tinker",
+      "mcp__laravel-boost__search-docs",
+      "mcp__laravel-boost__browser-logs"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "laravel-boost",
+    "herd"
+  ]
 }

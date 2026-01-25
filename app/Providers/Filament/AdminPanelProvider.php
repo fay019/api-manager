@@ -26,6 +26,12 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
+        if (! file_exists(storage_path('app/installed.lock'))) {
+            return $panel
+                ->id('admin')
+                ->path('admin');
+        }
+
         return $panel
             ->id('admin')
             ->path('admin')

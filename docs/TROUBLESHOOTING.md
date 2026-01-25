@@ -1,417 +1,431 @@
-# 🔧 Troubleshooting & Debugging
+# 🔧 Dépannage - FAQ Installation
 
-Guide de dépannage pour les problèmes courants avec API Manager.
+**Version:** 2.0
+**Dernière mise à jour:** 24 janvier 2026
 
 ---
 
-## 🚀 Installation & Déploiement
+## 📋 Index rapide
 
-### Erreur 500 - "Domain works but Laravel crashes"
+- [Erreurs PHP/Système](#erreurs-phpsystème)
+- [Erreurs Base de données](#erreurs-base-de-données)
+- [Erreurs Email/SMTP](#erreurs-emailsmtp)
+- [Erreurs Permissions](#erreurs-permissions)
+- [Problèmes Installation](#problèmes-installation)
+- [Après Installation](#après-installation)
 
-Si vous accédez au domaine et voyez une erreur 500 Laravel:
+---
 
-**Cause possible:** Installation incomplète ou configuration manquante
+## 🔴 Erreurs PHP/Système
 
-**Solution:**
+### ❌ "PHP 8.3 est requis"
 
-1. **First, check diagnostics** (these work even if Laravel is broken):
-   ```
-   https://your-domain.com/diagnostic.php    (plain text version)
-   https://your-domain.com/install.php       (HTML version with UI)
-   ```
+**Cause**: Votre serveur utilise PHP < 8.3
 
-   These pages will:
-   - ✅ Show current server status
-   - ✅ Create missing directories
-   - ✅ Create .env file from .env.example
-   - ✅ Test filesystem permissions
-   - ✅ Detect Composer status
-   - ✅ Provide detailed error messages
-
-2. **Then, complete setup via web wizard** (if diagnostics pass):
-   ```
-   https://your-domain.com/setup
-   ```
-   Cette page démarre l'assistant d'installation automatique.
-
-3. **Installation steps** - L'assistant va:
-   - Installer les dépendances Composer
-   - Générer la clé APP_KEY
-   - Créer les répertoires nécessaires
-   - Créer la base de données
-   - Exécuter les migrations
-   - Lancer les seeders
-   - Créer l'utilisateur administrateur
-
-4. **If errors persist**, consultez les logs:
+**Solution**:
+1. Vérifiez votre version PHP:
    ```bash
-   tail -f storage/logs/laravel.log
-   tail -f storage/logs/install-diagnostic.log
+   php --version
    ```
 
+2. **Si vous pouvez changer la version**:
+   - Contactez votre hébergeur
+   - Demandez la mise à jour vers PHP 8.3+
+   - Vérifiez les paramètres de votre panel d'administration
+
+3. **Si vous ne pouvez pas changer**:
+   - Changez d'hébergeur
+   - Utilisez un serveur local avec PHP 8.3+
+
 ---
 
-### "Database file at path does not exist" (Résolu ✅)
+### ❌ "Extension XXX manquante"
 
-**Cause:** La base de données SQLite n'a pas été créée avant le premier accès
+**Cause**: Une extension PHP requise n'est pas installée
 
-**Pourquoi ça ne devrait plus arriver:**
-
-Le middleware `EnsureDatabaseExists` crée maintenant automatiquement:
-- ✅ Le fichier `database/database.sqlite`
-- ✅ La table `sessions` requise par Laravel
-- ✅ Cela se fait **AVANT** le chargement de la session
-
-**Si vous rencontrez encore cette erreur:**
-
-#### Option 1: Via l'assistant d'installation (Recommandé)
-- Accédez à `/setup` - le middleware crée tout automatiquement
-- Suivez les étapes du wizard
-
-#### Option 2: Vérifier les permissions
-```bash
-# S'assurer que database/ est accessible
-chmod -R 755 database/
-ls -la database/
+**Extensions requises**:
+```
+PDO, mbstring, JSON, ctype, filter, hash, OpenSSL
 ```
 
-#### Option 3: Manuellement en SSH (si le middleware ne fonctionne pas)
-```bash
-# Créer le fichier database.sqlite
-mkdir -p database
-touch database/database.sqlite
-chmod 666 database/database.sqlite
+**Solution**:
 
-# Exécuter les migrations
-php artisan migrate
+1. **Demander à votre hébergeur** (méthode recommandée)
+   - Email: support@hosting.com
+   - "Veuillez installer l'extension PHP: xxx"
 
-# Lancer les seeders
-php artisan db:seed
-```
-
----
-
-### Erreur ".env file not found" ou ".env: No such file" (Résolu ✅)
-
-**Symptôme:** 500 error au premier accès avec "No environment file"
-
-**Cause:** Laravel ne trouve pas le fichier `.env`
-
-**Résolution:**
-
-La fonction `ensureApplicationReady()` dans `public/index.php` crée maintenant automatiquement `.env` depuis `.env.example`:
-- S'exécute AVANT le chargement de la configuration Laravel
-- S'exécute AVANT les middlewares
-- Crée `.env` si `.env.example` existe
-- Crée aussi tous les répertoires nécessaires
-
-**Résultat:** Aucune erreur "env file not found" au premier accès! ✅
-
----
-
-### Erreur lors du chargement de la session (résolu ✅)
-
-**Symptôme:** 500 error sur `/setup` avec message "select * from sessions"
-
-**Cause:** Avant, Laravel essayait de charger la session depuis la base de données avant que SQLite existe
-
-**Résolution:**
-
-Le middleware `EnsureDatabaseExists` s'exécute maintenant **AVANT** la session:
-- Crée `.env` depuis `.env.example`
-- Crée le fichier SQLite si manquant
-- Crée la table sessions automatiquement
-
-**Résultat:** Aucun risque de "sessions table not found" au premier accès! ✅
-
----
-
-### "Cannot redeclare non static Widget::$view"
-
-**Cause:** Incompatibilité de version ou cache obsolète
-
-**Solution:**
-```bash
-php artisan cache:clear
-php artisan config:clear
-php artisan view:clear
-composer dump-autoload
-```
-
----
-
-### Permissions insuffisantes
-
-**Symptôme:** "Permission denied" lors de l'écriture dans storage/
-
-**Solution:**
-```bash
-# Sur Linux/Mac
-chmod -R 775 storage bootstrap/cache
-
-# Sur certains serveurs, créer les répertoires s'ils manquent
-mkdir -p storage/framework/{cache,data,sessions,views,testing}
-mkdir -p storage/logs
-mkdir -p storage/app
-mkdir -p bootstrap/cache
-```
-
----
-
-### "composer: command not found"
-
-**Cause:** Composer n'est pas installé ou non dans le PATH
-
-**Solutions:**
-
-1. **Installer Composer** (si nécessaire):
+2. **Si vous avez accès SSH**:
    ```bash
-   curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+   # Ubuntu/Debian
+   sudo apt-get install php8.3-pdo php8.3-mbstring php8.3-json
+
+   # CentOS/RHEL
+   sudo yum install php83-pdo php83-mbstring php83-json
+
+   # Après installation, redémarrer PHP
+   sudo systemctl restart php-fpm
    ```
 
-2. **Utiliser Composer global:**
+3. **Vérifier après installation**:
    ```bash
-   /usr/local/bin/composer install
+   php -m | grep pdo
    ```
 
-3. **Sur le serveur, si Composer n'est pas disponible:**
-   - L'assistant d'installation essayera de le lancer mais créera une erreur si absent
-   - Solution: Installer Composer d'abord, ou lancer manuellement:
+---
+
+## 🔴 Erreurs Base de données
+
+### ❌ "Impossible se connecter à la base de données"
+
+**Écrans concernés**:
+- Étape 3: Configuration BD
+- Test de connexion
+
+**Causes possibles**:
+
+#### SQLite
+```
+✅ Pas besoin de configurer
+✅ Fonctionne toujours
+```
+
+#### MySQL - Serveur non accessible
+```
+❌ Hôte inaccessible
+❌ Port fermé (3306)
+```
+
+**Solution**:
+1. Vérifier que MySQL est démarré:
    ```bash
-   php artisan key:generate
-   php artisan migrate --force
-   php artisan db:seed --force
+   sudo systemctl status mysql
    ```
 
----
-
-## 📊 Configuration & Environnement
-
-### APP_KEY manquante ou vide
-
-**Symptôme:** "No application encryption key has been specified"
-
-**Cause:** `APP_KEY` non défini dans `.env`
-
-**Solution:**
-```bash
-php artisan key:generate
-```
-
-L'assistant d'installation le fait automatiquement.
-
----
-
-### Database connection refused
-
-**Cause:**
-- Identifiants MySQL/PostgreSQL incorrects
-- Serveur de base de données non accessible
-- Base de données non créée
-
-**Debug:**
-1. Testez la connexion via l'assistant d'installation
-2. Vérifiez les identifiants `.env`:
-   ```
-   DB_HOST=
-   DB_PORT=
-   DB_DATABASE=
-   DB_USERNAME=
-   DB_PASSWORD=
-   ```
-
-3. Testez manuellement:
+2. Vérifier que vous pouvez vous connecter:
    ```bash
-   # Pour MySQL
-   mysql -h DB_HOST -u DB_USERNAME -p DB_PASSWORD -e "use DB_DATABASE;"
-
-   # Pour PostgreSQL
-   psql -h DB_HOST -U DB_USERNAME -d DB_DATABASE
+   mysql -u root -p
    ```
 
----
+3. Si ça ne fonctionne pas:
+   - Redémarrer MySQL: `sudo systemctl restart mysql`
+   - Vérifier le pare-feu: `sudo ufw allow 3306`
 
-## 🔍 Debugging & Logs
-
-### Consulter les logs
-
-**Log principal Laravel:**
-```bash
-tail -f storage/logs/laravel.log
+#### MySQL - Authentification échouée
+```
+❌ Utilisateur invalide
+❌ Mot de passe incorrect
 ```
 
-**Installation log:**
-```bash
-cat storage/logs/installation.log
-```
-
-**Logs en temps réel (Pail):**
-```bash
-php artisan pail
-```
-
----
-
-### Mode debug activé
-
-Pour plus d'informations, activez le mode debug dans `.env`:
-```env
-APP_DEBUG=true
-```
-
-⚠️ **Attention:** Désactivez-le en production (`APP_DEBUG=false`)
-
----
-
-### Vérifier l'état de l'application
-
-```bash
-# Vue d'ensemble de la santé
-php artisan tinker
-
-# Dans la console Tinker:
->>> app()->isInstalled()
->>> config('database.default')
->>> DB::connection()->getPdo()
-```
-
----
-
-## 🌐 Serveur Web
-
-### Nginx - Erreur "Access Denied"
-
-**Cause:** Permissions sur le répertoire public/
-
-**Solution:**
-```bash
-# S'assurer que Nginx peut lire public/
-chmod -R 755 public
-chown -R www-data:www-data . # Ou l'utilisateur Nginx
-```
-
-**Configuration Nginx exemple:**
-```nginx
-location / {
-    try_files $uri $uri/ /index.php?$query_string;
-}
-```
-
----
-
-### Apache - mod_rewrite non activé
-
-**Symptôme:** Les routes ne fonctionnent pas, tout redirect vers 404
-
-**Solution:**
-```bash
-# Activer mod_rewrite
-a2enmod rewrite
-systemctl restart apache2
-```
-
-**Vérifier le `.htaccess` dans public/:**
-```
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    RewriteBase /
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^ /index.php [L]
-</IfModule>
-```
-
----
-
-## 📱 API Issues
-
-### "Unauthorized" 401 sur les routes API
-
-**Cause:** Clé API manquante ou invalide
-
-**Debug:**
-1. Vérifiez que la clé API est envoyée dans le header:
-   ```
-   X-API-KEY: apk_xxxxx
-   ```
-
-2. Consultez les logs des requêtes:
-   ```
-   Admin Panel → API Management → Request Logs
-   ```
-
----
-
-### Erreur "429 Too Many Requests"
-
-**Cause:** Rate limiting activé
-
-**Solution:**
-1. Vérifier les paramètres du client API dans l'admin panel
-2. Augmenter la limite si nécessaire
-3. Attendre le reset du rate limiter (par défaut: 1 minute)
-
----
-
-## 🆘 Page de Maintenance
-
-Une page de maintenance statique est disponible à:
-```
-public/maintenance.html
-```
-
-Cette page s'affiche automatiquement si Laravel plante et peut être consultée sans dépendance Laravel. Elle vous guidera pour:
-- Vérifier la connexion au domaine
-- Accéder à l'assistant d'installation
-- Exécuter les commandes de correction
-
-**Note:** Cette page se recharge automatiquement toutes les 10 secondes pour vérifier la récupération de l'application.
-
----
-
-### ⏰ Erreur 419 "Session expirée" au Setup Wizard (⚠️ EN COURS DE CORRECTION)
-
-**Symptôme:** Lors du remplissage de l'étape 1 du Setup Wizard, un clic sur "Suivant" affiche:
-```
-419 Votre session a expiré. Veuillez rafraîchir la page et réessayer.
-```
-
-**Cause:** Le middleware de session essaie d'accéder à la table `sessions` en base de données, mais:
-- La table n'existe pas encore (première visite)
-- Le fichier `database.sqlite` n'a pas été créé
-
-**Status:** 🔧 Investigation en cours
-- Commit 75e7a21: Augmentation SESSION_LIFETIME (120 → 2880 min)
-- Commit 1791434: Création du fichier database.sqlite en bootstrap
-- **À vérifier demain:** Ordre d'exécution du bootstrap, permissions, PDO/SQLite disponibilité
-
-**Workaround temporaire:**
-1. Créer manuellement le fichier `database/database.sqlite`:
+**Solution**:
+1. Vérifier les identifiants:
    ```bash
-   mkdir -p database
-   touch database/database.sqlite
-   chmod 666 database/database.sqlite
+   mysql -u api_user -p -h localhost
    ```
 
-2. Exécuter les migrations manuellement:
+2. Créer un nouvel utilisateur:
+   ```sql
+   CREATE USER 'api_user'@'localhost' IDENTIFIED BY 'strong_password';
+   GRANT ALL PRIVILEGES ON api_manager.* TO 'api_user'@'localhost';
+   FLUSH PRIVILEGES;
+   ```
+
+#### PostgreSQL - Serveur non accessible
+```
+Port: 5432 (par défaut)
+```
+
+**Solution**:
+1. Vérifier PostgreSQL:
    ```bash
-   php artisan migrate --force
+   sudo systemctl status postgresql
    ```
 
-3. Puis relancer le setup wizard à `/setup`
-
-**Détails complets:** Voir `DEBUG_419_SESSION_ERROR.md` pour le diagnostic détaillé et les prochaines étapes de correction.
-
----
-
-## 📞 Besoin d'aide supplémentaire?
-
-1. **Consultez les logs:** `storage/logs/laravel.log`
-2. **Lancez l'installation:** Accédez à `/setup`
-3. **Vérifiez la documentation:** [Deployment Guide](./DEPLOYMENT.md)
-4. **Contacter le support:** GitHub Issues ou support email
+2. Redémarrer:
+   ```bash
+   sudo systemctl restart postgresql
+   ```
 
 ---
 
-**Last Updated:** 2026-01-21
-**Version:** API Manager v1.0
+### ❌ "Database XXX n'existe pas"
+
+**Solution**:
+1. **MySQL**:
+   ```sql
+   CREATE DATABASE api_manager CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+   ```
+
+2. **PostgreSQL**:
+   ```sql
+   CREATE DATABASE api_manager;
+   ```
+
+3. **Vérifier la création**:
+   ```bash
+   # MySQL
+   mysql -e "SHOW DATABASES;" | grep api_manager
+
+   # PostgreSQL
+   psql -l | grep api_manager
+   ```
+
+---
+
+## 🔴 Erreurs Email/SMTP
+
+### ❌ "Connexion SMTP échouée"
+
+**Écran concerné**: Étape 4, Test de connexion email
+
+**Causes possibles**:
+
+#### Host invalide
+```
+❌ smtp.example.com n'existe pas
+```
+
+**Vérification**:
+```bash
+ping smtp.gmail.com
+nslookup smtp.gmail.com
+```
+
+#### Port fermé
+```
+❌ Port 587 ou 465 fermé
+❌ Pare-feu bloque la connexion
+```
+
+**Commandes de test**:
+```bash
+# Tester la connexion
+nc -zv smtp.gmail.com 587
+
+# Si firewalls:
+telnet smtp.gmail.com 587
+```
+
+#### Authentification refusée
+```
+❌ Utilisateur incorrect
+❌ Mot de passe incorrect
+```
+
+**Solutions par service**:
+
+#### Gmail
+```
+❌ ERREUR: Mot de passe incorrect
+✅ SOLUTION: Utiliser un "App Password"
+
+1. Aller à: https://myaccount.google.com/security
+2. Activer "2-Step Verification" si pas fait
+3. Générer "App Passwords"
+4. Choisir Mail → Windows/Linux/Mac
+5. Copier le mot de passe généré (16 caractères)
+6. L'utiliser dans le wizard
+```
+
+#### Mailtrap
+```
+❌ Authentification échouée
+✅ SOLUTION: Utiliser les bonnes identifiants
+
+1. Aller à: https://mailtrap.io/inboxes
+2. Cliquer sur "SMTP Settings"
+3. Copier le "Username" et "Password"
+4. Port: 2525
+5. Chiffrement: TLS
+```
+
+#### Sendgrid
+```
+❌ Authentification échouée
+✅ SOLUTION: Utiliser API Key
+
+1. Aller à: https://app.sendgrid.com/settings/api_keys
+2. Créer une clé
+3. Copier la clé
+4. Utilisateur: "apikey"
+5. Mot de passe: [La clé]
+```
+
+---
+
+### ❌ "Les emails ne s'envoient pas"
+
+**Après installation**: Les emails configurés ne sont pas envoyés
+
+**Solution**:
+
+1. **Vérifier la configuration .env**:
+   ```bash
+   cat .env | grep MAIL
+   ```
+
+2. **Tester l'envoi manuel**:
+   ```bash
+   php artisan tinker
+   > Mail::raw('Test', function ($m) {
+   >   $m->to('votre-email@example.com')->send();
+   > });
+   ```
+
+3. **Vérifier les logs**:
+   ```bash
+   tail -50 storage/logs/laravel.log | grep -i mail
+   ```
+
+4. **Si mode Log**: Vérifier les logs directs
+   ```bash
+   grep -i "test message" storage/logs/laravel.log
+   ```
+
+---
+
+## 🔴 Erreurs Permissions
+
+### ❌ "Répertoire non writable"
+
+**Répertoires concernés**:
+```
+📁 storage/
+📁 bootstrap/cache/
+📁 database/
+```
+
+**Cause**: Permissions insuffisantes
+
+**Solution - Simple**:
+```bash
+chmod -R 775 storage bootstrap/cache database
+```
+
+**Solution - Sécurisée** (recommandée):
+```bash
+# Utilisateur web: www-data (Nginx/Apache2)
+sudo chown -R www-data:www-data storage bootstrap/cache database
+sudo chmod -R 755 storage bootstrap/cache database
+```
+
+**Sur cPanel/Shared Hosting**:
+```bash
+chmod -R 755 storage bootstrap/cache database
+chmod -R 644 storage bootstrap/cache database/.gitkeep
+```
+
+---
+
+## 🔴 Problèmes Installation
+
+### ❌ "Installation timeout (60s dépassé)"
+
+**Cause**: Opération trop lente (migrations, seeds)
+
+**Solution**:
+1. **Augmenter le timeout** (fichier `.htaccess`):
+   ```apache
+   php_value max_execution_time 300
+   ```
+
+2. **Ou via PHP-FPM** (`/etc/php/8.3/fpm/php.ini`):
+   ```ini
+   max_execution_time = 300
+   ```
+
+3. **Puis redémarrer**:
+   ```bash
+   sudo systemctl restart php-fpm
+   ```
+
+---
+
+### ❌ "Mot de passe non valide"
+
+**Critères oubliés**:
+```
+✅ Min 8 caractères
+✅ Au moins 1 MAJUSCULE
+✅ Au moins 1 minuscule
+✅ Au moins 1 chiffre
+✅ Au moins 1 spécial (@$!%*?&)
+```
+
+**Exemples**:
+```
+❌ password         (pas MAJ, pas chiffre, pas spécial)
+❌ Password         (pas chiffre, pas spécial)
+❌ Password1        (pas spécial)
+✅ Password1!       (tout bon)
+✅ SecurePass123@   (tout bon)
+```
+
+---
+
+### ❌ "Installation déjà complétée"
+
+**Message**: "Setup locked - Application already installed"
+
+**Cause**: Fichier `storage/app/installed.lock` existe
+
+**Solution**:
+
+Pour **réinstaller**, voir la section "Test Installation Réel" en bas.
+
+---
+
+## 🟢 Après Installation
+
+### ✅ "Comment se connecter à l'admin?"
+
+```
+URL:     http://api-manager.test/admin
+Email:   [Celui que vous avez créé]
+Mot de passe: [Celui que vous avez créé]
+```
+
+---
+
+### ✅ "Changer le mot de passe admin"
+
+1. Se connecter à `/admin`
+2. Cliquer sur son profil (haut droite)
+3. "Paramètres de compte"
+4. "Changer le mot de passe"
+
+---
+
+### ✅ "Réinitialiser mot de passe oublié"
+
+1. Via SSH/Terminal:
+   ```bash
+   php artisan tinker
+   > $user = App\Models\User::first();
+   > $user->password = Hash::make('NewPassword123!');
+   > $user->save();
+   > exit
+   ```
+
+2. Puis vous connecter avec `NewPassword123!`
+
+---
+
+## 📞 Besoin d'aide?
+
+Si le problème n'est pas listé:
+
+1. **Vérifier les logs**:
+   ```bash
+   tail -100 storage/logs/laravel.log
+   ```
+
+2. **Copier le message d'erreur complet**
+
+3. **Contacter le support**:
+   - Email: support@example.com
+   - Inclure les logs et la configuration
+
+---
+
+**Dernière mise à jour**: 24 janvier 2026
+**Version du wizard**: 7 étapes, fully automatic

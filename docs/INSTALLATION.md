@@ -1,769 +1,335 @@
-# 📦 Guide d'Installation Complet
+# 📖 Guide d'Installation - API Manager
 
-Ce document décrit le système d'installation modulaire et robuste de l'application API Manager.
-
-**GitHub Repository**: [fay019/api-manager](https://github.com/fay019/api-manager)
-
-## Table des matières
-
-- [Installation Rapide](#installation-rapide)
-- [Installation Interactive (Setup Wizard)](#installation-interactive-setup-wizard)
-- [Installation depuis GitHub](#installation-depuis-github)
-- [Installation Détaillée](#installation-détaillée)
-- [Installation par Étapes](#installation-par-étapes)
-- [Validation](#validation)
-- [Dépannage](#dépannage)
-- [Environnements de Déploiement](#environnements-de-déploiement)
+**Version:** 2.0 (Wizard Complet)
+**Dernière mise à jour:** 24 janvier 2026
+**Status:** ✅ Production Ready
 
 ---
 
-## 🆘 Troubleshooting Rapide - Erreur 500?
+## 📋 Table des matières
 
-Si vous voyez une **erreur 500 au premier accès**, accédez à l'une de ces pages:
-
-### Option 1: Diagnostic Simple (Texte brut)
-```
-https://your-domain.com/diagnostic.php
-```
-Ultra-simple, texte brut, fonctionne si tout échoue.
-
-### Option 2: Page d'Installation Interactive (HTML)
-```
-https://your-domain.com/install.php
-```
-Interface graphique complète avec tous les détails.
-
-Ces pages **indépendantes de Laravel** vont:
-- ✅ Afficher les diagnostiques (PHP version, extensions, permissions)
-- ✅ Créer les répertoires manquants automatiquement
-- ✅ Créer le fichier `.env` depuis `.env.example`
-- ✅ Tester les permissions du système de fichiers
-- ✅ Lancer Composer automatiquement si disponible
-- ✅ Créer la base de données SQLite et table sessions
-- ✅ Écrire les logs détaillés dans `storage/logs/install-diagnostic.log`
-- ✅ Proposer des solutions spécifiques aux erreurs
-
-**Elles fonctionnent même si Laravel est complètement cassé!**
-
-Les logs de diagnostic sont disponibles via SSH:
-```bash
-tail -f storage/logs/install-diagnostic.log
-```
+1. [Prérequis](#prérequis)
+2. [Accès au wizard](#accès-au-wizard)
+3. [Étape 1: Vérification des prérequis](#étape-1-vérification-des-prérequis)
+4. [Étape 2: Paramètres applicatifs](#étape-2-paramètres-applicatifs)
+5. [Étape 3: Configuration base de données](#étape-3-configuration-base-de-données)
+6. [Étape 4: Configuration email](#étape-4-configuration-email)
+7. [Étape 5: Créer administrateur](#étape-5-créer-administrateur)
+8. [Étape 6: Récapitulatif](#étape-6-récapitulatif)
+9. [Étape 7: Installation finale](#étape-7-installation-finale)
+10. [Après installation](#après-installation)
+11. [Dépannage](#dépannage)
 
 ---
 
-## Installation Rapide
+## 🛠️ Prérequis
 
-### Prérequis
+Avant de commencer, assurez-vous que votre serveur dispose de:
 
-- **PHP**: 8.2 ou supérieur
-- **Composer**: Dernier version
-- **Node.js**: 18+ (optionnel pour les assets)
-- **Permissions**: Écriture sur `storage/`, `bootstrap/cache/`, `database/`
-- **Base de données**: SQLite (dev) ou MySQL 5.7+ (prod)
+### Système
+- **PHP**: 8.3.0 ou supérieur
+- **Serveur Web**: Apache 2.4+, Nginx 1.18+
+- **Port**: 80 (HTTP) ou 443 (HTTPS)
 
-### Commande d'installation unique
-
-```bash
-# 1. Cloner le projet depuis GitHub
-git clone https://github.com/fay019/api-manager.git
-cd api-manager
-
-# 2. Installation des dépendances PHP
-composer install
-
-# 3. Lancer l'installation complète
-php artisan install
+### Extensions PHP requises
+```
+✅ PDO (PHP Data Objects)
+✅ mbstring (Multi-byte string)
+✅ JSON
+✅ ctype
+✅ filter
+✅ hash
+✅ OpenSSL
 ```
 
-C'est tout! L'application est maintenant prête.
-
-### Vérification
-
-```bash
-# Vérifier que l'installation est correcte
-php artisan validate:install
-
-# Démarrer le serveur de développement
-php artisan serve
+### Extensions PHP optionnelles
+```
+⭐ zip (recommandé)
+⭐ fileinfo (recommandé)
+⭐ intl (optionnel)
 ```
 
-Accédez à:
-- **Application**: http://localhost:8000
-- **Admin Panel**: http://localhost:8000/admin
-- **Documentation**: http://localhost:8000/docs
-- **Health Check**: http://localhost:8000/api/v1/health
+### Répertoires writable
+```
+📁 storage/              (logs, sessions, uploads)
+📁 bootstrap/cache/      (cache applicatif)
+📁 database/             (base de données SQLite)
+```
+
+### Base de données (choisissez une)
+- **SQLite**: Inclus (parfait pour démarrer)
+- **MySQL**: 5.7+ ou 8.0+
+- **PostgreSQL**: 10+
 
 ---
 
-## Installation Interactive (Setup Wizard)
+## 🚀 Accès au wizard
 
-### 🧙 Nouvelle méthode: Interface Web
-
-À la place d'utiliser la CLI, vous pouvez maintenant installer l'application via une interface web interactive!
-
-#### Comment ça marche?
-
-**Première visite → Auto-détection → Setup Wizard s'affiche**
+Une fois l'application déployée:
 
 ```
-1. Cloner le projet
-   git clone https://github.com/fay019/api-manager.git
-   cd api-manager
-
-2. Installer les dépendances
-   composer install
-
-3. Démarrer le serveur
-   php artisan serve
-
-4. Visiter http://localhost:8000
-   ↓
-   ✨ Setup Wizard s'affiche automatiquement!
+http://votre-domaine.com/setup/welcome
 ```
 
-#### Les Étapes du Wizard (Flux Adaptatif)
-
-**Étape 1: Infos Générales + Choix Base de Données**
-```
-├─ Nom du Site (ex: "Mon API Manager")
-├─ URL de l'Application (ex: "https://api.example.com")
-├─ Email Admin (ex: "admin@example.com")
-├─ Mot de Passe Admin (min 8 caractères)
-│
-└─ ✨ Sélection du type de base de données:
-   ├─ SQLite (Développement/Test - aucune config supplémentaire)
-   ├─ MySQL (Production - nécessite une deuxième étape)
-   └─ PostgreSQL (Production - nécessite une deuxième étape)
-```
-
-**Étape 2: Configuration Base de Données (si MySQL/PostgreSQL)**
-
-*Cette étape s'affiche SEULEMENT si vous avez choisi MySQL ou PostgreSQL*
+Ou en local (Laravel Herd):
 
 ```
-Pour MySQL:
-├─ Hôte: localhost
-├─ Port: 3306
-├─ Base de données: api_manager
-├─ Utilisateur: root
-├─ Mot de passe: ••••••••
-└─ Bouton "Test Connexion" ✅ (avant de continuer)
-
-Pour PostgreSQL:
-├─ Hôte: localhost
-├─ Port: 5432
-├─ Base de données: api_manager
-├─ Utilisateur: postgres
-├─ Mot de passe: ••••••••
-└─ Bouton "Test Connexion" ✅ (avant de continuer)
-```
-
-**Étape 2 ou 3: Confirmation**
-
-*Pour SQLite: Étape 2 | Pour MySQL/PostgreSQL: Étape 3*
-
-```
-Récapitulatif final:
-├─ Nom du Site
-├─ URL de l'Application
-├─ Type de BD
-├─ Configuration BD
-└─ Bouton "Finaliser l'Installation" → Tout se configure automatiquement!
-```
-
-#### Après le Setup Wizard
-
-L'application effectue automatiquement TOUT ce qui est nécessaire:
-
-1. ✅ **Composer Install** - Installe les dépendances PHP si `vendor/` n'existe pas
-2. ✅ **APP_KEY** - Génère la clé de chiffrement si absente
-3. ✅ **Répertoires** - Crée `storage/`, `bootstrap/cache/` et tous les sous-répertoires
-4. ✅ **Fichier SQLite** - Crée la BD SQLite + table sessions (si SQLite choisi)
-5. ✅ **Mise à jour .env** - Configure tous les paramètres (DB, URL, etc.)
-6. ✅ **Migrations** - Exécute la création de toutes les tables
-7. ✅ **Seeders** - Lance les seeders pour initialiser les données
-8. ✅ **Admin User** - Crée l'utilisateur administrateur avec les identifiants saisis
-9. ✅ **Flag Installation** - Crée `storage/app/installed.lock` pour marquer comme installé
-
-**Puis vous êtes redirigé vers le login admin!**
-
-### ⚡ Bootstrap Automatique
-
-L'application crée automatiquement TOUT ce qui est nécessaire au démarrage:
-
-**1. Dans `public/index.php` (avant tout le reste):**
-- ✅ Crée les répertoires: `storage/`, `bootstrap/cache/`, etc.
-- ✅ Crée `.env` depuis `.env.example` si manquant
-- ✅ S'exécute AVANT que Laravel charge sa configuration
-- Élimine les erreurs "No environment file" et "Permission denied"
-
-**2. Dans le middleware `EnsureDatabaseExists` (avant la session):**
-- ✅ Crée le fichier SQLite s'il manque
-- ✅ Crée la table sessions automatiquement
-- Élimine les erreurs "Sessions table not found"
-
-**Résultat:** Aucune erreur 500 au premier accès! ✅
-
-#### Identifiants
-
-```
-Email: admin@example.com        (celui rempli dans le formulaire)
-Password: (celui rempli dans le formulaire)
+http://api-manager.test/setup/welcome
 ```
 
 ---
 
-### 🔄 Comment fonctionne la détection?
+## ✅ Étape 1: Vérification des prérequis
 
-**Middleware CheckInstallation** vérifie à chaque requête:
-
-```
-Requête Web
-    ↓
-[CheckInstallation Middleware]
-    ↓
-Fichier storage/app/installed.lock existe?
-    ├─ OUI  → App normale ✅
-    └─ NON  → Redirige vers /setup 🧙
-```
-
-**Le flag file** (`storage/app/installed.lock`):
-```json
-{
-  "installed_at": "2026-01-21T13:00:00Z",
-  "php_version": "8.3.30",
-  "laravel_version": "12.0.0",
-  "database": "mysql"
-}
-```
-
-### 📱 Interface Responsive
-
-Le Setup Wizard est entièrement responsive:
-- ✅ Desktop
-- ✅ Tablette
-- ✅ Mobile
-
-Avec design moderne et intuitif!
-
-### 🔗 Routes Setup
-
-```
-GET  /setup                 → Page d'accueil Setup
-GET  /setup/general        → Étape 1 (formulaire infos + sélection BD)
-POST /setup/save-general   → Sauvegarde étape 1
-GET  /setup/database       → Étape 2 (SEULEMENT si MySQL/PostgreSQL)
-POST /setup/test-database  → Test connexion BD (AJAX)
-POST /setup/save-database  → Sauvegarde étape 2
-GET  /setup/confirm        → Confirmation (Étape 2 ou 3 selon BD)
-POST /setup/finish         → Finalise l'installation complète
-```
-
-### ✨ Problèmes Résolus
-
-| Problème | Solution |
-|----------|----------|
-| **Erreur 500 au premier accès** | Middleware crée `.env` depuis `.env.example` avant tout le reste |
-| **".env file not found"** | Middleware `EnsureDatabaseExists` le crée automatiquement |
-| **"Database file does not exist"** | Middleware crée le fichier + table sessions avant session loading |
-| **"Sessions table not found"** | Middleware prépare la table sessions automatiquement |
-| **"Composer not found"** | Setup installe Composer automatiquement si `vendor/` manque |
-| **"Permission denied" sur storage/** | Setup crée tous les répertoires avec permissions correctes |
-| **"APP_KEY not set"** | Setup génère APP_KEY automatiquement |
-| **Oublier les infos SQLite** | SQLite est créé automatiquement, aucune config manuelle nécessaire |
-| **Configuration MySQL oubliée** | Setup demande TOUT d'abord avant de procéder |
-
-### 📖 Documentation Complète
-
-Pour plus de détails sur le Setup Wizard, voir: [SETUP_WIZARD.md](./SETUP_WIZARD.md)
-
----
-
-## Installation depuis GitHub
-
-### Clone & Deploy (Déploiement Recommandé)
-
-Cette méthode est idéale pour le déploiement en production sur des serveurs:
-
-```bash
-# 1. Cloner depuis GitHub
-git clone https://github.com/fay019/api-manager.git
-cd api-manager
-
-# 2. Configurer pour votre environnement
-cp .env.example .env
-nano .env  # Éditer les variables
-
-# 3. Installer les dépendances (sans packages de dev)
-composer install --no-dev --optimize-autoloader
-
-# 4. Lancer l'installation complète
-php artisan install --force
-
-# 5. Optimiser pour la production
-php artisan optimize
-php artisan config:cache
-php artisan route:cache
-```
-
-### Variables d'Environnement Importantes
-
-```bash
-# .env pour production
-APP_NAME="API Manager"
-APP_ENV=production
-APP_DEBUG=false
-APP_URL=https://api.example.com
-
-# Base de données
-DB_CONNECTION=mysql
-DB_HOST=localhost
-DB_PORT=3306
-DB_DATABASE=api_manager
-DB_USERNAME=user
-DB_PASSWORD=secure_password
-
-# Performance
-CACHE_STORE=database
-SESSION_DRIVER=database
-QUEUE_CONNECTION=database
-```
-
-### Push vers GitHub
-
-```bash
-# Après la configuration locale
-git add .
-git commit -m "chore: configure for production"
-git push origin master
-```
-
-### Déploiement Continu (CI/CD)
-
-Vous pouvez maintenant créer des pipelines GitHub Actions pour automatiser:
-
-```yaml
-name: Deploy API Manager
-
-on:
-  push:
-    branches: [main, master]
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Install PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-
-      - name: Install dependencies
-        run: composer install --no-dev --optimize-autoloader
-
-      - name: Run installation
-        run: php artisan install --force
-
-      - name: Deploy to server
-        run: ./deploy.sh
-```
-
----
-
-## Installation Détaillée
-
-### Étape 1: Cloner le projet
-
-```bash
-git clone <repository-url>
-cd api-manager
-```
-
-### Étape 2: Installer les dépendances
-
-```bash
-# Dépendances PHP via Composer
-composer install
-
-# Dépendances Node.js (optionnel, pour les assets front-end)
-npm install
-```
-
-### Étape 3: Configuration de l'environnement
-
-```bash
-# Copier le fichier d'environnement template
-cp .env.example .env
-
-# Générer la clé de l'application
-php artisan key:generate
-
-# Adapter .env à votre environnement
-nano .env
-```
-
-**Variables essentielles dans `.env`:**
-
-```bash
-APP_NAME="API Manager"
-APP_ENV=local              # local | testing | production
-APP_DEBUG=true
-APP_URL=http://localhost:8000
-
-# Base de données
-DB_CONNECTION=sqlite       # sqlite | mysql | pgsql
-DB_DATABASE=database/database.sqlite
-
-# Pour MySQL:
-# DB_CONNECTION=mysql
-# DB_HOST=127.0.0.1
-# DB_PORT=3306
-# DB_DATABASE=api_manager
-# DB_USERNAME=root
-# DB_PASSWORD=password
-
-# Cache & Session (optionnel)
-CACHE_STORE=database
-SESSION_DRIVER=database
-QUEUE_CONNECTION=database
-```
-
-### Étape 4: Installation complète
-
-```bash
-php artisan install
-```
-
-Cette commande exécute tous les processus:
-1. ✅ Vérification des prérequis système
-2. ✅ Configuration de l'environnement
-3. ✅ Publication des fichiers de configuration
-4. ✅ Exécution des migrations de base de données
-5. ✅ Découverte et initialisation des modules
-6. ✅ Remplissage initial de la base de données (seeding)
-7. ✅ Configuration du stockage
-8. ✅ Compilation des assets front-end
-9. ✅ Vérification de la santé de l'application
-
-### Étape 5: Vérification
-
-```bash
-php artisan validate:install
-```
-
-Tous les checks doivent être verts ✅.
-
----
-
-## Installation par Étapes
-
-Pour un déploiement progressif ou pour tester chaque étape individuellement:
-
-### Exécuter une étape spécifique
-
-```bash
-# Vérifier les prérequis
-php artisan install --step=requirements
-
-# Configurer l'environnement
-php artisan install --step=environment
-
-# Exécuter les migrations
-php artisan install --step=database
-
-# Initialiser les modules
-php artisan install --step=modules
-
-# Remplir la base de données
-php artisan install --step=seeders
-
-# Compiler les assets
-php artisan install --step=assets
-
-# Vérifier la santé
-php artisan install --step=health
-```
-
-### Étapes disponibles
-
-| Étape | Description | Critique |
-|-------|-------------|----------|
-| `requirements` | Vérification PHP, extensions, permissions | ✅ OUI |
-| `environment` | Configuration .env, APP_KEY, BD SQLite | ✅ OUI |
-| `config` | Publication des fichiers de config | ❌ NON |
-| `database` | Migrations, création tables | ✅ OUI |
-| `modules` | Découverte et init des modules | ✅ OUI |
-| `seeders` | Données initiales (dev only) | ❌ NON |
-| `storage` | Configuration répertoires de stockage | ✅ OUI |
-| `assets` | Compilation front-end (npm run build) | ❌ NON |
-| `health` | Vérification finale de santé | ✅ OUI |
-
-**Notes:**
-- Les étapes critiques arrêtent l'installation en cas d'erreur
-- Les étapes non-critiques continuent même en cas d'erreur
-- L'ordre des étapes est important et respecte les dépendances
-
----
-
-## Validation
-
-### Vérifier que tout fonctionne
-
-```bash
-php artisan validate:install
-```
-
-Affiche:
-- ✅ PHP version
+Le système vérifie automatiquement:
+- ✅ Version de PHP (8.3+)
 - ✅ Extensions requises
-- ✅ Permissions d'écriture
-- ✅ Connexion base de données
-- ✅ Migrations exécutées
-- ✅ Tables essentielles
-- ✅ Performance BD
+- ✅ Permissions des répertoires
+- ✅ Fichier .env présent
 
-### Découvrir les modules
+**Si vous voyez des ❌**:
 
-```bash
-# Lister tous les modules
-php artisan discover:modules
+1. **Extension manquante**: Contactez votre hébergeur
+2. **Permission refusée**:
+   ```bash
+   chmod -R 775 storage bootstrap/cache database
+   ```
+3. **Fichier .env manquant**: Sera créé automatiquement
 
-# Afficher l'ordre d'installation (basé sur les dépendances)
-php artisan discover:modules --install-order
-
-# Exporter les modules en JSON
-php artisan discover:modules --json
-```
+**Suite**: Cliquez **"Continuer"** →
 
 ---
 
-## Dépannage
+## 📝 Étape 2: Paramètres applicatifs
 
-### Erreur: "Cannot connect to database"
+### À remplir
 
-**Solutions:**
-```bash
-# 1. Vérifier .env DB_CONNECTION et DB_DATABASE
-nano .env
-
-# 2. Pour SQLite, créer le fichier
-touch database/database.sqlite
-chmod 666 database/database.sqlite
-
-# 3. Pour MySQL, vérifier la connexion
-mysql -h 127.0.0.1 -u root -p
-
-# 4. Exécuter les migrations manuellement
-php artisan migrate --force
+**Nom de l'application**
+```
+Exemple: "API Manager"
 ```
 
-### Erreur: "Insufficient permissions"
+**URL de l'application**
+```
+https://api.example.com    (production)
+http://api-manager.test    (local)
+```
+- Doit commencer par `http://` ou `https://`
+- Sans trailing slash
 
-**Solutions:**
-```bash
-# Donner les permissions d'écriture
-chmod -R 775 storage/
-chmod -R 775 bootstrap/cache/
-chmod 666 database/database.sqlite
+**Environnement**
+```
+local       - Développement
+staging     - Test
+production  - Production
 ```
 
-### Erreur: "Node.js not installed"
-
-**Solution (optionnel):**
-```bash
-# Si vous ne compilez pas les assets, ce n'est pas grave
-# Sinon, installer Node.js:
-brew install node        # macOS
-apt-get install nodejs   # Ubuntu/Debian
+**Fuseau horaire**
+```
+UTC, Europe/Paris, America/New_York, Asia/Tokyo
 ```
 
-### Erreur: "Extension missing"
-
-**Solutions:**
-```bash
-# Sur macOS avec PHP via Homebrew
-pecl install bcmath
-pecl install json
-
-# Sur Ubuntu/Debian
-apt-get install php-bcmath
-apt-get install php-json
-
-# Sur Docker
-# Ajouter à votre Dockerfile les extensions manquantes
+**Langue**
+```
+en (English), fr (Français)
 ```
 
-### Réinitialiser l'installation
-
-```bash
-# ⚠️ ATTENTION: Cela supprime toutes les données!
-
-# Supprimer la base de données
-rm database/database.sqlite
-
-# Réinitialiser le cache des modules
-php artisan cache:forget app:module:registry
-
-# Relancer l'installation
-php artisan install
-```
+**Suite**: **"Continuer"** →
 
 ---
 
-## Environnements de Déploiement
+## 🗄️ Étape 3: Configuration base de données
 
-### Développement
-
-```bash
-# Dans .env
-APP_ENV=local
-APP_DEBUG=true
-
-# Installation
-php artisan install
-
-# Démarrer
-php artisan serve
+### SQLite (Recommandé pour démarrer)
+```
+Chemin: database.sqlite
+✅ Aucune installation requise
 ```
 
-### Staging
-
-```bash
-# Dans .env
-APP_ENV=staging
-APP_DEBUG=false
-DB_CONNECTION=mysql
-
-# Installation
-php artisan install --force
-
-# Vérifier
-php artisan validate:install
+### MySQL
+```
+Hôte:       localhost
+Port:       3306
+Base:       api_manager
+Utilisateur: api_user
+Mot de passe: [votre password]
 ```
 
-### Production
-
-```bash
-# Dans .env
-APP_ENV=production
-APP_DEBUG=false
-DB_CONNECTION=mysql
-
-# Installation (skip les seeders de dev)
-php artisan install --force --skip-seeds=dev
-
-# Optimiser pour production
-php artisan optimize
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-
-# Vérifier
-php artisan validate:install
+**Créer la BD**:
+```sql
+CREATE DATABASE api_manager;
+CREATE USER 'api_user'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL ON api_manager.* TO 'api_user'@'localhost';
+FLUSH PRIVILEGES;
 ```
 
-### Docker
-
-```dockerfile
-FROM php:8.2-fpm
-
-# Installer les extensions requises
-RUN docker-php-ext-install bcmath json pdo pdo_mysql
-
-# Copier le projet
-COPY . /var/www/html
-
-WORKDIR /var/www/html
-
-# Installer les dépendances
-RUN composer install --no-dev --optimize-autoloader
-
-# Permissions
-RUN chown -R www-data:www-data /var/www/html/storage
-
-# Installation
-RUN php artisan install --force
-
-EXPOSE 9000
+### PostgreSQL
 ```
+Hôte:       localhost
+Port:       5432
+Base:       api_manager
+Utilisateur: postgres
+```
+
+**Test**: Cliquez "Tester la connexion" ✓
+
+**Suite**: **"Continuer"** →
 
 ---
 
-## Mise à jour de l'application
+## 📧 Étape 4: Configuration email
 
-### Après une mise à jour du code
+### SMTP (Recommandé)
 
-```bash
-# 1. Installer les nouvelles dépendances
-composer install
+**Gmail**
+```
+Hôte:       smtp.gmail.com
+Port:       587
+Chiffrement: TLS
+Utilisateur: votre-email@gmail.com
+Mot de passe: [App Password, pas votre password Gmail]
 
-# 2. Exécuter les migrations
-php artisan migrate --force
-
-# 3. Vider les caches
-php artisan cache:clear
-php artisan config:clear
-
-# 4. Redémarrer les services
-php artisan queue:restart
+⚠️ Créez un "App Password" dans les paramètres Gmail (2FA requis)
 ```
 
-### Ajouter un nouveau module
+**Mailtrap** (Test)
+```
+Hôte:       smtp.mailtrap.io
+Port:       2525
+Chiffrement: TLS
+Utilisateur: [Votre ID]
+Mot de passe: [Votre token]
+```
 
-Voir [MODULE_CREATION.md](./MODULE_CREATION.md) pour les instructions complètes.
+**Sendgrid**
+```
+Hôte:       smtp.sendgrid.net
+Port:       587
+Utilisateur: apikey
+Mot de passe: [Votre API Key]
+```
+
+### Autres options
+- **SendMail**: `/usr/sbin/sendmail -t -i`
+- **Log**: Pour développement (emails dans logs)
+
+### Adresse source
+```
+De: noreply@votre-domaine.com
+Nom: API Manager
+```
+
+**Test**: Cliquez "Tester la connexion SMTP" ✓
+
+**Suite**: **"Continuer"** →
 
 ---
 
-## Variables d'environnement avancées
+## 👤 Étape 5: Créer administrateur
 
-### Installation
+### Informations
 
-```bash
-# Désactiver l'installation automatique (CLI seulement)
-APP_INSTALLATION_ENABLED=false
-
-# Logging d'installation
-INSTALLATION_LOGGING=true
+**Nom complet**
+```
+Exemple: "John Doe"
 ```
 
-### Modules
+**Email**
+```
+admin@votre-domaine.com
+```
+- Utilisé pour se connecter à l'admin
 
-```bash
-# Mettre en cache le registre des modules (production)
-APP_ENV=production  # Auto-active le cache
+**Mot de passe**
 
-# Chemins personnalisés pour les modules
-MODULE_PATHS=/app/modules,/custom/modules
+**Critères obligatoires**:
+```
+✅ Minimum 8 caractères
+✅ Au moins 1 MAJUSCULE
+✅ Au moins 1 minuscule
+✅ Au least 1 chiffre (0-9)
+✅ Au moins 1 caractère spécial (@$!%*?&)
 ```
 
-### Base de données
-
-```bash
-# Mode strict (production)
-DB_STRICT=true
-
-# Pool de connexions
-DB_POOL_SIZE=10
-
-# Timeout
-DB_TIMEOUT=30
+**Exemples valides**:
 ```
+✅ SecurePass123!
+✅ MyApp@2024Admin
+✅ Prod#Pass99
+```
+
+**Indicateur de force**: Les barres colorées montrent la force en temps réel
+
+**Suite**: **"Continuer"** →
 
 ---
 
-## Support
+## 📋 Étape 6: Récapitulatif
 
-En cas de problème:
+Vérifiez que tout est correct:
+- ✓ Nom, URL, environnement
+- ✓ Type de BD et identifiants
+- ✓ Configuration email
+- ✓ Admin email
 
-1. Consultez les [logs d'installation](../storage/logs/installation.log)
-2. Exécutez `php artisan validate:install`
-3. Consultez [DATABASE.md](./DATABASE.md) pour les problèmes de BD
-4. Consultez [MODULE_CREATION.md](./MODULE_CREATION.md) pour les modules
+**⚠️ Attention**: Les mots de passe sont masqués par sécurité
+
+Si tout est OK → **"Lancer l'installation"** ↓
 
 ---
 
-**Dernière mise à jour**: 21 janvier 2026
-**Version du système d'installation**: 1.0.0
+## 🚀 Étape 7: Installation finale
+
+Le système exécute automatiquement:
+
+```
+1. ✅ Configuration .env
+2. ✅ Migrations base de données
+3. ✅ Création utilisateur admin
+4. ✅ Verrouillage installation (installed.lock)
+5. ✅ Redirection tableau de bord
+```
+
+**Durée**: 5-30 secondes
+
+**Après**: Page de succès avec redirection automatique vers l'admin
+
+---
+
+## ✨ Après installation
+
+### Première connexion
+
+```
+URL:  /admin
+Email: admin@votre-domaine.com
+Password: [Celui que vous avez créé]
+```
+
+### Premiers pas
+1. Changer le mot de passe (recommandé)
+2. Compléter votre profil
+3. Explorer le tableau de bord
+4. Lire la documentation
+
+---
+
+## 🔧 Dépannage
+
+Voir **docs/TROUBLESHOOTING.md** pour:
+- ❌ Erreurs de connexion BD
+- ❌ Problèmes SMTP/email
+- ❌ Erreurs de permissions
+- ❌ Erreurs PHP/extensions
+
+---
+
+## 📞 Support
+
+- Email: support@example.com
+- Documentation: `/admin/help`
+- Bugs: GitHub Issues
+
+---
+
+**Installation réussie? 🎉 Bienvenue dans API Manager!**

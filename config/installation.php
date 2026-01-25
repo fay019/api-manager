@@ -151,7 +151,7 @@ return [
     */
     'validation' => [
         'check_php_version' => true,
-        'php_minimum_version' => '8.2',
+        'php_minimum_version' => '8.3',
         'check_extensions' => true,
         'required_extensions' => [
             'bcmath',
@@ -171,5 +171,86 @@ return [
             'database',
         ],
         'check_database' => true,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Wizard Installation Configuration (Refactor 2026)
+    |--------------------------------------------------------------------------
+    |
+    | Configuration pour le nouveau système d'installation wizard par étapes.
+    | Ce système remplace progressivement l'ancien système basé sur Steps.
+    |
+    */
+
+    'wizard' => [
+        /**
+         * Configuration session setup.
+         * Paramètres affectant la session pendant l'installation.
+         */
+        'session' => [
+            'timeout' => 60,
+            'key_prefix' => 'setup.',
+        ],
+
+        /**
+         * Configuration rate limiting.
+         * Protection contre brute force sur /setup.
+         */
+        'rate_limit' => [
+            'max_attempts' => 30,
+            'decay_minutes' => 10,
+        ],
+
+        /**
+         * Configuration requirements check cache.
+         * Les vérifications sont coûteuses (permissions, extensions).
+         */
+        'requirements' => [
+            'cache_duration' => 5,
+            'min_php_version' => '8.3.0',
+        ],
+
+        /**
+         * Configuration validation passwords admin.
+         * Règles pour le mot de passe admin initial.
+         */
+        'password' => [
+            'min_length' => 12,
+            'require_mixed_case' => true,
+            'require_numbers' => true,
+            'require_symbols' => false,
+            'check_compromised' => true,
+        ],
+
+        /**
+         * Configuration base de données.
+         * Paramètres pour tests connexion DB.
+         */
+        'database' => [
+            'connection_timeout' => 10,
+            'supported_drivers' => ['sqlite', 'mysql', 'pgsql'],
+            'preferred_charset' => 'utf8mb4',
+        ],
+
+        /**
+         * Configuration email/SMTP.
+         * Paramètres pour setup mail.
+         */
+        'mail' => [
+            'supported_mailers' => ['smtp', 'log'],
+            'default_mailer' => 'log',
+            'test_timeout' => 10,
+        ],
+
+        /**
+         * Configuration sécurité.
+         * Paramètres affectant sécurité du setup.
+         */
+        'security' => [
+            'force_https' => true,
+            'allow_localhost_setup' => true,
+            'hide_secrets_in_logs' => true,
+        ],
     ],
 ];

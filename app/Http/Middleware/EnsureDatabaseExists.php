@@ -44,79 +44,19 @@ class EnsureDatabaseExists
     {
         $dbPath = config('database.connections.sqlite.database');
 
-        // Créer le fichier database.sqlite s'il n'existe pas
-        if (!file_exists($dbPath)) {
-            // Créer le répertoire s'il n'existe pas
-            $dir = dirname($dbPath);
-            if (!is_dir($dir)) {
-                mkdir($dir, 0755, true);
-            }
-
-            // Créer le fichier vide
-            touch($dbPath);
-
-            // Créer les tables minimales nécessaires au démarrage
-            try {
-                $pdo = new \PDO("sqlite:{$dbPath}");
-                $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-
-                // Table sessions (pour SESSION_DRIVER=database)
-                $pdo->exec('
-                    CREATE TABLE IF NOT EXISTS sessions (
-                        id TEXT PRIMARY KEY,
-                        user_id INTEGER,
-                        ip_address VARCHAR(45),
-                        user_agent TEXT,
-                        payload LONGTEXT,
-                        last_activity INTEGER
-                    )
-                ');
-
-                // Table cache (pour CACHE_STORE=database)
-                $pdo->exec('
-                    CREATE TABLE IF NOT EXISTS cache (
-                        key TEXT PRIMARY KEY,
-                        value LONGTEXT,
-                        expiration INTEGER
-                    )
-                ');
-
-                // Table cache_locks (pour atomic operations)
-                $pdo->exec('
-                    CREATE TABLE IF NOT EXISTS cache_locks (
-                        key TEXT PRIMARY KEY,
-                        owner TEXT,
-                        expiration INTEGER
-                    )
-                ');
-
-                // Table jobs (pour QUEUE_CONNECTION=database)
-                $pdo->exec('
-                    CREATE TABLE IF NOT EXISTS jobs (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        queue TEXT,
-                        payload LONGTEXT,
-                        attempts INTEGER,
-                        reserved_at INTEGER,
-                        available_at INTEGER,
-                        created_at INTEGER
-                    )
-                ');
-
-                // Table failed_jobs (pour les jobs échoués)
-                $pdo->exec('
-                    CREATE TABLE IF NOT EXISTS failed_jobs (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        connection TEXT,
-                        queue TEXT,
-                        payload LONGTEXT,
-                        exception LONGTEXT,
-                        failed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                    )
-                ');
-            } catch (\Exception $e) {
-                // Ignorer les erreurs - les migrations vont les créer
-            }
+        // Créer le répertoire s'il n'existe pas
+        $dir = dirname($dbPath);
+        if (! is_dir($dir)) {
+            mkdir($dir, 0755, true);
         }
+
+        // Créer le fichier database.sqlite s'il n'existe pas
+        if (! file_exists($dbPath)) {
+            touch($dbPath);
+        }
+
+        // NE PAS créer les tables ici - laisser les migrations de Laravel le faire
+        // Cela évite les conflits "table already exists" pendant les migrations
+        // Le middleware ne doit que s'assurer que la BD et le fichier existent
     }
 }

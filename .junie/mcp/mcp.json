@@ -1,0 +1,20 @@
+{
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "/Users/fay019/Library/Application Support/Herd/bin/php83",
+            "args": [
+                "/Volumes/Dev/Projets/Web/api-manager/artisan",
+                "boost:mcp"
+            ]
+        },
+        "herd": {
+            "command": "/Users/fay019/Library/Application Support/Herd/bin/php83",
+            "args": [
+                "/Applications/Herd.app/Contents/Resources/herd-mcp.phar"
+            ],
+            "env": {
+                "SITE_PATH": "/Volumes/Dev/Projets/Web/api-manager"
+            }
+        }
+    }
+}
