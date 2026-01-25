@@ -1,8 +1,38 @@
 # 📖 Guide d'Installation - API Manager
 
-**Version:** 2.0 (Wizard Complet)
-**Dernière mise à jour:** 24 janvier 2026
+**Version:** 2.1 (Stateless Architecture)
+**Dernière mise à jour:** 25 janvier 2026
 **Status:** ✅ Production Ready
+
+---
+
+## 🏗️ Architecture Technique
+
+L'installation utilise une **bascule binaire d'état** pour garantir une stabilité maximale :
+
+### 1. Mode PRE-INSTALL (Wizard)
+Le wizard d'installation fonctionne de manière **stateless** (sans sessions Laravel chiffrées).
+*   **Identification** : Via un jeton univoque stocké dans un cookie non chiffré `api_manager_setup_token` ou passé par URL `?setup_token=...`.
+*   **Sécurité** : Protection CSRF personnalisée via un jeton `_setup_token` contenu dans chaque formulaire.
+*   **Données** : Les progrès sont sauvegardés dans des fichiers JSON temporaires (`storage/app/setup/`).
+
+### 2. Mode POST-INSTALL (Application)
+Une fois installé :
+*   Le fichier `storage/app/installed.lock` verrouille l'accès au wizard.
+*   L'application repasse en mode Laravel standard avec sessions chiffrées et protection CSRF native.
+*   Toutes les fonctionnalités (Livewire, Filament, API) deviennent actives.
+
+---
+
+## 🛑 Réinitialisation
+
+Si vous devez recommencer l'installation à zéro, utilisez la commande CLI dédiée (uniquement en développement) :
+
+```bash
+php artisan app:danger-reset
+```
+
+Cette commande supprimera la base de données SQLite, le fichier lock, les logs et videra les sessions.
 
 ---
 
@@ -111,11 +141,12 @@ Exemple: "API Manager"
 
 **URL de l'application**
 ```
-https://api.example.com    (production)
 http://api-manager.test    (local)
+https://api.example.com    (production)
 ```
 - Doit commencer par `http://` ou `https://`
-- Sans trailing slash
+- Sans trailing slash (pas de `/` à la fin)
+- **Important** : En mode local (Herd), utilisez toujours l'URL `.test`.
 
 **Environnement**
 ```
@@ -311,6 +342,14 @@ Password: [Celui que vous avez créé]
 2. Compléter votre profil
 3. Explorer le tableau de bord
 4. Lire la documentation
+
+### Informations importantes (Post-installation)
+
+Une fois l'étape 7 terminée, des actions manuelles peuvent être nécessaires :
+
+1.  **Vider les cookies** : Si vous rencontrez une erreur 419 après l'installation, videz les cookies de votre navigateur pour le domaine ou utilisez une fenêtre de navigation privée.
+2.  **Permissions SQLite** : Vérifiez que le dossier `database/` est accessible en écriture.
+3.  **Nettoyage** : Assurez-vous que le dossier `storage/app/setup/` est vide.
 
 ---
 

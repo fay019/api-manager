@@ -8,6 +8,36 @@ A production-ready, modular API hub system for centralizing multiple APIs with s
 
 ---
 
+## ⚙️ Application Lifecycle: Binary State Switch
+
+The application operates in two mutually exclusive modes based on the presence of `storage/app/installed.lock`.
+
+### 1. PRE-INSTALL Mode (Setup Wizard)
+*   **Trigger**: `installed.lock` is missing.
+*   **Behavior**: 
+    *   Only `routes/setup.php` is loaded.
+    *   Standard app routes are **not registered**, preventing conflicts with Livewire v3.
+    *   **Stateless architecture**: No standard Laravel sessions or encrypted cookies are used to avoid `DECRYPT_FAILED` errors when `APP_KEY` changes.
+    *   Progress is stored in `storage/app/setup/progress_[token].json`.
+
+### 2. POST-INSTALL Mode (Standard Laravel)
+*   **Trigger**: `installed.lock` exists.
+*   **Behavior**: Normal Laravel lifecycle with Filament and Livewire fully enabled. The setup wizard is physically inaccessible.
+
+---
+
+## 🛑 Resetting the Application
+
+If you need to restart the installation process, use the dedicated CLI command (forbidden in production):
+
+```bash
+php artisan app:danger-reset
+```
+
+*You can also reset the application from the **Admin Panel > Settings > Danger Zone**.*
+
+---
+
 ## ✨ Core Features
 
 | Feature | Description |

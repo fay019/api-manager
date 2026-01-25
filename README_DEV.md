@@ -9,8 +9,9 @@ The application operates in two mutually exclusive modes based on the presence o
 *   **Behavior**: 
     *   Only `routes/setup.php` is loaded.
     *   Business routes (`web.php`, `api.php`, Filament) are **not registered**.
-    *   Stateless architecture: No standard Laravel sessions or encrypted cookies are used.
-    *   Progress is stored in temporary JSON files: `storage/app/setup/progress_[token].json`.
+    *   **Stateless architecture**: No standard Laravel sessions or encrypted cookies are used. This prevents `DECRYPT_FAILED` errors during installation when the `APP_KEY` is generated or changed.
+    *   **Token Identification**: Identification is handled via an unencrypted cookie `api_manager_setup_token` and a fallback URL parameter `?setup_token=...`.
+    *   Progress is stored in temporary JSON files: `storage/app/setup/progress_[sha256(token)].json`.
 *   **Security**: Uses a custom `_setup_token` for CSRF protection instead of standard Laravel CSRF.
 
 ### 2. POST-INSTALL Mode (Standard Laravel)
@@ -25,16 +26,16 @@ The application operates in two mutually exclusive modes based on the presence o
 
 ## 🛑 Resetting the Application
 
-If you need to restart the installation process or reset the environment, use the dedicated CLI command.
+If you need to restart the installation process or reset the environment, use the dedicated CLI command or the Admin UI.
 
-### `php artisan app:danger-reset`
-
+### CLI: `php artisan app:danger-reset`
 **What it does (DESTRUCTIVE):**
 1.  Removes `storage/app/installed.lock`.
 2.  Deletes the SQLite database (`database/database.sqlite`).
 3.  Cleans `storage/app/setup/` progress files.
 4.  Backs up `.env` and clears application caches.
-5.  Truncates logs.
+5.  Clears all user sessions.
+6.  Truncates logs.
 
 **Usage:**
 ```bash
@@ -42,7 +43,20 @@ php artisan app:danger-reset
 ```
 *Follow the interactive prompts. You will be asked to type "CONFIRMER" to proceed.*
 
-> ⚠️ **WARNING**: This command is forbidden in `production` environment.
+### Admin UI: Settings > Danger Zone
+The same reset process can be triggered from the Admin Panel by typing "Confirmer" in the modal.
+
+> ⚠️ **WARNING**: Resetting is strictly forbidden in `production` environment.
+
+---
+
+## 🛠️ Internal Maintenance
+
+### Documentation Scanner
+The documentation scanner automatically indexes Markdown files in the project.
+*   **Paths scanned**: Project root and `docs/` (recursive).
+*   **Admin Access**: System > Documentation Settings.
+*   **Status**: New files are hidden by default for security.
 
 ---
 

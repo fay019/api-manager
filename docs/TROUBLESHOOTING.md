@@ -370,11 +370,44 @@ chmod -R 644 storage bootstrap/cache database/.gitkeep
 
 **Solution**:
 
-Pour **réinstaller**, voir la section "Test Installation Réel" en bas.
+---
+
+## 🛑 Réinitialisation Totale (DANGER)
+
+Si l'application est dans un état incohérent ou si vous voulez recommencer à zéro :
+
+### Via CLI (Recommandé)
+```bash
+php artisan app:danger-reset
+```
+*Note : Cette commande demande une confirmation textuelle "CONFIRMER".*
+
+### Via l'Interface Admin
+1. Allez dans **Administration > Paramètres**.
+2. Dans la **Zone de Danger**, cliquez sur **Réinitialiser l'Application**.
+3. Saisissez "Confirmer" dans le modal.
+
+⚠️ **ATTENTION** : Ces actions sont irréversibles et interdites en production.
 
 ---
 
 ## 🟢 Après Installation
+
+### ❌ Erreur 419 (Page Expired) au Login
+**Cause** : Cookies de session obsolètes suite au changement de `APP_KEY` pendant l'installation.
+**Solution** :
+1. Vider les cookies de votre navigateur pour le domaine `api-manager.test`.
+2. Utiliser une fenêtre de navigation privée.
+3. Actualiser la page (Cmd+R / Ctrl+R) avant de soumettre le formulaire.
+
+### ❌ Erreur 404 sur Livewire ou Filament
+**Cause** : Le cache des routes peut être corrompu ou l'application est bloquée en mode installation.
+**Solution** :
+1. Vérifiez que `storage/app/installed.lock` existe.
+2. Lancez la commande de nettoyage du cache :
+   ```bash
+   php artisan optimize:clear
+   ```
 
 ### ✅ "Comment se connecter à l'admin?"
 
