@@ -29,8 +29,12 @@ class PromoService
             return [];
         }
 
+        // Récupérer le numéro de la version la plus récente
+        $versionNumber = $promo->versions()->max('version') ?? 1;
+
         return [
             'id' => $promo->id,
+            'version' => $versionNumber,
             'title' => $promo->title,
             'content' => $promo->content,
             'image_url' => $promo->full_image_url,
