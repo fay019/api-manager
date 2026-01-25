@@ -7,10 +7,10 @@ use App\Models\Promo;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Slider;
 use Filament\Forms\Components\Slider\Enums\PipsMode;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -224,9 +224,12 @@ class PromoForm
                     ->maxLength(255)
                     ->extraInputAttributes(['dir' => $direction]),
 
-                RichEditor::make("content.{$locale}")
-                    ->label("Contenu ({$label})")
+                // Ersetzt den RichEditor durch ein einfaches Textarea für Klartext (Anforderung: Nur Klartext, kein HTML)
+                Textarea::make("content.{$locale}")
+                    ->label("Inhalt ({$label})")
                     ->required(fn () => $locale === 'fr')
+                    ->rows(5)
+                    ->helperText('Nur Klartext (kein HTML)')
                     ->columnSpanFull()
                     ->extraAttributes(['dir' => $direction]),
 
