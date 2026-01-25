@@ -197,6 +197,7 @@ class SuccessController extends Controller
             'APP_ENV' => $appSettings['env'],
             'APP_KEY' => $appSettings['key'],
             'APP_DEBUG' => $appSettings['debug'] ? 'true' : 'false',
+            'APP_ALLOW_PRODUCTION_RESET' => ($appSettings['allow_production_reset'] ?? false) ? 'true' : 'false',
             'APP_TIMEZONE' => $appSettings['timezone'],
             'APP_LOCALE' => $appSettings['locale'],
             'DB_CONNECTION' => $database['driver'],

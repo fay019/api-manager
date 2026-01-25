@@ -73,6 +73,7 @@ class AppSettingsController extends Controller
             'app_url' => $setupSession->get('setup.app_url', $defaultAppUrl),
             'app_env' => $setupSession->get('setup.app_env', $defaultAppEnv),
             'app_debug' => $setupSession->get('setup.app_debug', $defaultAppEnv === 'local'),
+            'allow_production_reset' => $setupSession->get('setup.allow_production_reset', config('installation.wizard.security.allow_production_reset', false)),
             'timezone' => $setupSession->get('setup.timezone', config('app.timezone', 'UTC')),
             'locale' => $setupSession->get('setup.locale', config('app.locale', 'fr')),
         ];
@@ -119,6 +120,7 @@ class AppSettingsController extends Controller
             'app_url' => 'required|url',
             'app_env' => 'required|in:local,staging,production',
             'app_debug' => 'nullable|boolean',
+            'allow_production_reset' => 'nullable|boolean',
             'timezone' => 'required|timezone',
             'locale' => 'required|string|in:fr,en,es',
         ]);
@@ -146,6 +148,7 @@ class AppSettingsController extends Controller
         $setupSession->set('setup.app_url', $validated['app_url']);
         $setupSession->set('setup.app_env', $validated['app_env']);
         $setupSession->set('setup.app_debug', $validated['app_debug'] ?? ($validated['app_env'] === 'local'));
+        $setupSession->set('setup.allow_production_reset', $validated['allow_production_reset'] ?? false);
         $setupSession->set('setup.timezone', $validated['timezone']);
         $setupSession->set('setup.locale', $validated['locale']);
 

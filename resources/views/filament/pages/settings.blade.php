@@ -62,7 +62,7 @@
         </div>
     </div>
     <!-- Danger Zone: Application Reset -->
-    @if(!app()->environment('production'))
+    @if(!app()->environment('production') || config('installation.wizard.security.allow_production_reset', false))
         <div style="background: white; border: 1px solid #fee2e2; border-radius: 0.5rem; overflow: hidden; margin-top: 2rem;">
             <!-- Header -->
             <div style="background: #fef2f2; padding: 1rem; border-bottom: 1px solid #fee2e2;">

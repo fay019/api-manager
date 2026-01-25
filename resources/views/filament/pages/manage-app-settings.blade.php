@@ -122,7 +122,11 @@
     </div>
 
     <!-- Action Buttons -->
-    <div style="margin-bottom: 2rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
+    <div style="margin-bottom: 2rem; display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;">
+        <div style="font-size: 0.75rem; color: #6b7280; background: #f3f4f6; padding: 0.25rem 0.5rem; border-radius: 0.25rem; border: 1px solid #e5e7eb;">
+            ENV: {{ app()->environment() }} | DEBUG: {{ config('app.debug') ? 'ON' : 'OFF' }} | RESET: {{ config('installation.wizard.security.allow_production_reset') ? 'ALLOWED' : 'BLOCKED' }}
+        </div>
+
         <x-filament::button
             wire:click="scanDocumentation"
             color="info"
@@ -145,7 +149,7 @@
             <span wire:loading>Nettoyage...</span>
         </x-filament::button>
 
-        @if(!app()->environment('production'))
+        @if(!app()->environment('production') || config('installation.wizard.security.allow_production_reset', false))
             <div style="margin-left: auto;">
                 {{ $this->resetAction }}
             </div>

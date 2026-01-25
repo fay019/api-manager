@@ -46,6 +46,17 @@
     </div>
 
     <div class="form-group">
+        <label class="form-label">Réinitialisation (Danger)</label>
+        <div class="form-check">
+            <input type="checkbox" name="allow_production_reset" value="1" class="form-check-input @if(isset($errors['allow_production_reset'])) is-invalid @endif"
+                   @checked(old('allow_production_reset', $formData['allow_production_reset'] ?? false))>
+            <label class="form-check-label">Autoriser le bouton de réinitialisation en production</label>
+        </div>
+        @if(isset($errors['allow_production_reset'])) <span class="invalid-feedback" style="display: block;">{{ is_array($errors['allow_production_reset']) ? $errors['allow_production_reset'][0] : $errors['allow_production_reset'] }}</span> @endif
+        <small class="text-muted">Si activé, le bouton "Réinitialiser l'application" sera visible même en environnement de production.</small>
+    </div>
+
+    <div class="form-group">
         <label class="form-label">Fuseau horaire</label>
         <select name="timezone" class="form-control @if(isset($errors['timezone'])) is-invalid @endif" required>
             <option value="">-- Sélectionner --</option>

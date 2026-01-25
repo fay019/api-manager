@@ -52,7 +52,7 @@ class Settings extends Page
                     ->rules(['in:Confirmer']),
             ])
             ->action(function (AppSettingService $service) {
-                if (app()->environment('production')) {
+                if (app()->environment('production') && ! config('installation.wizard.security.allow_production_reset', false)) {
                     Notification::make()
                         ->danger()
                         ->title('Réinitialisation interdite')

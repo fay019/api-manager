@@ -251,6 +251,7 @@ return [
             'force_https' => true,
             'allow_localhost_setup' => true,
             'hide_secrets_in_logs' => true,
+            'allow_production_reset' => env('APP_ALLOW_PRODUCTION_RESET', false),
         ],
     ],
 ];
