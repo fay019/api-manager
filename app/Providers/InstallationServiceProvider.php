@@ -53,6 +53,7 @@ class InstallationServiceProvider extends ServiceProvider
 
         Route::middleware('api')
             ->prefix('api')
+            ->name('api.')
             ->group(base_path('routes/api.php'));
     }
 }
