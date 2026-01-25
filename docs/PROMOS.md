@@ -118,6 +118,7 @@ Draft (manual edit only)
 
 **Query Parameters:**
 - `lang` (optional): The language code (`fr`, `en`, `de`, `ar`). Defaults to `fr`. If a translation is missing, it falls back to the default locale.
+- `all_langs` (optional): If set to `true`, the API returns **all translations** in a `translations` object instead of a single language.
 
 **Required Headers:**
 ```
@@ -142,6 +143,45 @@ curl -H "X-API-KEY: apk_xxx" \
     "content": "Get 50% off on selected items",
     "image_url": "https://cdn.example.com/summer-banner.jpg",
     "cta_text": "Shop Now",
+    "cta_url": "https://example.com/summer-sale",
+    "priority": 10,
+    "max_impressions": 5,
+    "cooldown_seconds": 86400,
+    "display_mode": "fixed_count",
+    "start_date": "2026-01-25",
+    "end_date": "2026-02-25"
+  }
+}
+```
+
+**Success Response with All Languages (`?all_langs=true`):**
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "version": 3,
+    "translations": {
+      "title": {
+        "fr": "Soldes d'été",
+        "en": "Summer Sale",
+        "de": "Sommerschlussverkauf",
+        "ar": "تخفيضات الصيف"
+      },
+      "content": {
+        "fr": "Profitez de 50% de réduction...",
+        "en": "Get 50% off...",
+        "de": "Erhalten Sie 50% Rabatt...",
+        "ar": "احصل على خصم 50٪..."
+      },
+      "cta_text": {
+        "fr": "Acheter maintenant",
+        "en": "Shop Now",
+        "de": "Jetzt einkaufen",
+        "ar": "تسوق الآن"
+      }
+    },
+    "image_url": "https://cdn.example.com/summer-banner.jpg",
     "cta_url": "https://example.com/summer-sale",
     "priority": 10,
     "max_impressions": 5,

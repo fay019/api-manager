@@ -29,19 +29,32 @@ class PromoService
             return [];
         }
 
+        $allLangs = request()->query('all_langs') === 'true';
         $locale = $locale ?? request()->query('lang') ?? app()->getLocale();
 
         // Récupérer le numéro de la version la plus récente
         $versionNumber = $promo->versions()->max('version') ?? 1;
 
-        return [
+        $data = [
             'id' => $promo->id,
             'version' => $versionNumber,
-            'locale' => $locale,
-            'title' => $promo->getTranslation('title', $locale),
-            'content' => $promo->getTranslation('content', $locale),
+        ];
+
+        if ($allLangs) {
+            $data['translations'] = [
+                'title' => $promo->title,
+                'content' => $promo->content,
+                'cta_text' => $promo->cta_text,
+            ];
+        } else {
+            $data['locale'] = $locale;
+            $data['title'] = $promo->getTranslation('title', $locale);
+            $data['content'] = $promo->getTranslation('content', $locale);
+            $data['cta_text'] = $promo->getTranslation('cta_text', $locale);
+        }
+
+        return array_merge($data, [
             'image_url' => $promo->full_image_url,
-            'cta_text' => $promo->getTranslation('cta_text', $locale),
             'cta_url' => $promo->cta_url,
             'priority' => $promo->priority,
             'max_impressions' => $promo->max_impressions,
@@ -49,7 +62,7 @@ class PromoService
             'display_mode' => $promo->display_mode,
             'start_date' => $promo->starts_at?->format('Y-m-d'),
             'end_date' => $promo->ends_at?->format('Y-m-d'),
-        ];
+        ]);
     }
 
     public function getPromoBySlug(string $slug): ?Promo

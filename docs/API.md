@@ -257,6 +257,7 @@ GET /promo/banner.json
 
 **Query Parameters:**
 - `lang` (optional): The language code (`fr`, `en`, `de`, `ar`). Defaults to `fr`.
+- `all_langs` (optional): If set to `true`, returns all available translations in a `translations` object instead of single fields.
 
 **Response (200 OK):**
 ```json
@@ -287,7 +288,8 @@ GET /promo/banner.json
 |-------|------|-------------|
 | **id** | integer | Unique identifier |
 | **version** | integer | Version number of the promo |
-| **locale** | string | Language code of the returned content |
+| **locale** | string | Language code of the returned content (absent if `all_langs=true`) |
+| **translations** | object | All available translations (only if `all_langs=true`) |
 | **max_impressions** | integer | Max number of views before disappearing |
 | **cooldown_seconds** | integer | Wait time (seconds) after manual close |
 | **display_mode** | string | `fixed_count`, `unlimited`, `once_per_day`, `once_per_week` |
