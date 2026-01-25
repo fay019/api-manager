@@ -115,6 +115,10 @@ class SuccessController extends Controller
             Artisan::call('migrate', ['--force' => true]);
             $this->createAdminUser($admin);
 
+            // PUBLISH ASSETS to avoid "Unable to locate a class or view for component" in production
+            Artisan::call('vendor:publish', ['--tag' => 'laravel-exceptions-renderer-views', '--force' => true]);
+            Artisan::call('filament:assets');
+
             // 7. Create Lock BEFORE cleaning cache
             // This ensures InstallationServiceProvider sees the app as installed
             // when optimize is called.
