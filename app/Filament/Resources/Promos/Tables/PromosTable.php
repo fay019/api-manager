@@ -20,6 +20,7 @@ class PromosTable
             ->columns([
                 TextColumn::make('title')
                     ->label('Titre')
+                    ->state(fn (Promo $record): string => $record->getTranslation('title') ?? '')
                     ->searchable()
                     ->sortable(),
                 ImageColumn::make('image_url')
@@ -79,10 +80,10 @@ class PromosTable
                                             ->formatStateUsing(function () use ($record) {
                                                 $data = [
                                                     'id' => $record->id,
-                                                    'title' => $record->title,
-                                                    'content' => $record->content,
+                                                    'title' => $record->getTranslation('title'),
+                                                    'content' => $record->getTranslation('content'),
                                                     'image_url' => $record->full_image_url,
-                                                    'cta_text' => $record->cta_text,
+                                                    'cta_text' => $record->getTranslation('cta_text'),
                                                     'cta_url' => $record->cta_url,
                                                     'priority' => $record->priority,
                                                     'max_impressions' => $record->max_impressions,

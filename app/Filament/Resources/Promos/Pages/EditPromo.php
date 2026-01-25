@@ -24,9 +24,11 @@ class EditPromo extends EditRecord
             $latestVersion = $record->versions()->orderBy('version', 'desc')->first();
             $versionNumber = $latestVersion ? $latestVersion->version : 1;
 
-            return "{$record->title} (v{$versionNumber})";
+            $title = $record->getTranslation('title', 'fr') ?? 'Edit Promotion';
+
+            return "{$title} (v{$versionNumber})";
         } catch (\Exception $e) {
-            return $record->title ?? 'Edit Promotion';
+            return 'Edit Promotion';
         }
     }
 
@@ -114,10 +116,10 @@ class EditPromo extends EditRecord
                                         ->formatStateUsing(function () use ($record) {
                                             $data = [
                                                 'id' => $record->id,
-                                                'title' => $record->title,
-                                                'content' => $record->content,
+                                                'title' => $record->getTranslation('title'),
+                                                'content' => $record->getTranslation('content'),
                                                 'image_url' => $record->full_image_url,
-                                                'cta_text' => $record->cta_text,
+                                                'cta_text' => $record->getTranslation('cta_text'),
                                                 'cta_url' => $record->cta_url,
                                                 'priority' => $record->priority,
                                                 'max_impressions' => $record->max_impressions,
