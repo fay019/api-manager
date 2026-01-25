@@ -8,8 +8,8 @@
     <div style="background: white; border: 1px solid #d1d5db; border-radius: 0.5rem; overflow: hidden; margin-bottom: 2rem;">
         <!-- Table Header -->
         <div style="background: #f9fafb; padding: 1rem; border-bottom: 1px solid #e5e7eb;">
-            <h3 style="font-size: 1.125rem; font-weight: 600; color: #111827; margin: 0 0 0.25rem 0;">Documentation Management</h3>
-            <p style="font-size: 0.875rem; color: #6b7280; margin: 0;">View and manage your documentation files</p>
+            <h3 style="font-size: 1.125rem; font-weight: 600; color: #111827; margin: 0 0 0.25rem 0;">Gestion de la Documentation</h3>
+            <p style="font-size: 0.875rem; color: #6b7280; margin: 0;">Gérez vos fichiers de documentation .md</p>
         </div>
 
         @php
@@ -20,14 +20,14 @@
             <!-- Empty State -->
             <div style="padding: 4rem 2rem; text-align: center;">
                 <div style="font-size: 3rem; margin-bottom: 1rem;">📚</div>
-                <h4 style="font-size: 1.125rem; font-weight: 600; color: #111827; margin: 0 0 0.5rem 0;">No Documentation Found</h4>
+                <h4 style="font-size: 1.125rem; font-weight: 600; color: #111827; margin: 0 0 0.5rem 0;">Aucune Documentation Trouvée</h4>
                 <p style="font-size: 0.875rem; color: #6b7280; margin: 0 0 1.5rem 0;">
-                    It looks like you don't have any documentation files yet. Click the "Scan Documentation" button to discover .md files in your project.
+                    Cliquez sur le bouton "Scan Documentation" pour découvrir les fichiers .md dans votre projet.
                 </p>
                 <p style="font-size: 0.75rem; color: #9ca3af; margin: 0;">
-                    📍 Scanned locations: <code style="background: #f3f4f6; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">README.md</code>,
+                    📍 Emplacements scannés : <code style="background: #f3f4f6; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">README.md</code>,
                     <code style="background: #f3f4f6; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">DEPLOYMENT.md</code>,
-                    <code style="background: #f3f4f6; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">/docs/*.md</code>
+                    <code style="background: #f3f4f6; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">/docs/**/*.md</code>
                 </p>
             </div>
         @else
@@ -37,9 +37,9 @@
                     <thead>
                         <tr style="border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
                             <th style="text-align: left; padding: 1rem; font-weight: 600; color: #111827; font-size: 0.875rem;">Documentation</th>
-                            <th style="text-align: center; padding: 1rem; font-weight: 600; color: #111827; font-size: 0.875rem;">Icon</th>
-                            <th style="text-align: left; padding: 1rem; font-weight: 600; color: #111827; font-size: 0.875rem;">File Path</th>
-                            <th style="text-align: center; padding: 1rem; font-weight: 600; color: #111827; font-size: 0.875rem;">Status</th>
+                            <th style="text-align: center; padding: 1rem; font-weight: 600; color: #111827; font-size: 0.875rem;">Icône</th>
+                            <th style="text-align: left; padding: 1rem; font-weight: 600; color: #111827; font-size: 0.875rem;">Chemin du fichier</th>
+                            <th style="text-align: center; padding: 1rem; font-weight: 600; color: #111827; font-size: 0.875rem;">Statut</th>
                             <th style="text-align: center; padding: 1rem; font-weight: 600; color: #111827; font-size: 0.875rem;">Visible</th>
                         </tr>
                     </thead>
@@ -94,11 +94,11 @@
                                 <td style="padding: 1rem; vertical-align: middle; text-align: center;">
                                     @if ($fileExists)
                                         <span style="display: inline-block; font-size: 0.75rem; color: #16a34a; background: #f0fdf4; padding: 0.35rem 0.65rem; border-radius: 0.25rem; white-space: nowrap; border: 1px solid #dcfce7;">
-                                            ✓ Exists
+                                            ✓ Existe
                                         </span>
                                     @else
                                         <span style="display: inline-block; font-size: 0.75rem; color: #dc2626; background: #fef2f2; padding: 0.35rem 0.65rem; border-radius: 0.25rem; white-space: nowrap; border: 1px solid #fee2e2;">
-                                            ✗ Missing
+                                            ✗ Manquant
                                         </span>
                                     @endif
                                 </td>
@@ -130,8 +130,8 @@
             wire:loading.attr="disabled"
             wire:loading.class="opacity-50 cursor-not-allowed"
         >
-            <span wire:loading.remove>Scan Documentation</span>
-            <span wire:loading>Scanning...</span>
+            <span wire:loading.remove>Scanner la Documentation</span>
+            <span wire:loading>Scan en cours...</span>
         </x-filament::button>
 
         <x-filament::button
@@ -141,8 +141,8 @@
             wire:loading.attr="disabled"
             wire:loading.class="opacity-50 cursor-not-allowed"
         >
-            <span wire:loading.remove>Clean Up Missing Files</span>
-            <span wire:loading>Cleaning...</span>
+            <span wire:loading.remove>Nettoyer les Fichiers Manquants</span>
+            <span wire:loading>Nettoyage...</span>
         </x-filament::button>
     </div>
 </x-filament-panels::page>

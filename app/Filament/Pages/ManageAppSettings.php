@@ -62,8 +62,8 @@ class ManageAppSettings extends Page implements HasForms
 
             Notification::make()
                 ->success()
-                ->title('Documentation scanned')
-                ->body('Found ' . count($scanResults) . ' documentation file(s). Please refresh the page.')
+                ->title('Documentation scannée')
+                ->body('Trouvé ' . count($scanResults) . ' fichier(s) de documentation. Les nouveaux documents sont masqués par défaut.')
                 ->send();
 
             $this->redirect(request()->header('Referer') ?? url()->current());
@@ -92,14 +92,14 @@ class ManageAppSettings extends Page implements HasForms
             if (empty($deleted)) {
                 Notification::make()
                     ->info()
-                    ->title('No missing files')
-                    ->body('All documentation files exist.')
+                    ->title('Aucun fichier manquant')
+                    ->body('Tous les fichiers de documentation existent.')
                     ->send();
             } else {
                 Notification::make()
                     ->success()
-                    ->title('Cleanup complete')
-                    ->body('Deleted ' . count($deleted) . ' missing documentation record(s): ' . implode(', ', $deleted))
+                    ->title('Nettoyage terminé')
+                    ->body('Supprimé ' . count($deleted) . ' enregistrement(s) manquant(s) : ' . implode(', ', $deleted))
                     ->send();
 
                 $this->redirect(request()->header('Referer') ?? url()->current());
@@ -107,7 +107,7 @@ class ManageAppSettings extends Page implements HasForms
         } catch (\Exception $e) {
             Notification::make()
                 ->danger()
-                ->title('Error during cleanup')
+                ->title('Erreur lors du nettoyage')
                 ->body($e->getMessage())
                 ->send();
         }

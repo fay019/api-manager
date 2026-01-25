@@ -14,47 +14,34 @@ class DocumentationScanner
     {
         $docs = [];
 
-        // Define locations to scan
-        $locations = [
-            // Root files
-            [
-                'path' => 'README.md',
-                'name' => 'readme',
-            ],
-            [
-                'path' => 'DEPLOYMENT.md',
-                'name' => 'deployment',
-            ],
-            // docs directory - scan all .md files
-            [
-                'dir' => 'docs',
-                'extensions' => ['md'],
-            ],
-        ];
-
-        // Scan specific root files
-        foreach ($locations as $location) {
-            if (isset($location['path']) && File::exists(base_path($location['path']))) {
+        // 1. Scan root directory for .md files
+        $rootFiles = File::files(base_path());
+        foreach ($rootFiles as $file) {
+            if ($file->getExtension() === 'md') {
+                $name = strtolower($file->getFilenameWithoutExtension());
                 $docs[] = [
-                    'doc_name' => $location['name'],
-                    'path' => '/' . $location['path'],
+                    'doc_name' => $name,
+                    'path' => '/' . $file->getFilename(),
                 ];
             }
         }
 
-        // Scan docs directory
+        // 2. Scan docs directory - recursively
         $docsPath = base_path('docs');
         if (File::isDirectory($docsPath)) {
-            $files = File::files($docsPath);
+            $files = File::allFiles($docsPath);
             foreach ($files as $file) {
                 if ($file->getExtension() === 'md') {
                     $name = strtolower($file->getFilenameWithoutExtension());
 
-                    // Avoid duplicates
+                    // Relative path from project root
+                    $relativePath = str_replace(base_path(), '', $file->getRealPath());
+
+                    // Avoid duplicates (if a file exists in both root and docs, which is unlikely but possible)
                     if (!in_array($name, array_column($docs, 'doc_name'))) {
                         $docs[] = [
                             'doc_name' => $name,
-                            'path' => '/docs/' . $file->getFilename(),
+                            'path' => $relativePath,
                         ];
                     }
                 }
@@ -117,8 +104,8 @@ class DocumentationScanner
         ];
 
         $base = $metadata[$docName] ?? [
-            'label' => ucfirst(str_replace('_', ' ', $docName)) . ' Documentation',
-            'description' => ucfirst($docName) . ' documentation',
+            'label' => ucfirst(str_replace('_', ' ', $docName)),
+            'description' => 'Documentation pour ' . $docName,
         ];
 
         return array_merge($base, ['icon' => $icon]);
