@@ -55,7 +55,7 @@ class PromoService
             $data['cta_text'] = $promo->getTranslation('cta_text', $locale);
         }
 
-        return array_merge($data, [
+        $response = array_merge($data, [
             'image_url' => $promo->full_image_url,
             'cta_url' => $promo->cta_url,
             'priority' => $promo->priority,
@@ -65,6 +65,19 @@ class PromoService
             'start_date' => $promo->starts_at?->format('Y-m-d'),
             'end_date' => $promo->ends_at?->format('Y-m-d'),
         ]);
+
+        // Add new optional display feature fields
+        if ($promo->auto_close_timer !== null) {
+            $response['auto_close_timer'] = $promo->auto_close_timer;
+        }
+        if ($promo->show_countdown !== null) {
+            $response['show_countdown'] = $promo->show_countdown;
+        }
+        if ($promo->animation_style !== null) {
+            $response['animation_style'] = $promo->animation_style;
+        }
+
+        return $response;
     }
 
     public function getPromoBySlug(string $slug): ?Promo

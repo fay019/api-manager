@@ -12,6 +12,7 @@ use Filament\Forms\Components\Slider;
 use Filament\Forms\Components\Slider\Enums\PipsMode;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
@@ -46,9 +47,9 @@ class PromoForm
                     ])
                     ->columnSpanFull(),
 
-                Section::make('Apparence & Action')
+                Section::make('Auteur & Informations')
                     ->schema([
-                        Grid::make(2)
+                        Grid::make(3)
                             ->schema([
                                 TextInput::make('author_name')
                                     ->label('Nom de l\'auteur')
@@ -58,6 +59,12 @@ class PromoForm
                                     ->label('Rôle de l\'auteur')
                                     ->placeholder('Ex: Développeur Fullstack')
                                     ->maxLength(255),
+                                FileUpload::make('image_url')
+                                    ->label('Image du banner')
+                                    ->image()
+                                    ->disk('public')
+                                    ->directory('promos')
+                                    ->visibility('public'),
                             ]),
                         Placeholder::make('public_url')
                             ->label('URL de l\'API')
@@ -91,12 +98,15 @@ class PromoForm
                                     </div>
                                 ");
                             })
+                            ->columnSpanFull()
                             ->helperText('C\'est l\'URL à utiliser dans votre intégration frontend.'),
                     ]),
 
-                Section::make('Paramètres & Statut')
+                Section::make('Planification & Affichage')
+                    ->description('Gérez quand et comment le banner s\'affiche')
                     ->schema([
-                        Grid::make(3)
+                        // Planification - Statut & Dates
+                        Grid::make(2)
                             ->schema([
                                 Select::make('status')
                                     ->label('Statut')
@@ -104,7 +114,23 @@ class PromoForm
                                     ->required()
                                     ->default(PromoStatus::DRAFT)
                                     ->live()
-                                    ->helperText('Le statut est mis à jour automatiquement en fonction des dates sélectionnées (sauf en mode Brouillon).'),
+                                    ->native(false)
+                                    ->helperText('Automatique selon les dates (sauf Brouillon)'),
+                                Slider::make('priority')
+                                    ->label('Priorité')
+                                    ->required()
+                                    ->minValue(1)
+                                    ->maxValue(10)
+                                    ->fillTrack()
+                                    ->step(1)
+                                    ->pips(PipsMode::Steps)
+                                    ->decimalPlaces(0)
+                                    ->default(1)
+                                    ->tooltips()
+                                    ->helperText('10 = plus prioritaire'),
+                            ]),
+                        Grid::make(2)
+                            ->schema([
                                 DateTimePicker::make('starts_at')
                                     ->label('Date de début')
                                     ->native(false)
@@ -126,19 +152,9 @@ class PromoForm
                                         $livewire->validateOnly('data.ends_at');
                                     }),
                             ]),
-                        Slider::make('priority')
-                            ->label('Priorité')
-                            ->required()
-                            ->minValue(1)
-                            ->maxValue(10)
-                            ->fillTrack()
-                            ->step(1)
-                            ->pips(PipsMode::Steps)
-                            ->decimalPlaces(0)
-                            ->default(1)
-                            ->tooltips()
-                            ->helperText('10 est le plus prioritaire, 1 le moins.'),
-                        Grid::make(3)
+
+                        // Mode d'affichage & Limites
+                        Grid::make(2)
                             ->schema([
                                 Select::make('display_mode')
                                     ->label('Mode d\'affichage')
@@ -150,30 +166,48 @@ class PromoForm
                                     ])
                                     ->default('fixed_count')
                                     ->required()
-                                    ->live(),
+                                    ->native(false)
+                                    ->live()
+                                    ->helperText('Règle de fréquence d\'affichage'),
                                 TextInput::make('max_impressions')
-                                    ->label('Impressions Max')
+                                    ->label('Nombre max de vues')
                                     ->numeric()
                                     ->default(9999)
                                     ->required()
-                                    ->visible(fn ($get) => $get('display_mode') === 'fixed_count'),
+                                    ->visible(fn ($get) => $get('display_mode') === 'fixed_count')
+                                    ->helperText('Si 0 = illimité'),
+                            ]),
+                        Grid::make(2)
+                            ->schema([
                                 TextInput::make('cooldown_seconds')
-                                    ->label('Délai après fermeture (sec)')
+                                    ->label('Attendre après fermeture (sec)')
                                     ->numeric()
                                     ->default(0)
                                     ->required()
-                                    ->helperText('86400 = 24h'),
+                                    ->helperText('Ex: 86400 pour 24h'),
+                                Select::make('animation_style')
+                                    ->label('Animation')
+                                    ->options([
+                                        'fade' => 'Fondu (fade)',
+                                        'slide' => 'Glissement (slide)',
+                                        'zoom' => 'Zoom',
+                                    ])
+                                    ->native(false)
+                                    ->helperText('À l\'apparition du banner'),
                             ]),
-                    ]),
 
-                Section::make('Média')
-                    ->schema([
-                        FileUpload::make('image_url')
-                            ->label('Image')
-                            ->image()
-                            ->disk('public')
-                            ->directory('promos')
-                            ->visibility('public'),
+                        // Comportement avancé
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('auto_close_timer')
+                                    ->label('Fermeture automatique (sec)')
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->helperText('0 = désactivé. Ex: 15'),
+                                Toggle::make('show_countdown')
+                                    ->label('Afficher le compte à rebours')
+                                    ->helperText('Avant la fermeture automatique'),
+                            ]),
                     ]),
 
                 TextInput::make('created_by')

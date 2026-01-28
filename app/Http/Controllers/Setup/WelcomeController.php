@@ -6,6 +6,7 @@ use App\Contracts\Installation\InstallationCheckInterface;
 use App\Contracts\Installation\RequirementsCheckerInterface;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\View\View;
 
 /**
@@ -66,6 +67,10 @@ class WelcomeController extends Controller
      */
     public function index(Request $request): View
     {
+        // Clear all caches and optimizations at the start of installation wizard
+        // to avoid conflicts with previous state (DB, routes, config, etc.)
+        Artisan::call('optimize:clear');
+
         // Initialiser la session de setup si inexistante ou si le token cookie ne pointe vers rien
         $setupSession = app(\App\Services\Installation\SetupSession::class);
         if (! $setupSession->getToken() || ! $setupSession->getCsrfToken()) {

@@ -27,6 +27,9 @@ class Promo extends Model
         'max_impressions',
         'cooldown_seconds',
         'display_mode',
+        'auto_close_timer',
+        'show_countdown',
+        'animation_style',
         'created_by',
     ];
 
@@ -42,6 +45,8 @@ class Promo extends Model
             'priority' => 'integer',
             'max_impressions' => 'integer',
             'cooldown_seconds' => 'integer',
+            'auto_close_timer' => 'integer',
+            'show_countdown' => 'boolean',
         ];
     }
 

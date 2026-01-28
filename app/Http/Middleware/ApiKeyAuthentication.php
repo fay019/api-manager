@@ -24,7 +24,7 @@ class ApiKeyAuthentication
                 ->with('apiClient')
                 ->first();
 
-            if ($key && Hash::check($keyHeader, $key->key_hash)) {
+            if ($key && Hash::check($keyHeader, $key->key_encrypted)) {
                 if ($key->expires_at && $key->expires_at->isPast()) {
                     return ApiResponse::unauthorized('API key has expired');
                 }
