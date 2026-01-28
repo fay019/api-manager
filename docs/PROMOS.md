@@ -53,7 +53,12 @@ Promotional banners are announcements with:
 
 6. **Set priority:** 1-10 scale (10 = highest priority)
 
-7. **Save**
+7. **Configure Display Features (Optional):**
+   - **Fermeture automatique:** Set auto-close time in seconds (0 = disabled)
+   - **Afficher le compte à rebours:** Enable to show countdown before auto-close
+   - **Style d'animation:** Choose animation style (fade, slide, zoom)
+
+8. **Save**
 
 ---
 
@@ -144,15 +149,22 @@ curl -H "X-API-KEY: apk_xxx" \
     "image_url": "https://cdn.example.com/summer-banner.jpg",
     "cta_text": "Shop Now",
     "cta_url": "https://example.com/summer-sale",
+    "author_name": "Marketing Team",
+    "author_role": "Campaign Manager",
     "priority": 10,
     "max_impressions": 5,
     "cooldown_seconds": 86400,
     "display_mode": "fixed_count",
     "start_date": "2026-01-25",
-    "end_date": "2026-02-25"
+    "end_date": "2026-02-25",
+    "auto_close_timer": 15,
+    "show_countdown": true,
+    "animation_style": "fade"
   }
 }
 ```
+
+**Note:** Optional fields (`auto_close_timer`, `show_countdown`, `animation_style`) are only included in the response when they have been set. If not configured, they will be omitted.
 
 **Success Response with All Languages (`?all_langs=true`):**
 ```json
@@ -183,28 +195,74 @@ curl -H "X-API-KEY: apk_xxx" \
     },
     "image_url": "https://cdn.example.com/summer-banner.jpg",
     "cta_url": "https://example.com/summer-sale",
+    "author_name": "Marketing Team",
+    "author_role": "Campaign Manager",
     "priority": 10,
     "max_impressions": 5,
     "cooldown_seconds": 86400,
     "display_mode": "fixed_count",
     "start_date": "2026-01-25",
-    "end_date": "2026-02-25"
+    "end_date": "2026-02-25",
+    "auto_close_timer": 15,
+    "show_countdown": true,
+    "animation_style": "fade"
   }
 }
 ```
 
 ### Display Configuration Fields
 
-| Field | Type | Description |
-|-------|------|-------------|
-| **id** | integer | Unique identifier |
-| **version** | integer | Version number of the promo |
-| **locale** | string | Language code of the returned content |
-| **max_impressions** | integer | Max number of views before disappearing |
-| **cooldown_seconds** | integer | Wait time (seconds) after manual close |
-| **display_mode** | string | `fixed_count`, `unlimited`, `once_per_day`, `once_per_week` |
-| **start_date** | string | Campaign start date (YYYY-MM-DD) |
-| **end_date** | string | Campaign end date (YYYY-MM-DD) |
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| **id** | integer | Always | Unique identifier |
+| **version** | integer | Always | Version number of the promo |
+| **locale** | string | Always | Language code of the returned content |
+| **author_name** | string | Always | Name of the promo author |
+| **author_role** | string | Always | Role/title of the promo author |
+| **priority** | integer | Always | Priority level (1-10, where 10 is highest) |
+| **max_impressions** | integer | Always | Max number of views before disappearing |
+| **cooldown_seconds** | integer | Always | Wait time (seconds) after manual close |
+| **display_mode** | string | Always | `fixed_count`, `unlimited`, `once_per_day`, `once_per_week` |
+| **start_date** | string | Always | Campaign start date (YYYY-MM-DD) |
+| **end_date** | string | Always | Campaign end date (YYYY-MM-DD) |
+| **auto_close_timer** | integer | Optional | Seconds before auto-close (0 = disabled). Only present if configured. |
+| **show_countdown** | boolean | Optional | Display countdown timer before auto-close. Only present if configured. |
+| **animation_style** | string | Optional | Animation style: `fade`, `slide`, `zoom`. Only present if configured. |
+
+### Advanced Display Features (Optional)
+
+The API supports optional display behavior fields that enable advanced client-side features:
+
+#### **auto_close_timer** (integer, optional)
+- **Default:** Not included (auto-close disabled)
+- **Valid Values:** 0 or positive integers (seconds)
+- **Example:** `15` = Banner closes automatically after 15 seconds
+- **Use Case:** Time-limited announcements that dismiss themselves
+
+#### **show_countdown** (boolean, optional)
+- **Default:** Not included
+- **Valid Values:** `true` or `false`
+- **Use Case:** Displays a countdown timer before the banner auto-closes
+- **Note:** Only meaningful if `auto_close_timer` is configured
+
+#### **animation_style** (string, optional)
+- **Default:** Not included
+- **Valid Values:** `fade`, `slide`, `zoom`
+- **Examples:**
+  - `"fade"` - Smooth opacity transition
+  - `"slide"` - Slide in from top/side
+  - `"zoom"` - Zoom/scale animation
+- **Use Case:** Control how the banner appears on screen
+
+### Backward Compatibility
+
+**Important:** Optional fields are only included in the API response when they have been explicitly set in the admin panel. This ensures **100% backward compatibility** with existing client implementations:
+
+- Clients that don't expect these fields simply ignore them
+- Clients can check for field presence before using advanced features
+- No changes needed to existing integrations
+
+**Example:** A client that only needs basic banner display won't receive `auto_close_timer`, `show_countdown`, or `animation_style` if they're not configured.
 
 **No Active Promo (404 Not Found):**
 ```json
@@ -431,5 +489,6 @@ if ($promo['success']) {
 
 ---
 
-**Last Updated:** 2026-01-25
-**Module:** Promos v1.2
+**Last Updated:** 2026-01-28
+**Module:** Promos v1.3
+**New in v1.3:** Advanced display features (auto-close, countdown, animations)
