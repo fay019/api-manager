@@ -4,6 +4,40 @@ Guide complet pour interpréter et implémenter la réponse API Promo dans votre
 
 ---
 
+## 🚀 Requêtes Supportées
+
+L'API Promo supporte 2 modes de récupération selon vos besoins:
+
+### Mode 1️⃣: Une Seule Langue (Recommandé)
+
+Récupère le promo dans la langue spécifiée (ou la langue par défaut):
+
+```bash
+# Français (par défaut)
+GET /api/v1/promo/banner.json
+
+# Anglais
+GET /api/v1/promo/banner.json?lang=en
+
+# Allemand
+GET /api/v1/promo/banner.json?lang=de
+
+# Arabe
+GET /api/v1/promo/banner.json?lang=ar
+```
+
+**Langues supportées:** `fr`, `en`, `de`, `ar`
+
+### Mode 2️⃣: Toutes les Langues
+
+Récupère le promo avec tous les textes traduits:
+
+```bash
+GET /api/v1/promo/banner.json?all_langs=true
+```
+
+---
+
 ## 📐 Structure de Base
 
 La réponse API Promo suit toujours ce format:
@@ -18,109 +52,258 @@ La réponse API Promo suit toujours ce format:
 
 ---
 
-## ✅ Réponse Réussie (success: true)
+## ✅ Réponse Mode 1: Une Seule Langue
 
-### Étape 1: Vérifier que success = true
+**Exemple de requête:**
+```bash
+curl -H "X-API-KEY: apk_xxx" \
+  "https://api.moussouni.dev/api/v1/promo/banner.json?lang=en"
+```
 
-```javascript
-if (!response.success) {
-  // Afficher l'erreur
-  console.error(response.error.message);
-  return;
+**Réponse (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "version": 2,
+    "locale": "en",
+    "author_name": "Marketing Team",
+    "author_role": "Campaign Manager",
+    "title": "Summer Sale",
+    "content": "Get 50% off on selected items",
+    "cta_text": "Shop Now",
+    "image_url": "https://api.example.com/storage/summer-banner.jpg",
+    "cta_url": "https://example.com/summer-sale",
+    "priority": 10,
+    "max_impressions": 5,
+    "cooldown_seconds": 86400,
+    "display_mode": "fixed_count",
+    "start_date": "2026-01-25",
+    "end_date": "2026-02-25",
+    "auto_close_timer": 15,
+    "show_countdown": true,
+    "animation_style": "fade"
+  }
 }
 ```
 
-### Étape 2: Extraire les données du promo
+### Extraction des données (Mode 1)
 
 ```javascript
-const promo = response.data;
+const response = await fetch('https://api.moussouni.dev/api/v1/promo/banner.json?lang=en', {
+  headers: { 'X-API-KEY': 'apk_your_key' }
+});
 
-// Champs TOUJOURS présents:
-const id = promo.id;                    // Identifiant unique
-const version = promo.version;          // Numéro de version
-const locale = promo.locale;            // Langue (fr, en, de, ar)
-const title = promo.title;              // Titre du promo
-const content = promo.content;          // Contenu/description
-const image_url = promo.image_url;      // URL complète de l'image
-const cta_text = promo.cta_text;        // Texte du bouton
-const cta_url = promo.cta_url;          // Lien du bouton
-const author_name = promo.author_name;  // Auteur
-const author_role = promo.author_role;  // Rôle de l'auteur
-const priority = promo.priority;        // Priorité (1-10)
-const max_impressions = promo.max_impressions;    // Nombre max de vues
-const cooldown_seconds = promo.cooldown_seconds;  // Délai après fermeture
-const display_mode = promo.display_mode;          // Mode d'affichage
-const start_date = promo.start_date;    // Date début (YYYY-MM-DD)
-const end_date = promo.end_date;        // Date fin (YYYY-MM-DD)
+const data = await response.json();
+
+if (!data.success) {
+  console.error('Erreur:', data.error.message);
+  return;
+}
+
+const promo = data.data;
+
+// Champs STRING (une langue seulement)
+const title = promo.title;           // "Summer Sale"
+const content = promo.content;       // "Get 50% off on selected items"
+const cta_text = promo.cta_text;     // "Shop Now"
+const locale = promo.locale;         // "en"
+
+// Autres champs
+const id = promo.id;
+const version = promo.version;
+const image_url = promo.image_url;
+const cta_url = promo.cta_url;
+const author_name = promo.author_name;
+const author_role = promo.author_role;
+const priority = promo.priority;
+const max_impressions = promo.max_impressions;
+const cooldown_seconds = promo.cooldown_seconds;
+const display_mode = promo.display_mode;
+const start_date = promo.start_date;
+const end_date = promo.end_date;
+
+// Champs OPTIONNELS (seulement si configurés)
+const auto_close_timer = promo.auto_close_timer ?? null;
+const show_countdown = promo.show_countdown ?? false;
+const animation_style = promo.animation_style ?? null;
 ```
 
-### Étape 3: Gérer les Champs Optionnels
+---
 
-Ces champs ne sont **PRÉSENTS QUE** s'ils ont été configurés dans l'admin:
+## ✅ Réponse Mode 2: Toutes les Langues
+
+**Exemple de requête:**
+```bash
+curl -H "X-API-KEY: apk_xxx" \
+  "https://api.moussouni.dev/api/v1/promo/banner.json?all_langs=true"
+```
+
+**Réponse (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "version": 2,
+    "author_name": "Marketing Team",
+    "author_role": "Campaign Manager",
+    "translations": {
+      "title": {
+        "fr": "Soldes d'été",
+        "en": "Summer Sale",
+        "de": "Sommerschlussverkauf",
+        "ar": "تخفيضات الصيف"
+      },
+      "content": {
+        "fr": "Profitez de 50% de réduction sur les articles sélectionnés",
+        "en": "Get 50% off on selected items",
+        "de": "Erhalten Sie 50% Rabatt auf ausgewählte Artikel",
+        "ar": "احصل على خصم 50٪ على العناصر المختارة"
+      },
+      "cta_text": {
+        "fr": "Acheter maintenant",
+        "en": "Shop Now",
+        "de": "Jetzt einkaufen",
+        "ar": "تسوق الآن"
+      }
+    },
+    "image_url": "https://api.example.com/storage/summer-banner.jpg",
+    "cta_url": "https://example.com/summer-sale",
+    "priority": 10,
+    "max_impressions": 5,
+    "cooldown_seconds": 86400,
+    "display_mode": "fixed_count",
+    "start_date": "2026-01-25",
+    "end_date": "2026-02-25",
+    "auto_close_timer": 15,
+    "show_countdown": true,
+    "animation_style": "fade"
+  }
+}
+```
+
+### Extraction des données (Mode 2)
 
 ```javascript
-// Fermeture automatique (en secondes)
+const response = await fetch('https://api.moussouni.dev/api/v1/promo/banner.json?all_langs=true', {
+  headers: { 'X-API-KEY': 'apk_your_key' }
+});
+
+const data = await response.json();
+
+if (!data.success) {
+  console.error('Erreur:', data.error.message);
+  return;
+}
+
+const promo = data.data;
+
+// Champs OBJECT (toutes les langues)
+const translations = promo.translations;  // { title: {...}, content: {...}, cta_text: {...} }
+const titleFr = translations.title.fr;    // "Soldes d'été"
+const titleEn = translations.title.en;    // "Summer Sale"
+const contentDe = translations.content.de; // "Erhalten Sie 50% Rabatt..."
+const ctaAr = translations.cta_text.ar;   // "تسوق الآن"
+
+// ⚠️ NOTE: Il n'y a PAS de "locale" en mode all_langs (on a toutes les langues)
+
+// Autres champs (identiques)
+const id = promo.id;
+const version = promo.version;
+const image_url = promo.image_url;
+const cta_url = promo.cta_url;
+const author_name = promo.author_name;
+const author_role = promo.author_role;
+const priority = promo.priority;
+const max_impressions = promo.max_impressions;
+const cooldown_seconds = promo.cooldown_seconds;
+const display_mode = promo.display_mode;
+const start_date = promo.start_date;
+const end_date = promo.end_date;
+
+// Champs OPTIONNELS (seulement si configurés)
 const auto_close_timer = promo.auto_close_timer ?? null;
-// Exemple: 15 = fermer après 15 secondes, null = pas de fermeture auto
-
-// Afficher un countdown avant fermeture
 const show_countdown = promo.show_countdown ?? false;
-// Exemple: true = afficher "Fermeture dans 10s", false = sans countdown
-
-// Style d'animation à l'apparition
-const animation_style = promo.animation_style ?? 'fade';
-// Exemple: 'fade' | 'slide' | 'zoom'
+const animation_style = promo.animation_style ?? null;
 ```
 
 ---
 
 ## 🎯 Implémentation Basique
 
-### Afficher le Banner Simple
+### Afficher un Banner Simple (Mode 1)
 
 ```javascript
-function displayPromo(promo) {
-  const banner = document.createElement('div');
-  banner.className = 'promo-banner';
-  banner.id = `promo-${promo.id}`;
+async function displayPromo(lang = 'fr') {
+  try {
+    const response = await fetch(
+      `https://api.moussouni.dev/api/v1/promo/banner.json?lang=${lang}`,
+      { headers: { 'X-API-KEY': 'apk_your_key' } }
+    );
 
-  banner.innerHTML = `
-    <div class="promo-content">
-      <button class="promo-close" aria-label="Fermer">×</button>
+    const data = await response.json();
 
-      <img
-        src="${promo.image_url}"
-        alt="${promo.title}"
-        class="promo-image"
-      />
+    if (!data.success) {
+      console.log('Pas de promo disponible');
+      return;
+    }
 
-      <div class="promo-text">
-        <h2 class="promo-title">${promo.title}</h2>
-        <p class="promo-description">${promo.content}</p>
-        <small class="promo-author">
-          Par ${promo.author_name} (${promo.author_role})
-        </small>
+    const promo = data.data;
+    const banner = document.createElement('div');
+    banner.className = 'promo-banner';
+    banner.id = `promo-${promo.id}`;
+
+    banner.innerHTML = `
+      <div class="promo-content">
+        <button class="promo-close" aria-label="Fermer">×</button>
+
+        <img
+          src="${promo.image_url}"
+          alt="${promo.title}"
+          class="promo-image"
+        />
+
+        <div class="promo-text">
+          <h2 class="promo-title">${promo.title}</h2>
+          <p class="promo-description">${promo.content}</p>
+          <small class="promo-author">
+            Par ${promo.author_name} (${promo.author_role})
+          </small>
+        </div>
+
+        <a
+          href="${promo.cta_url}"
+          class="promo-cta"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          ${promo.cta_text}
+        </a>
       </div>
+    `;
 
-      <a
-        href="${promo.cta_url}"
-        class="promo-cta"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        ${promo.cta_text}
-      </a>
-    </div>
-  `;
+    // Fermeture manuelle
+    banner.querySelector('.promo-close').addEventListener('click', () => {
+      banner.remove();
+    });
 
-  // Bouton fermeture
-  banner.querySelector('.promo-close').addEventListener('click', () => {
-    banner.remove();
-  });
+    document.body.appendChild(banner);
 
-  document.body.appendChild(banner);
-  return banner;
+    // Gérer auto-close si configuré
+    if (promo.auto_close_timer && promo.auto_close_timer > 0) {
+      setTimeout(() => {
+        banner.remove();
+      }, promo.auto_close_timer * 1000);
+    }
+  } catch (error) {
+    console.error('Erreur chargement promo:', error);
+  }
 }
+
+// Utilisation
+displayPromo('en');  // Afficher en anglais
 ```
 
 ### CSS de Base
@@ -143,6 +326,7 @@ function displayPromo(promo) {
   flex-direction: column;
   gap: 12px;
   padding: 16px;
+  position: relative;
 }
 
 .promo-close {
@@ -155,6 +339,7 @@ function displayPromo(promo) {
   cursor: pointer;
   color: #999;
   transition: color 0.2s;
+  z-index: 1;
 }
 
 .promo-close:hover {
@@ -199,6 +384,7 @@ function displayPromo(promo) {
   font-weight: 500;
   text-align: center;
   transition: background 0.2s;
+  align-self: flex-start;
 }
 
 .promo-cta:hover {
@@ -211,6 +397,7 @@ function displayPromo(promo) {
   text-align: center;
   padding: 8px 0;
   border-top: 1px solid #eee;
+  margin-top: 8px;
 }
 ```
 
@@ -218,39 +405,20 @@ function displayPromo(promo) {
 
 ## 🚀 Fonctionnalités Avancées
 
-### 1️⃣ Fermeture Automatique
+### 1️⃣ Countdown Visuel
 
 ```javascript
-function displayPromoWithAutoClose(promo, bannerElement) {
-  // SI fermeture auto configurée
-  if (promo.auto_close_timer && promo.auto_close_timer > 0) {
-    setTimeout(() => {
-      bannerElement.remove();
-    }, promo.auto_close_timer * 1000);
-  }
-}
-
-// Usage
-const banner = displayPromo(promo);
-displayPromoWithAutoClose(promo, banner);
-```
-
-### 2️⃣ Countdown Visuel
-
-```javascript
-function displayCountdown(promo, bannerElement) {
+function addCountdown(promo, bannerElement) {
   if (!promo.show_countdown || !promo.auto_close_timer) {
     return;
   }
 
-  // Créer l'élément countdown
   const countdownEl = document.createElement('div');
   countdownEl.className = 'promo-countdown';
   bannerElement.appendChild(countdownEl);
 
   let remaining = promo.auto_close_timer;
 
-  // Mettre à jour chaque seconde
   const interval = setInterval(() => {
     countdownEl.textContent = `Fermeture dans ${remaining}s`;
     remaining--;
@@ -260,14 +428,9 @@ function displayCountdown(promo, bannerElement) {
     }
   }, 1000);
 }
-
-// Usage
-const banner = displayPromo(promo);
-displayCountdown(promo, banner);
-displayPromoWithAutoClose(promo, banner);
 ```
 
-### 3️⃣ Animations
+### 2️⃣ Animations
 
 ```javascript
 const AnimationStyles = {
@@ -278,7 +441,6 @@ const AnimationStyles = {
     }
     .animate-fade { animation: animate-fade 0.5s ease-in-out; }
   `,
-
   slide: `
     @keyframes animate-slide {
       from { transform: translateY(-100%); opacity: 0; }
@@ -286,7 +448,6 @@ const AnimationStyles = {
     }
     .animate-slide { animation: animate-slide 0.5s ease-out; }
   `,
-
   zoom: `
     @keyframes animate-zoom {
       from { transform: scale(0.9); opacity: 0; }
@@ -297,136 +458,59 @@ const AnimationStyles = {
 };
 
 function applyAnimation(promo, bannerElement) {
-  const style = promo.animation_style || 'fade';
+  const style = promo.animation_style;
 
-  if (AnimationStyles[style]) {
-    // Ajouter les styles CSS
-    const styleEl = document.createElement('style');
-    styleEl.textContent = AnimationStyles[style];
-    document.head.appendChild(styleEl);
-
-    // Appliquer la classe
-    bannerElement.classList.add(`animate-${style}`);
+  if (!style || !AnimationStyles[style]) {
+    return;
   }
-}
 
-// Usage
-const banner = displayPromo(promo);
-applyAnimation(promo, banner);
+  const styleEl = document.createElement('style');
+  styleEl.textContent = AnimationStyles[style];
+  document.head.appendChild(styleEl);
+
+  bannerElement.classList.add(`animate-${style}`);
+}
 ```
 
-### 4️⃣ Solution Complète
+### 3️⃣ Gestion Multilingue (Mode 2)
 
 ```javascript
-class PromoManager {
-  constructor(apiKey) {
-    this.apiKey = apiKey;
-    this.apiUrl = 'https://api.moussouni.dev/api/v1/promo/banner.json';
-  }
+async function displayPromoMultilingual() {
+  const response = await fetch(
+    'https://api.moussouni.dev/api/v1/promo/banner.json?all_langs=true',
+    { headers: { 'X-API-KEY': 'apk_your_key' } }
+  );
 
-  async fetch() {
-    try {
-      const response = await fetch(this.apiUrl, {
-        headers: {
-          'X-API-KEY': this.apiKey
-        }
-      });
+  const data = await response.json();
 
-      const data = await response.json();
+  if (!data.success) return;
 
-      if (!data.success) {
-        if (response.status === 404) {
-          console.log('Aucun promo actif');
-          return null;
-        }
-        console.error('Erreur API:', data.error.message);
-        return null;
-      }
+  const promo = data.data;
 
-      return data.data;
-    } catch (error) {
-      console.error('Erreur chargement promo:', error);
-      return null;
-    }
-  }
+  // Déterminer la langue de l'utilisateur
+  const userLang = navigator.language.split('-')[0]; // 'en', 'fr', etc.
+  const supportedLangs = Object.keys(promo.translations.title);
+  const lang = supportedLangs.includes(userLang) ? userLang : 'fr'; // Fallback à FR
 
-  display(promo) {
-    const banner = document.createElement('div');
-    banner.className = 'promo-banner';
-    banner.id = `promo-${promo.id}`;
+  // Utiliser les textes de la langue détectée
+  const banner = document.createElement('div');
+  banner.className = 'promo-banner';
 
-    // Appliquer l'animation
-    if (promo.animation_style) {
-      banner.classList.add(`animate-${promo.animation_style}`);
-    }
+  banner.innerHTML = `
+    <div class="promo-content">
+      <img src="${promo.image_url}" alt="${promo.translations.title[lang]}" />
 
-    banner.innerHTML = `
-      <div class="promo-content">
-        <button class="promo-close" aria-label="Fermer">×</button>
+      <h2>${promo.translations.title[lang]}</h2>
+      <p>${promo.translations.content[lang]}</p>
 
-        <img
-          src="${promo.image_url}"
-          alt="${promo.title}"
-          class="promo-image"
-        />
+      <a href="${promo.cta_url}" class="promo-cta">
+        ${promo.translations.cta_text[lang]}
+      </a>
+    </div>
+  `;
 
-        <div class="promo-text">
-          <h2 class="promo-title">${promo.title}</h2>
-          <p class="promo-description">${promo.content}</p>
-          <small class="promo-author">
-            Par ${promo.author_name}
-          </small>
-        </div>
-
-        <a
-          href="${promo.cta_url}"
-          class="promo-cta"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          ${promo.cta_text}
-        </a>
-
-        ${promo.show_countdown ? '<div class="promo-countdown"></div>' : ''}
-      </div>
-    `;
-
-    // Fermeture manuelle
-    banner.querySelector('.promo-close').addEventListener('click', () => {
-      banner.remove();
-    });
-
-    document.body.appendChild(banner);
-
-    // Gestion countdown + auto-close
-    if (promo.auto_close_timer && promo.auto_close_timer > 0) {
-      if (promo.show_countdown) {
-        let remaining = promo.auto_close_timer;
-        const countdownEl = banner.querySelector('.promo-countdown');
-
-        const interval = setInterval(() => {
-          countdownEl.textContent = `Fermeture dans ${remaining}s`;
-          remaining--;
-        }, 1000);
-      }
-
-      setTimeout(() => {
-        banner.remove();
-      }, promo.auto_close_timer * 1000);
-    }
-  }
-
-  async init() {
-    const promo = await this.fetch();
-    if (promo) {
-      this.display(promo);
-    }
-  }
+  document.body.appendChild(banner);
 }
-
-// Usage
-const manager = new PromoManager('votre_clé_api');
-manager.init();
 ```
 
 ---
@@ -447,103 +531,57 @@ if (response.status === 404 && !data.success) {
 ```javascript
 if (response.status === 401) {
   console.error('Clé API invalide ou expirée');
-  // Vérifier la clé X-API-KEY
 }
 ```
 
-### 429 - Rate limit dépassé
+### 429 - Rate limit
 
 ```javascript
 if (response.status === 429) {
-  console.error('Trop de requêtes, veuillez patienter');
+  console.error('Trop de requêtes');
   const retryAfter = response.headers.get('Retry-After');
   console.log(`Réessayer après ${retryAfter}s`);
 }
 ```
 
-### Gestion Générale
+---
 
-```javascript
-async function fetchPromo(apiKey) {
-  try {
-    const response = await fetch('https://api.moussouni.dev/api/v1/promo/banner.json', {
-      headers: { 'X-API-KEY': apiKey }
-    });
+## 📋 Différences Mode 1 vs Mode 2
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      switch (response.status) {
-        case 404:
-          console.log('Aucun promo actif');
-          break;
-        case 401:
-          console.error('Authentification échouée');
-          break;
-        case 429:
-          console.error('Rate limit dépassé');
-          break;
-        default:
-          console.error(`Erreur ${response.status}: ${data.error?.message}`);
-      }
-      return null;
-    }
-
-    return data.success ? data.data : null;
-  } catch (error) {
-    console.error('Erreur réseau:', error);
-    return null;
-  }
-}
-```
+| Aspect | Mode 1 (`?lang=fr`) | Mode 2 (`?all_langs=true`) |
+|--------|---------------------|---------------------------|
+| **URL** | `/api/v1/promo/banner.json?lang=en` | `/api/v1/promo/banner.json?all_langs=true` |
+| **title** | STRING | OBJECT `{ fr: "...", en: "..." }` |
+| **content** | STRING | OBJECT `{ fr: "...", en: "..." }` |
+| **cta_text** | STRING | OBJECT `{ fr: "...", en: "..." }` |
+| **locale** | STRING (la langue demandée) | ❌ ABSENT |
+| **Use Case** | Application monolingue ou langue fixe | Application multilingue dynamique |
+| **Overhead** | ✅ Minimal | ⚠️ Plus de données |
 
 ---
 
-## 📋 Checklist d'Implémentation
+## 🔄 Checklist d'Implémentation
 
-- ✅ Vérifier `response.success` avant d'utiliser les données
-- ✅ Extraire tous les champs standard (title, content, image_url, etc.)
-- ✅ Vérifier la présence des champs optionnels avant utilisation
-- ✅ Implémenter l'affichage du banner basique
-- ✅ Si `auto_close_timer` > 0: fermer automatiquement
-- ✅ Si `show_countdown` = true: afficher le décompte
-- ✅ Si `animation_style` configuré: appliquer l'animation
-- ✅ Gérer les erreurs (404, 401, 429)
-- ✅ Ajouter un bouton fermeture manuel
-- ✅ Tester avec tous les cas (avec/sans options avancées)
-- ✅ Respecter les dates de début/fin pour l'affichage côté client
-
----
-
-## 🔄 Flux Recommandé
-
-```
-1. Récupérer la réponse API
-   ↓
-2. Vérifier success = true
-   ↓
-3. Créer le DOM du banner
-   ↓
-4. Appliquer l'animation (si configurée)
-   ↓
-5. Ajouter les événements (fermeture manuelle)
-   ↓
-6. Afficher le countdown (si configuré)
-   ↓
-7. Gérer l'auto-close (si configuré)
-   ↓
-8. Attendre fermeture manuelle ou auto
-```
+- ✅ Choisir Mode 1 ou Mode 2 selon vos besoins
+- ✅ Vérifier `response.success` avant utilisation
+- ✅ Extraire correctement les champs (STRING vs OBJECT)
+- ✅ Gérer les champs optionnels (`auto_close_timer`, etc.)
+- ✅ Implémenter l'affichage basique
+- ✅ Ajouter le bouton fermeture manuelle
+- ✅ Si `auto_close_timer` > 0 : fermer automatiquement
+- ✅ Si `show_countdown` = true : afficher countdown
+- ✅ Si `animation_style` configuré : appliquer animation
+- ✅ Gérer les erreurs API (404, 401, 429)
 
 ---
 
 ## 📚 Ressources
 
-- [Documentation complète des Promos](./PROMOS.md) - Structure et endpoints
+- [Documentation Promos](./PROMOS.md) - Structure complète
 - [API Reference](./API.md) - Détails techniques
-- [Database Schema](./DATABASE.md) - Structure des données
+- [Database Schema](./DATABASE.md) - Structure données
 
 ---
 
 **Dernière mise à jour:** 2026-01-28
-**Version:** 1.0
+**Version:** 1.1

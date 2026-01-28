@@ -121,22 +121,53 @@ Draft (manual edit only)
 
 **Endpoint:** `GET /api/v1/promo/banner.json`
 
-**Query Parameters:**
-- `lang` (optional): The language code (`fr`, `en`, `de`, `ar`). Defaults to `fr`. If a translation is missing, it falls back to the default locale.
-- `all_langs` (optional): If set to `true`, the API returns **all translations** in a `translations` object instead of a single language.
-
 **Required Headers:**
 ```
 X-API-KEY: apk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
-**Request Example:**
+### Query Parameters
+
+Choose ONE of these modes:
+
+#### Mode 1: Single Language (Default)
+Return promo in a specific language (texts as STRING):
+
 ```bash
-curl -H "X-API-KEY: apk_xxx" \
-  https://api.example.com/api/v1/promo/banner.json?lang=en
+# Français (default if no param)
+GET /api/v1/promo/banner.json
+
+# English
+GET /api/v1/promo/banner.json?lang=en
+
+# Deutsch
+GET /api/v1/promo/banner.json?lang=de
+
+# العربية
+GET /api/v1/promo/banner.json?lang=ar
 ```
 
-**Success Response (200 OK):**
+**Supported languages:** `fr` (default), `en`, `de`, `ar`
+
+#### Mode 2: All Languages
+Return promo with all translations (texts as OBJECT):
+
+```bash
+GET /api/v1/promo/banner.json?all_langs=true
+```
+
+**Request Examples:**
+```bash
+# Get in English
+curl -H "X-API-KEY: apk_xxx" \
+  https://api.example.com/api/v1/promo/banner.json?lang=en
+
+# Get all languages
+curl -H "X-API-KEY: apk_xxx" \
+  https://api.example.com/api/v1/promo/banner.json?all_langs=true
+```
+
+**Success Response - Mode 1 (Single Language, `?lang=en`):**
 ```json
 {
   "success": true,
@@ -144,13 +175,13 @@ curl -H "X-API-KEY: apk_xxx" \
     "id": 1,
     "version": 3,
     "locale": "en",
-    "title": "Summer Sale",
-    "content": "Get 50% off on selected items",
-    "image_url": "https://cdn.example.com/summer-banner.jpg",
-    "cta_text": "Shop Now",
-    "cta_url": "https://example.com/summer-sale",
     "author_name": "Marketing Team",
     "author_role": "Campaign Manager",
+    "title": "Summer Sale",
+    "content": "Get 50% off on selected items",
+    "cta_text": "Shop Now",
+    "image_url": "https://cdn.example.com/summer-banner.jpg",
+    "cta_url": "https://example.com/summer-sale",
     "priority": 10,
     "max_impressions": 5,
     "cooldown_seconds": 86400,
@@ -164,15 +195,20 @@ curl -H "X-API-KEY: apk_xxx" \
 }
 ```
 
-**Note:** Optional fields (`auto_close_timer`, `show_countdown`, `animation_style`) are only included in the response when they have been set. If not configured, they will be omitted.
+**Note:**
+- Texts (`title`, `content`, `cta_text`) are **STRING** (single language)
+- `locale` field indicates the language of returned content
+- Optional fields (`auto_close_timer`, `show_countdown`, `animation_style`) are only included when configured
 
-**Success Response with All Languages (`?all_langs=true`):**
+**Success Response - Mode 2 (All Languages, `?all_langs=true`):**
 ```json
 {
   "success": true,
   "data": {
     "id": 1,
     "version": 3,
+    "author_name": "Marketing Team",
+    "author_role": "Campaign Manager",
     "translations": {
       "title": {
         "fr": "Soldes d'été",
@@ -181,10 +217,10 @@ curl -H "X-API-KEY: apk_xxx" \
         "ar": "تخفيضات الصيف"
       },
       "content": {
-        "fr": "Profitez de 50% de réduction...",
-        "en": "Get 50% off...",
-        "de": "Erhalten Sie 50% Rabatt...",
-        "ar": "احصل على خصم 50٪..."
+        "fr": "Profitez de 50% de réduction sur les articles sélectionnés",
+        "en": "Get 50% off on selected items",
+        "de": "Erhalten Sie 50% Rabatt auf ausgewählte Artikel",
+        "ar": "احصل على خصم 50٪ على العناصر المختارة"
       },
       "cta_text": {
         "fr": "Acheter maintenant",
@@ -195,8 +231,6 @@ curl -H "X-API-KEY: apk_xxx" \
     },
     "image_url": "https://cdn.example.com/summer-banner.jpg",
     "cta_url": "https://example.com/summer-sale",
-    "author_name": "Marketing Team",
-    "author_role": "Campaign Manager",
     "priority": 10,
     "max_impressions": 5,
     "cooldown_seconds": 86400,
@@ -210,24 +244,46 @@ curl -H "X-API-KEY: apk_xxx" \
 }
 ```
 
-### Display Configuration Fields
+**Note:**
+- Texts (`title`, `content`, `cta_text`) are **OBJECTS** with all 4 languages (fr, en, de, ar)
+- ⚠️ **NO** `locale` field in this mode (you have all languages available)
+- Optional fields are still only included when configured
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| **id** | integer | Always | Unique identifier |
-| **version** | integer | Always | Version number of the promo |
-| **locale** | string | Always | Language code of the returned content |
-| **author_name** | string | Always | Name of the promo author |
-| **author_role** | string | Always | Role/title of the promo author |
-| **priority** | integer | Always | Priority level (1-10, where 10 is highest) |
-| **max_impressions** | integer | Always | Max number of views before disappearing |
-| **cooldown_seconds** | integer | Always | Wait time (seconds) after manual close |
-| **display_mode** | string | Always | `fixed_count`, `unlimited`, `once_per_day`, `once_per_week` |
-| **start_date** | string | Always | Campaign start date (YYYY-MM-DD) |
-| **end_date** | string | Always | Campaign end date (YYYY-MM-DD) |
-| **auto_close_timer** | integer | Optional | Seconds before auto-close (0 = disabled). Only present if configured. |
-| **show_countdown** | boolean | Optional | Display countdown timer before auto-close. Only present if configured. |
-| **animation_style** | string | Optional | Animation style: `fade`, `slide`, `zoom`. Only present if configured. |
+### Response Fields
+
+#### Always Present
+
+| Field | Type | Description |
+|-------|------|-------------|
+| **id** | integer | Unique promo identifier |
+| **version** | integer | Version number of the promo |
+| **author_name** | string | Name of the promo author |
+| **author_role** | string | Role/title of the promo author |
+| **priority** | integer | Priority level (1-10, where 10 is highest) |
+| **max_impressions** | integer | Max number of views before disappearing |
+| **cooldown_seconds** | integer | Wait time (seconds) after manual close |
+| **display_mode** | string | Display frequency: `fixed_count`, `unlimited`, `once_per_day`, `once_per_week` |
+| **image_url** | string | Full URL to promo image |
+| **cta_url** | string | Full URL for CTA button |
+| **start_date** | string | Campaign start date (YYYY-MM-DD) |
+| **end_date** | string | Campaign end date (YYYY-MM-DD) |
+
+#### Text Fields (Mode Dependent)
+
+| Field | Type (Mode 1) | Type (Mode 2) | Description |
+|-------|---|---|-------------|
+| **title** | string | object | `{fr: "...", en: "...", de: "...", ar: "..."}` |
+| **content** | string | object | `{fr: "...", en: "...", de: "...", ar: "..."}` |
+| **cta_text** | string | object | `{fr: "...", en: "...", de: "...", ar: "..."}` |
+| **locale** | string | absent | Language code of returned content (Mode 1 only) |
+
+#### Optional Fields (Only if Configured)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| **auto_close_timer** | integer | Seconds before auto-close (0 = disabled) |
+| **show_countdown** | boolean | Display countdown timer before auto-close |
+| **animation_style** | string | Animation style: `fade`, `slide`, `zoom` |
 
 ### Advanced Display Features (Optional)
 
