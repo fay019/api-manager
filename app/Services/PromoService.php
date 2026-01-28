@@ -76,6 +76,9 @@ class PromoService
         if ($promo->animation_style !== null) {
             $response['animation_style'] = $promo->animation_style;
         }
+        if ($promo->message_display_mode !== null) {
+            $response['message_display_mode'] = $promo->message_display_mode;
+        }
 
         return $response;
     }

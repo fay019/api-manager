@@ -169,14 +169,24 @@ class PromoForm
                                     ->native(false)
                                     ->live()
                                     ->helperText('Règle de fréquence d\'affichage'),
-                                TextInput::make('max_impressions')
-                                    ->label('Nombre max de vues')
-                                    ->numeric()
-                                    ->default(9999)
-                                    ->required()
-                                    ->visible(fn ($get) => $get('display_mode') === 'fixed_count')
-                                    ->helperText('Si 0 = illimité'),
+                                Select::make('message_display_mode')
+                                    ->label('Mode d\'affichage du texte')
+                                    ->options([
+                                        'multiline' => 'V - Vertical (scroll)',
+                                        'marquee' => 'H - Horizontal (ticker)',
+                                        'none' => 'N - Statique',
+                                    ])
+                                    ->default('multiline')
+                                    ->native(false)
+                                    ->helperText('Défilement du texte'),
                             ]),
+                        TextInput::make('max_impressions')
+                            ->label('Nombre max de vues')
+                            ->numeric()
+                            ->default(9999)
+                            ->required()
+                            ->visible(fn ($get) => $get('display_mode') === 'fixed_count')
+                            ->helperText('Si 0 = illimité'),
                         Grid::make(2)
                             ->schema([
                                 TextInput::make('cooldown_seconds')

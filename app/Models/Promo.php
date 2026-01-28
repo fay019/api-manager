@@ -30,6 +30,7 @@ class Promo extends Model
         'auto_close_timer',
         'show_countdown',
         'animation_style',
+        'message_display_mode',
         'created_by',
     ];
 
