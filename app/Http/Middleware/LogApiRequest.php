@@ -26,16 +26,10 @@ class LogApiRequest
             $apiClient = $request->attributes->get('api_client');
             $apiKey = $request->attributes->get('api_key');
 
-            // Origin/Referer dépend du client, pas toujours présent. Fallback: Origin > Referer.
+            // Origin/Referer dépend du client, pas toujours présent. Fallback: Origin > Referer > x-site-domain
             $origin = $request->header('Origin');
             $referer = $request->header('Referer');
-
-            // Debug logging
-            \Log::info('API Request Log Debug', [
-                'origin' => $origin,
-                'referer' => $referer,
-                'all_headers' => $request->headers->all(),
-            ]);
+            $xSiteDomain = $request->header('X-Site-Domain');
 
             $ip = $request->ip();
             $hostname = null;
@@ -46,8 +40,8 @@ class LogApiRequest
                 }
             }
 
-            // Extract domain from Origin or Referer header
-            $domain = $this->extractDomain($origin ?? $referer);
+            // Extract domain from Origin, Referer, or X-Site-Domain header
+            $domain = $this->extractDomain($origin ?? $referer) ?? $xSiteDomain;
 
             ApiRequestLog::create([
                 'api_client_id' => $apiClient?->id,
