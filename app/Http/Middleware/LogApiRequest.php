@@ -30,6 +30,13 @@ class LogApiRequest
             $origin = $request->header('Origin');
             $referer = $request->header('Referer');
 
+            // Debug logging
+            \Log::info('API Request Log Debug', [
+                'origin' => $origin,
+                'referer' => $referer,
+                'all_headers' => $request->headers->all(),
+            ]);
+
             $ip = $request->ip();
             $hostname = null;
             if ($ip) {
