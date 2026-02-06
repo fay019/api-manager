@@ -90,10 +90,15 @@ Every API request captures the following information:
 | **Endpoint** | Request path | The API endpoint path |
 | **Status Code** | Response status | HTTP response code (200, 404, 500, etc.) |
 | **Duration (ms)** | Response time | How long the request took to process |
-| **Domain** | Origin/Referer header | The website domain calling the API (e.g., `moussouni.dev`) |
+| **Domain** | Origin/Referer header or X-Site-Domain | The website domain calling the API (e.g., `moussouni.dev`) |
+| **Site Name** | X-Site-Name header | Name of the client site (e.g., `Portfolio`) |
+| **Page Path** | X-Site-Page header | Exact page/path that triggered the request (e.g., `/blog/article`) |
+| **Full URL** | X-Site-Full-Url header | Complete URL of the calling page |
+| **Client Request Time** | X-Request-Time header | Timestamp when the client made the request |
+| **Client Browser** | X-User-Agent header | Client's browser/user agent information |
 | **IP Address** | Remote IP | The server's IP address |
 | **Hostname** | Reverse DNS lookup | The hostname of the server (e.g., `server-12345.likuid.com`) |
-| **User Agent** | User-Agent header | Browser/client information (hidden by default) |
+| **User Agent** | User-Agent header | Server's HTTP client information (hidden by default) |
 | **Origin** | Origin header | HTTP Origin header (hidden by default) |
 | **Referer** | Referer header | HTTP Referer header (details page only) |
 | **API Client** | Request auth | Which API client made the request |
@@ -115,10 +120,32 @@ Every API request captures the following information:
 
 When a request comes in:
 1. The `LogApiRequest` middleware captures the request details
-2. It extracts the **domain** from the `Origin` header (or `Referer` as fallback)
-3. It performs a reverse DNS lookup for the **hostname**
-4. All information is logged to the `api_request_logs` table
-5. You can view and filter the logs in the admin panel
+2. It extracts the **domain** from the `Origin` header (or `Referer`, then `X-Site-Domain` as fallback)
+3. It extracts **client details** from custom headers if provided:
+   - `X-Site-Name` → Site name
+   - `X-Site-Page` → Exact page path (e.g., `/blog/article`)
+   - `X-Site-Full-Url` → Complete URL
+   - `X-Request-Time` → Client's request timestamp
+   - `X-User-Agent` → Client's browser info
+4. It performs a reverse DNS lookup for the **hostname**
+5. All information is logged to the `api_request_logs` table
+6. You can view and filter the logs in the admin panel
+
+### Custom Headers (Client Integration)
+
+If your client sends these custom headers, you get much richer data:
+
+```
+X-Site-Domain: moussouni.dev
+X-Site-Name: Portfolio
+X-Site-Page: /blog/article
+X-Site-Full-Url: https://moussouni.dev/blog
+X-Request-Time: 1738939200
+X-User-Agent: Mozilla/5.0...
+X-Site-Lang: fr
+```
+
+These headers are typically sent by JavaScript/PHP clients that track analytics. They allow you to pinpoint exactly which page triggered each API request.
 
 ### Filtering and Searching
 
