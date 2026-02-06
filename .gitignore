@@ -27,3 +27,5 @@ Thumbs.db
 /storage/app/
 /storage/framework/
 /.claude/
+/claude/
+claude.md

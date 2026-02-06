@@ -39,6 +39,9 @@ class LogApiRequest
                 }
             }
 
+            // Extract domain from Origin or Referer header
+            $domain = $this->extractDomain($origin ?? $referer);
+
             ApiRequestLog::create([
                 'api_client_id' => $apiClient?->id,
                 'api_key_id' => $apiKey?->id,
@@ -47,6 +50,7 @@ class LogApiRequest
                 'status_code' => $response->status(),
                 'ip' => $ip,
                 'hostname' => $hostname,
+                'domain' => $domain,
                 'user_agent' => $request->header('User-Agent'),
                 'origin' => $origin ?? $referer,
                 'referer' => $referer,
@@ -57,5 +61,16 @@ class LogApiRequest
             // Silently fail - don't let logging break the response
             \Log::error('Failed to log API request', ['exception' => $e]);
         }
+    }
+
+    private function extractDomain(?string $url): ?string
+    {
+        if (! $url) {
+            return null;
+        }
+
+        $parsed = parse_url($url);
+
+        return $parsed['host'] ?? null;
     }
 }

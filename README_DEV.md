@@ -72,3 +72,62 @@ If you see 404s on `/livewire/*` or `/admin`, it means the application is likely
 
 ### SQLite Permissions
 Ensure the `database/` directory is writable by the web server (www-data/nginx). SQLite needs to create `-wal` and `-shm` temporary files in that folder during operations.
+
+---
+
+## 📊 API Request Logs
+
+The **API Request Logs** section in the admin panel records every request made to the API. This feature helps you monitor and debug API usage.
+
+### What Gets Logged
+
+Every API request captures the following information:
+
+| Field | Source | Purpose |
+|-------|--------|---------|
+| **Timestamp** | Request time | When the request was made |
+| **HTTP Method** | HTTP method | GET, POST, PUT, DELETE, or PATCH |
+| **Endpoint** | Request path | The API endpoint path |
+| **Status Code** | Response status | HTTP response code (200, 404, 500, etc.) |
+| **Duration (ms)** | Response time | How long the request took to process |
+| **Domain** | Origin/Referer header | The website domain calling the API (e.g., `moussouni.dev`) |
+| **IP Address** | Remote IP | The server's IP address |
+| **Hostname** | Reverse DNS lookup | The hostname of the server (e.g., `server-12345.likuid.com`) |
+| **User Agent** | User-Agent header | Browser/client information (hidden by default) |
+| **Origin** | Origin header | HTTP Origin header (hidden by default) |
+| **Referer** | Referer header | HTTP Referer header (details page only) |
+| **API Client** | Request auth | Which API client made the request |
+| **API Key** | Request auth | Which API key was used |
+
+### Understanding Domain vs. Hostname
+
+**Domain** (e.g., `moussouni.dev`):
+- Extracted from the `Origin` or `Referer` HTTP header
+- Shows the actual website that called the API
+- More useful for identifying which site is making requests
+
+**Hostname** (e.g., `server-12345.likuid.com`):
+- Obtained via reverse DNS lookup of the source IP
+- Shows the server's infrastructure hostname
+- Useful for technical debugging and server identification
+
+### How It Works
+
+When a request comes in:
+1. The `LogApiRequest` middleware captures the request details
+2. It extracts the **domain** from the `Origin` header (or `Referer` as fallback)
+3. It performs a reverse DNS lookup for the **hostname**
+4. All information is logged to the `api_request_logs` table
+5. You can view and filter the logs in the admin panel
+
+### Filtering and Searching
+
+The logs table supports:
+- **Search**: Find by domain, IP, endpoint, or other fields
+- **Filters**: Filter by HTTP method, status code range, API client, or date range
+- **Sort**: Click column headers to sort
+- **Toggle columns**: Show/hide optional columns like User Agent and Origin
+
+### Detail View
+
+Click the **View** button on any log entry to see all captured information, including the full Origin and Referer headers.
