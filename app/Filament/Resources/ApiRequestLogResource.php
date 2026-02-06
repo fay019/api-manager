@@ -69,19 +69,23 @@ class ApiRequestLogResource extends Resource
 
                 TextInput::make('origin')
                     ->label('Origin')
-                    ->disabled(),
+                    ->disabled()
+                    ->placeholder('Not provided'),
 
                 TextInput::make('referer')
                     ->label('Referer')
-                    ->disabled(),
+                    ->disabled()
+                    ->placeholder('Not provided'),
 
                 TextInput::make('apiClient.name')
                     ->label('API Client')
-                    ->disabled(),
+                    ->disabled()
+                    ->placeholder('Public API'),
 
                 TextInput::make('apiKey.name')
                     ->label('API Key')
-                    ->disabled(),
+                    ->disabled()
+                    ->placeholder('Not used'),
             ]);
     }
 
