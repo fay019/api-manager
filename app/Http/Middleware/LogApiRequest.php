@@ -31,6 +31,13 @@ class LogApiRequest
             $referer = $request->header('Referer');
             $xSiteDomain = $request->header('X-Site-Domain');
 
+            // Client custom headers
+            $siteName = $request->header('X-Site-Name');
+            $pagePath = $request->header('X-Site-Page');
+            $fullUrl = $request->header('X-Site-Full-Url');
+            $clientRequestTime = $request->header('X-Request-Time');
+            $clientUserAgent = $request->header('X-User-Agent');
+
             $ip = $request->ip();
             $hostname = null;
             if ($ip) {
@@ -52,6 +59,11 @@ class LogApiRequest
                 'ip' => $ip,
                 'hostname' => $hostname,
                 'domain' => $domain,
+                'site_name' => $siteName,
+                'page_path' => $pagePath,
+                'full_url' => $fullUrl,
+                'client_request_time' => $clientRequestTime ? \Carbon\Carbon::createFromTimestamp($clientRequestTime) : null,
+                'client_user_agent' => $clientUserAgent,
                 'user_agent' => $request->header('User-Agent'),
                 'origin' => $origin ?? $referer,
                 'referer' => $referer,

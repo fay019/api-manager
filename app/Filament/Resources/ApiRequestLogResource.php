@@ -63,6 +63,26 @@ class ApiRequestLogResource extends Resource
                     ->label('Domain')
                     ->disabled(),
 
+                TextInput::make('site_name')
+                    ->label('Site Name')
+                    ->disabled(),
+
+                TextInput::make('page_path')
+                    ->label('Page Path')
+                    ->disabled(),
+
+                TextInput::make('full_url')
+                    ->label('Full URL')
+                    ->disabled(),
+
+                TextInput::make('client_request_time')
+                    ->label('Client Request Time')
+                    ->disabled(),
+
+                TextInput::make('client_user_agent')
+                    ->label('Client Browser')
+                    ->disabled(),
+
                 TextInput::make('user_agent')
                     ->label('User Agent')
                     ->disabled(),
@@ -142,6 +162,13 @@ class ApiRequestLogResource extends Resource
                     ->sortable()
                     ->placeholder('-')
                     ->limit(40),
+
+                TextColumn::make('page_path')
+                    ->label('Page')
+                    ->searchable()
+                    ->sortable()
+                    ->placeholder('-')
+                    ->limit(30),
 
                 TextColumn::make('ip')
                     ->label('Source')
