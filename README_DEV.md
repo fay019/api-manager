@@ -60,6 +60,34 @@ The documentation scanner automatically indexes Markdown files in the project.
 
 ---
 
+## 🗄️ Database Configuration
+
+### Database Selection During Installation
+The installation wizard (`/setup/database`) allows you to choose between:
+*   **SQLite** - Default option, file-based, no server required
+*   **MySQL** - Production-ready, requires MySQL server
+*   **PostgreSQL** - Alternative production option
+
+You can select your preferred database during the setup wizard. The configuration is stored in `.env`.
+
+### Development Environment
+*   **Recommended**: SQLite (`database/database.sqlite`)
+*   **Setup**: Choose during installation wizard
+*   **Location**: `database/` directory (must be writable)
+
+### Production Environment (api.moussouni.dev)
+*   **Database**: MySQL
+*   **Configuration**: `.env` file
+*   **Credentials**: Set in `DB_HOST`, `DB_USERNAME`, `DB_PASSWORD`, `DB_DATABASE`
+*   **Migration**: As of February 2026, production was migrated from SQLite to MySQL for better performance and scalability
+
+**Data Recovery (if needed):**
+1. Backup the MySQL database first
+2. Export data from `database/database.sqlite.backup-*` (if available)
+3. Use tinker to re-import data following the JSON export/import process
+
+---
+
 ## 🧪 Troubleshooting Installation
 
 ### DECRYPT_FAILED Errors
