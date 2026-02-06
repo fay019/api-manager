@@ -38,16 +38,6 @@ class LogApiRequest
             $clientRequestTime = $request->header('X-Request-Time');
             $clientUserAgent = $request->header('X-User-Agent');
 
-            // Debug logging - check what's being received
-            \Log::info('API Request - Client Details Debug', [
-                'x_site_page_header' => $pagePath,
-                'x_site_name_header' => $siteName,
-                'x_site_full_url_header' => $fullUrl,
-                'all_headers_keys' => array_keys($request->headers->all()),
-                'request_path' => $request->path(),
-                'request_getPathInfo' => $request->getPathInfo(),
-            ]);
-
             $ip = $request->ip();
             $hostname = null;
             if ($ip) {
