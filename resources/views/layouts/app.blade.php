@@ -59,16 +59,25 @@
 
     <!-- Footer partagé -->
     <footer class="footer">
-        <p><strong>API Manager</strong> • Production-ready API Hub for Laravel</p>
+        <p><strong>🚀 API Manager</strong> • Production-ready API Hub for Laravel</p>
         <p>Environment: <strong>{{ config('app.env') }}</strong>
             {{ env('APP_DEBUG') === false ? '• Debug: OFF ✓' : '• Debug: ON (Development)' }}</p>
-        <p style="margin-top: 15px; font-size: 0.85em;">
-            <a href="{{ route('docs.index') }}">All Documentation</a> •
-            <a href="{{ route('docs.database') }}">Database Schema</a> •
-            <a href="{{ route('docs.deployment') }}">Deployment Guide</a>
+
+        <p style="margin-top: 20px; font-size: 0.85em;">
+            <a href="{{ route('docs.index') }}">📚 Documentation</a> •
+            <a href="{{ route('docs.database') }}">🗄️ Database Schema</a> •
+            <a href="{{ route('docs.deployment') }}">🚢 Deployment Guide</a>
             @if(!auth()->check())
-                • <a href="/admin/login" class="admin-link">admin</a>
+                • <a href="/admin/login" class="admin-link">🔐 Admin</a>
             @endif
+        </p>
+
+        <p style="margin-top: 20px; font-size: 0.85em; padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+            📧 <span id="admin-email"></span>
+        </p>
+
+        <p style="margin-top: 20px; font-size: 0.8em; opacity: 0.9; padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.05);">
+            © {{ date('Y') }} API Manager. All rights reserved.
         </p>
     </footer>
 
@@ -76,30 +85,61 @@
         .footer {
             background: transparent;
             border-radius: 0 0 12px 12px;
-            padding: 30px 40px;
+            padding: 40px 40px;
             text-align: center;
             color: #fff;
             font-size: 0.9em;
-            border-top: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 20px;
         }
 
         .footer p {
-            margin: 5px 0;
+            margin: 8px 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            line-height: 1.6;
         }
 
         .footer a {
             color: #fff;
             text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s ease;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .footer a:hover {
+            opacity: 0.8;
             text-decoration: underline;
         }
 
         .footer strong {
             color: #fff;
+            font-weight: 600;
+        }
+
+        .admin-link {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s ease;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .admin-link:hover {
+            opacity: 0.8;
         }
     </style>
+
+    <script>
+        // Protect email from bots - build dynamically
+        document.addEventListener('DOMContentLoaded', function() {
+            const adminEmail = document.getElementById('admin-email');
+            if (adminEmail) {
+                const email = 'admin' + '@' + 'moussouni.dev';
+                adminEmail.innerHTML = '<a href="mailto:' + email + '">' + email + '</a>';
+            }
+        });
+    </script>
 
     @yield('scripts')
 </body>
