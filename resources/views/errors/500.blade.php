@@ -26,6 +26,7 @@
             max-width: 600px;
             width: 100%;
             padding: 40px;
+            text-align: center;
         }
         .error-code {
             font-size: 72px;
@@ -98,11 +99,11 @@
             transition: all 0.3s;
         }
         .btn-primary {
-            background: #3b82f6;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
         }
         .btn-primary:hover {
-            background: #2563eb;
+            opacity: 0.9;
         }
         .btn-secondary {
             background: #e5e7eb;

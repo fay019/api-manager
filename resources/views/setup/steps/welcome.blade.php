@@ -13,7 +13,7 @@
             Continuer vers l'étape 2 →
         </a>
     @else
-        <div class="alert alert-danger">
+        <div class="alert alert-error">
             ❌ Les prérequis suivants ne sont pas satisfaits:
         </div>
 

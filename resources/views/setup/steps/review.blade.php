@@ -195,12 +195,12 @@
     }
 
     .info-box {
-        background: #dbeafe;
-        border-left: 4px solid #3b82f6;
+        background: #f3f4f6;
+        border-left: 4px solid #667eea;
         padding: 12px 16px;
         border-radius: 4px;
         font-size: 13px;
-        color: #1e40af;
+        color: #333;
     }
 
     .setup-header h1 {

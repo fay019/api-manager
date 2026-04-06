@@ -16,15 +16,12 @@
             box-sizing: border-box;
         }
 
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             color: #333;
             padding-bottom: 250px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
         }
 
         .admin-link {
@@ -65,10 +62,10 @@
         <p><strong>API Manager</strong> • Production-ready API Hub for Laravel</p>
         <p>Environment: <strong>{{ config('app.env') }}</strong>
             {{ env('APP_DEBUG') === false ? '• Debug: OFF ✓' : '• Debug: ON (Development)' }}</p>
-        <p style="margin-top: 15px; font-size: 0.85em; color: #999;">
-            <a href="{{ route('docs.index') }}" style="color: #667eea; text-decoration: none;">All Documentation</a> •
-            <a href="{{ route('docs.database') }}" style="color: #667eea; text-decoration: none;">Database Schema</a> •
-            <a href="{{ route('docs.deployment') }}" style="color: #667eea; text-decoration: none;">Deployment Guide</a>
+        <p style="margin-top: 15px; font-size: 0.85em;">
+            <a href="{{ route('docs.index') }}">All Documentation</a> •
+            <a href="{{ route('docs.database') }}">Database Schema</a> •
+            <a href="{{ route('docs.deployment') }}">Deployment Guide</a>
             @if(!auth()->check())
                 • <a href="/admin/login" class="admin-link">admin</a>
             @endif

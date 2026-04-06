@@ -4,47 +4,25 @@
 
 @section('styles')
     <style>
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-
         body {
-            background: #f5f5f5;
-        }
-
-        .navbar {
-            background: white;
-            border-bottom: 1px solid #eee;
-            padding: 20px 40px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-
-        .navbar a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.1em;
-        }
-
-        .navbar a:hover {
-            color: #764ba2;
+            min-height: 100vh;
+            padding: 20px;
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1100px;
             margin: 0 auto;
             padding: 40px 20px;
         }
 
         h1 {
-            color: #333;
+            color: white;
             margin-bottom: 10px;
             font-size: 2em;
         }
 
         .subtitle {
-            color: #999;
+            color: rgba(255, 255, 255, 0.85);
             margin-bottom: 40px;
             font-size: 1.1em;
         }
@@ -75,7 +53,7 @@
 
         .doc-card:hover {
             box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
-            transform: translateY(-4px);
+            transform: translateY(-3px);
         }
 
         .doc-card h3 {
@@ -138,9 +116,9 @@
 @endsection
 
 @section('content')
-    <div class="navbar">
+    <x-navbar>
         <a href="/">← Back to Home</a>
-    </div>
+    </x-navbar>
 
     <div class="container">
         <h1>📚 Documentation</h1>

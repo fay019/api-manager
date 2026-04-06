@@ -5,32 +5,19 @@
 @section('styles')
     <style>
         body {
-            background: #f5f5f5;
+            min-height: 100vh;
+            padding: 20px;
             line-height: 1.6;
         }
 
         .navbar {
-            background: white;
-            border-bottom: 1px solid #eee;
-            padding: 20px 40px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .navbar a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .navbar a:hover {
-            color: #764ba2;
-        }
-
         .container {
-            max-width: 900px;
+            max-width: 1100px;
             margin: 0 auto;
             padding: 40px 20px;
         }
@@ -261,10 +248,10 @@
 @endsection
 
 @section('content')
-    <div class="navbar">
+    <x-navbar>
         <a href="/">← API Manager</a>
         <a href="{{ route('docs.index') }}">← All Docs</a>
-    </div>
+    </x-navbar>
 
     <div class="container">
         <div class="doc-content">

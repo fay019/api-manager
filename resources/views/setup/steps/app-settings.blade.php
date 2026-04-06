@@ -1,6 +1,41 @@
 @extends('setup.layout')
 
 @section('content')
+<style>
+    .text-muted {
+        color: #6b7280;
+        font-size: 0.875em;
+    }
+
+    .form-check {
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-check-input {
+        margin-right: 0.5rem;
+        margin-top: 0.25rem;
+        accent-color: #667eea;
+        cursor: pointer;
+    }
+
+    .form-check-label {
+        cursor: pointer;
+        color: #333;
+    }
+
+    .invalid-feedback {
+        color: #dc2626;
+        font-size: 0.875em;
+        margin-top: 0.25rem;
+        display: none;
+    }
+
+    .is-invalid ~ .invalid-feedback {
+        display: block;
+    }
+</style>
+
 <h2>Paramètres Applicatifs</h2>
 <p>Étape 2/7 - Configuration de l'application</p>
 

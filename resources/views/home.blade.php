@@ -5,8 +5,6 @@
 @section('styles')
     <style>
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
             display: flex;
             flex-direction: column;
             padding: 20px;
@@ -75,7 +73,6 @@
 
         .nav-card {
             background: white;
-            border: 2px solid #f0f0f0;
             border-radius: 8px;
             padding: 25px;
             text-align: center;
@@ -86,11 +83,11 @@
             flex-direction: column;
             align-items: center;
             gap: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         .nav-card:hover {
-            border-color: #667eea;
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.15);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
             transform: translateY(-3px);
         }
 
@@ -246,7 +243,7 @@
                         </a>
                     @endif
 
-                    <a href="{{ route('docs.index') }}" class="nav-card" style="border-color: #667eea; box-shadow: 0 5px 20px rgba(102, 126, 234, 0.15);">
+                    <a href="{{ route('docs.index') }}" class="nav-card">
                         <div class="icon" style="font-size: 3em;">📚</div>
                         <h3 style="color: #764ba2; font-weight: 700;">All Documentation</h3>
                         <p style="font-weight: 600;">Browse all guides, API docs & schema</p>
