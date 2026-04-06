@@ -76,6 +76,11 @@
             📧 <span id="admin-email"></span>
         </p>
 
+        <p style="margin-top: 20px; font-size: 0.85em;">
+            🌐 <a href="https://moussouni.dev" target="_blank" rel="noopener noreferrer">Moussouni.dev</a> •
+            🎬 <a href="https://kdrama.moussouni.dev" target="_blank" rel="noopener noreferrer">K-Drama</a>
+        </p>
+
         <p style="margin-top: 20px; font-size: 0.8em; opacity: 0.9; padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.05);">
             © {{ date('Y') }} API Manager. All rights reserved.
         </p>
