@@ -101,6 +101,31 @@
         }
     </style>
 
+    <script>
+        // Detect Google AdSense ad height and adjust body padding
+        function adjustFooterPadding() {
+            const ads = document.querySelectorAll('ins.adsbygoogle[style*="position: fixed"]');
+            let maxHeight = 150; // fallback padding
+
+            ads.forEach(ad => {
+                const rect = ad.getBoundingClientRect();
+                if (rect.height > 0) {
+                    maxHeight = Math.max(maxHeight, rect.height + 20); // +20 for margin
+                }
+            });
+
+            document.body.style.paddingBottom = maxHeight + 'px';
+        }
+
+        // Check on page load and when ads are loaded
+        window.addEventListener('load', adjustFooterPadding);
+
+        // Re-check every 500ms in case ads load later
+        setTimeout(() => {
+            setInterval(adjustFooterPadding, 500);
+        }, 1000);
+    </script>
+
     @yield('scripts')
 </body>
 </html>
