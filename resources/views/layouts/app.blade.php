@@ -77,17 +77,30 @@
 
     <style>
         .footer {
-            background: white;
+            background: transparent;
             border-radius: 0 0 12px 12px;
             padding: 30px 40px;
             text-align: center;
-            color: #666;
+            color: #fff;
             font-size: 0.9em;
-            border-top: 1px solid #eee;
+            border-top: none;
         }
 
         .footer p {
             margin: 5px 0;
+        }
+
+        .footer a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer strong {
+            color: #fff;
         }
     </style>
 
