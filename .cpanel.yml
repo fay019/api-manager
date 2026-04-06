@@ -1,0 +1,13 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/guyfarro/api.moussouni.dev/
+    - /bin/cp -R ./* $DEPLOYPATH
+    - /bin/cp -R ./.[^.]* $DEPLOYPATH
+    - cd $DEPLOYPATH
+    - /usr/local/bin/php83 /usr/bin/composer install --no-dev --optimize-autoloader
+    - /usr/local/bin/php83 artisan migrate --force
+    - /usr/local/bin/php83 artisan config:cache
+    - /usr/local/bin/php83 artisan view:cache
+    - /usr/local/bin/php83 artisan route:cache
+    - npm ci && npm run build
