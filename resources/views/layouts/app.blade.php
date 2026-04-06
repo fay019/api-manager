@@ -30,7 +30,7 @@
             color: #333;
             display: flex;
             flex-direction: column;
-            padding-bottom: 150px;
+            padding-bottom: 220px;
         }
 
         .main-content {
@@ -100,47 +100,6 @@
             margin: 5px 0;
         }
     </style>
-
-    <script>
-        // Detect Google AdSense ad height and adjust body padding
-        function adjustFooterPadding() {
-            let maxHeight = 0;
-
-            // Method 1: Detect fixed/sticky positioned ads
-            const allElements = document.querySelectorAll('[style*="position: fixed"], [style*="position: sticky"], [style*="bottom: 0"]');
-
-            allElements.forEach(el => {
-                const rect = el.getBoundingClientRect();
-                const computedStyle = window.getComputedStyle(el);
-                const position = computedStyle.position;
-
-                // Check if element is at the bottom and has height
-                if ((position === 'fixed' || position === 'sticky') && rect.bottom > 0 && rect.height > 0) {
-                    // Don't count elements above the fold (like top nav)
-                    if (rect.top > window.innerHeight / 2) {
-                        maxHeight = Math.max(maxHeight, rect.height + 30);
-                    }
-                }
-            });
-
-            // Fallback to at least 100px padding
-            const padding = Math.max(100, maxHeight);
-            document.body.style.paddingBottom = padding + 'px';
-            console.log('Ad height detected:', maxHeight, 'px | Body padding:', padding, 'px');
-        }
-
-        // Check on page load
-        window.addEventListener('load', () => {
-            setTimeout(adjustFooterPadding, 500);
-        });
-
-        // Monitor DOM changes (ads might load dynamically)
-        const observer = new MutationObserver(adjustFooterPadding);
-        observer.observe(document.body, { childList: true, subtree: true });
-
-        // Also check periodically
-        setInterval(adjustFooterPadding, 1000);
-    </script>
 
     @yield('scripts')
 </body>
