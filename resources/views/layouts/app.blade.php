@@ -21,20 +21,10 @@
             50% { transform: translateY(-20px); }
         }
 
-        html, body {
-            height: 100%;
-        }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             color: #333;
-            display: flex;
-            flex-direction: column;
-            padding-bottom: 220px;
-        }
-
-        .main-content {
-            flex: 1;
+            padding-bottom: 250px;
         }
 
         .admin-link {
