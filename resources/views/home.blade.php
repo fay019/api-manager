@@ -1,18 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Manager - {{ config('app.name') }}</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+@extends('layouts.app')
 
+@section('title', 'Home')
+
+@section('styles')
+    <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
@@ -143,22 +135,6 @@
             margin-bottom: 10px;
         }
 
-        .credentials-box {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            border-radius: 4px;
-            margin-top: 10px;
-            font-size: 0.9em;
-            color: #333;
-        }
-
-        .credentials-box strong {
-            color: #333;
-            display: block;
-            margin-bottom: 8px;
-        }
-
         .endpoints-list {
             background: #f5f5f5;
             padding: 20px;
@@ -241,51 +217,15 @@
             line-height: 1.5;
         }
 
-        .footer {
-            background: white;
-            border-radius: 0 0 12px 12px;
-            padding: 30px 40px;
-            text-align: center;
-            color: #666;
-            font-size: 0.9em;
-            border-top: 1px solid #eee;
-        }
-
-        .footer p {
-            margin: 5px 0;
-        }
-
-        .admin-link {
-            color: #ccc;
-            text-decoration: none;
-            font-size: 0.9em;
-            transition: color 0.3s ease;
-        }
-
-        .admin-link:hover {
-            color: #667eea;
-        }
-
         @media (max-width: 768px) {
-            .header {
-                padding: 40px 20px;
-            }
-
-            .header h1 {
-                font-size: 1.8em;
-            }
-
-            .content {
-                padding: 20px;
-            }
-
             .quick-nav {
                 grid-template-columns: 1fr;
             }
         }
     </style>
-</head>
-<body>
+@endsection
+
+@section('content')
     <div class="container">
         <div class="header">
             <h1>🚀 API Manager</h1>
@@ -389,20 +329,5 @@
                 </div>
             </section>
         </div>
-
-        <div class="footer">
-            <p><strong>API Manager</strong> • Production-ready API Hub for Laravel</p>
-            <p>Environment: <strong>{{ config('app.env') }}</strong>
-                {{ env('APP_DEBUG') === false ? '• Debug: OFF ✓' : '• Debug: ON (Development)' }}</p>
-            <p style="margin-top: 15px; font-size: 0.85em; color: #999;">
-                <a href="{{ route('docs.index') }}" style="color: #667eea; text-decoration: none;">All Documentation</a> •
-                <a href="{{ route('docs.database') }}" style="color: #667eea; text-decoration: none;">Database Schema</a> •
-                <a href="{{ route('docs.deployment') }}" style="color: #667eea; text-decoration: none;">Deployment Guide</a>
-                @if(!auth()->check())
-                    • <a href="/admin/login" class="admin-link">admin</a>
-                @endif
-            </p>
-        </div>
     </div>
-</body>
-</html>
+@endsection

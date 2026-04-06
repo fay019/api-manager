@@ -1,25 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Documentation - API Manager</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+@extends('layouts.app')
 
+@section('title', 'Documentation')
+
+@section('styles')
+    <style>
         @keyframes bounce {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-20px); }
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             background: #f5f5f5;
-            color: #333;
         }
 
         .navbar {
@@ -112,17 +103,6 @@
             border-top: 1px solid #eee;
         }
 
-        .back-link {
-            color: #667eea;
-            text-decoration: none;
-            margin-bottom: 20px;
-            display: inline-block;
-        }
-
-        .back-link:hover {
-            text-decoration: underline;
-        }
-
         .features {
             background: white;
             padding: 30px;
@@ -155,8 +135,9 @@
             font-weight: bold;
         }
     </style>
-</head>
-<body>
+@endsection
+
+@section('content')
     <div class="navbar">
         <a href="/">← Back to Home</a>
     </div>
@@ -221,5 +202,4 @@
             </ul>
         </div>
     </div>
-</body>
-</html>
+@endsection

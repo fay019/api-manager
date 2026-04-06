@@ -1,20 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title }} - API Manager</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+@extends('layouts.app')
 
+@section('title', $title ?? 'Documentation')
+
+@section('styles')
+    <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             background: #f5f5f5;
-            color: #333;
             line-height: 1.6;
         }
 
@@ -267,8 +258,9 @@
             accent-color: #667eea;
         }
     </style>
-</head>
-<body>
+@endsection
+
+@section('content')
     <div class="navbar">
         <a href="/">← API Manager</a>
         <a href="{{ route('docs.index') }}">← All Docs</a>
@@ -293,5 +285,4 @@
             </div>
         </div>
     </div>
-</body>
-</html>
+@endsection
