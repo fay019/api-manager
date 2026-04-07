@@ -18,6 +18,11 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        html.dark body {
+            background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
         }
         .container {
             background: white;
@@ -75,6 +80,32 @@
         .btn-secondary:hover {
             background: #d1d5db;
         }
+
+        html.dark .container {
+            background: #374151;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        html.dark .error-code {
+            color: #f87171;
+        }
+
+        html.dark .error-title {
+            color: #f3f4f6;
+        }
+
+        html.dark .error-description {
+            color: #d1d5db;
+        }
+
+        html.dark .btn-secondary {
+            background: #4b5563;
+            color: #f3f4f6;
+        }
+
+        html.dark .btn-secondary:hover {
+            background: #6b7280;
+        }
     </style>
 </head>
 <body>
@@ -87,5 +118,39 @@
             <a href="{{ url()->previous() }}" class="btn btn-secondary">← Page précédente</a>
         </div>
     </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const html = document.documentElement;
+
+        function getInitialTheme() {
+            const saved = localStorage.getItem('theme');
+            if (saved) return saved;
+
+            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                return 'dark';
+            }
+            return 'light';
+        }
+
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                html.classList.add('dark');
+            } else {
+                html.classList.remove('dark');
+            }
+            localStorage.setItem('theme', theme);
+        }
+
+        const initialTheme = getInitialTheme();
+        applyTheme(initialTheme);
+
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (!localStorage.getItem('theme')) {
+                applyTheme(e.matches ? 'dark' : 'light');
+            }
+        });
+    });
+    </script>
 </body>
 </html>

@@ -6,8 +6,10 @@
     <title>@yield('title', 'API Manager') - {{ config('app.name') }}</title>
 
     <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8411028629670447"
-        crossorigin="anonymous"></script>
+    @if(\App\Models\Setting::get('ads_enabled', app()->environment('production')))
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8411028629670447"
+            crossorigin="anonymous"></script>
+    @endif
 
     <style>
         * {
@@ -22,6 +24,12 @@
             padding-bottom: 250px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        html.dark body {
+            background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+            color: #f3f4f6;
         }
 
         .admin-link {
@@ -59,9 +67,14 @@
 
     <!-- Footer partagé -->
     <footer class="footer">
-        <p><strong>🚀 API Manager</strong> • Production-ready API Hub for Laravel</p>
-        <p>Environment: <strong>{{ config('app.env') }}</strong>
-            {{ env('APP_DEBUG') === false ? '• Debug: OFF ✓' : '• Debug: ON (Development)' }}</p>
+        <div style="display: flex; justify-content: center; align-items: center; gap: 20px; margin-bottom: 20px;">
+            <div>
+                <p><strong>🚀 API Manager</strong> • Production-ready API Hub for Laravel</p>
+                <p>Environment: <strong>{{ config('app.env') }}</strong>
+                    {{ env('APP_DEBUG') === false ? '• Debug: OFF ✓' : '• Debug: ON (Development)' }}</p>
+            </div>
+            <x-theme-toggle />
+        </div>
 
         <p style="margin-top: 20px; font-size: 0.85em;">
             <a href="{{ route('docs.index') }}">📚 Documentation</a> •
@@ -132,6 +145,27 @@
 
         .admin-link:hover {
             opacity: 0.8;
+        }
+
+        #theme-toggle {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        #theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        html.dark #theme-toggle {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        html.dark #theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
         }
     </style>
 

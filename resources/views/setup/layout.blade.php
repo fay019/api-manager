@@ -13,6 +13,7 @@
             justify-content: center;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 20px;
+            transition: background-color 0.3s ease;
         }
 
         .setup-card {
@@ -22,6 +23,17 @@
             max-width: 500px;
             width: 100%;
             padding: 40px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        html.dark .setup-container {
+            background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+        }
+
+        html.dark .setup-card {
+            background: #374151;
+            color: #f3f4f6;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
         }
 
         .setup-header {
@@ -39,6 +51,14 @@
             color: #666;
             margin: 0;
             font-size: 14px;
+        }
+
+        html.dark .setup-header h1 {
+            color: #f3f4f6;
+        }
+
+        html.dark .setup-header p {
+            color: #d1d5db;
         }
 
         .setup-steps {
@@ -223,6 +243,76 @@
             font-size: 18px;
             user-select: none;
         }
+
+        html.dark .setup-step {
+            background: #4b5563;
+        }
+
+        html.dark .form-group label {
+            color: #f3f4f6;
+        }
+
+        html.dark .form-group input,
+        html.dark .form-group select,
+        html.dark .form-group textarea {
+            background: #1f2937;
+            border-color: #4b5563;
+            color: #f3f4f6;
+        }
+
+        html.dark .form-group input:focus,
+        html.dark .form-group select:focus,
+        html.dark .form-group textarea:focus {
+            border-color: #818cf8;
+            box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.1);
+        }
+
+        html.dark .form-group input::placeholder,
+        html.dark .form-group textarea::placeholder {
+            color: #9ca3af;
+        }
+
+        html.dark .btn-secondary {
+            background: #4b5563;
+            color: #f3f4f6;
+        }
+
+        html.dark .btn-secondary:hover {
+            background: #6b7280;
+        }
+
+        html.dark .alert-success {
+            background: rgba(34, 197, 94, 0.15);
+            color: #86efac;
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+
+        html.dark .alert-error {
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        html.dark .alert-info {
+            background: rgba(59, 130, 246, 0.15);
+            color: #93c5fd;
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        html.dark .info-box {
+            background: #1f2937;
+            border-left-color: #818cf8;
+            color: #d1d5db;
+        }
+
+        html.dark .spinner {
+            border-color: rgba(129, 140, 248, 0.3);
+            border-top-color: #818cf8;
+        }
+
+        html.dark .password-toggle {
+            color: #818cf8;
+        }
     </style>
 </head>
 <body>
@@ -233,6 +323,37 @@
     </div>
 
     <script>
+        // Theme management
+        const html = document.documentElement;
+
+        function getInitialTheme() {
+            const saved = localStorage.getItem('theme');
+            if (saved) return saved;
+
+            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                return 'dark';
+            }
+            return 'light';
+        }
+
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                html.classList.add('dark');
+            } else {
+                html.classList.remove('dark');
+            }
+            localStorage.setItem('theme', theme);
+        }
+
+        const initialTheme = getInitialTheme();
+        applyTheme(initialTheme);
+
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (!localStorage.getItem('theme')) {
+                applyTheme(e.matches ? 'dark' : 'light');
+            }
+        });
+
         // Toggle password visibility
         document.querySelectorAll('.password-toggle').forEach(toggle => {
             toggle.addEventListener('click', function() {

@@ -172,6 +172,46 @@ class ManageAppSettings extends Page implements HasForms
         }
     }
 
+    public function resetApplication(): void
+    {
+        if (app()->environment('production') && ! config('installation.wizard.security.allow_production_reset', false)) {
+            Notification::make()
+                ->danger()
+                ->title('Action interdite')
+                ->body('La réinitialisation est interdite en production.')
+                ->send();
+
+            return;
+        }
+
+        try {
+            $service = app(AppSettingService::class);
+            if ($service->resetApplication()) {
+                Notification::make()
+                    ->success()
+                    ->title('Application réinitialisée')
+                    ->body('L\'application a été remise à son état initial.')
+                    ->send();
+
+                $this->redirect('/setup/welcome', navigate: true);
+
+                return;
+            }
+
+            Notification::make()
+                ->danger()
+                ->title('Échec de la réinitialisation')
+                ->body('Une erreur est survenue lors de la réinitialisation.')
+                ->send();
+        } catch (\Exception $e) {
+            Notification::make()
+                ->danger()
+                ->title('Erreur')
+                ->body($e->getMessage())
+                ->send();
+        }
+    }
+
     public function resetAction(): Action
     {
         return Action::make('reset')

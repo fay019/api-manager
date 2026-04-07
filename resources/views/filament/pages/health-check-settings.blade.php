@@ -1,19 +1,206 @@
+<style>
+    :root {
+        --hc-text-dark: #111827;
+        --hc-text-muted: #6b7280;
+        --hc-bg-card: white;
+        --hc-bg-header: #f9fafb;
+        --hc-border: #d1d5db;
+        --hc-border-light: #e5e7eb;
+        --hc-green: #10b981;
+        --hc-green-light: #d1fae5;
+        --hc-red: #ef4444;
+        --hc-red-light: #fee2e2;
+        --hc-orange: #f59e0b;
+        --hc-orange-light: #fef3c7;
+        --hc-blue: #3b82f6;
+        --hc-blue-bg: #eff6ff;
+        --hc-blue-dark: #1e40af;
+        --hc-json-bg: #1f2937;
+        --hc-json-text: #d1d5db;
+        --hc-disabled-bg: #f3f4f6;
+        --hc-disabled-text: #6b7280;
+        --hc-enabled-text: #15803d;
+    }
+
+    html.dark {
+        --hc-text-dark: #f3f4f6;
+        --hc-text-muted: #d1d5db;
+        --hc-bg-card: #1f2937;
+        --hc-bg-header: #111827;
+        --hc-border: #374151;
+        --hc-border-light: #374151;
+        --hc-green: #10b981;
+        --hc-green-light: #064e3b;
+        --hc-red: #ef4444;
+        --hc-red-light: #7f1d1d;
+        --hc-orange: #f59e0b;
+        --hc-orange-light: #78350f;
+        --hc-blue: #3b82f6;
+        --hc-blue-bg: #1e3a8a;
+        --hc-blue-dark: #93c5fd;
+        --hc-json-bg: #0f172a;
+        --hc-json-text: #e2e8f0;
+        --hc-disabled-bg: #374151;
+        --hc-disabled-text: #9ca3af;
+        --hc-enabled-text: #86efac;
+    }
+
+    .hc-card {
+        background: var(--hc-bg-card);
+        border: 1px solid var(--hc-border);
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+
+    .hc-header {
+        background: var(--hc-bg-header);
+        padding: 1rem;
+        border-bottom: 1px solid var(--hc-border-light);
+    }
+
+    .hc-header h3 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--hc-text-dark);
+        margin: 0;
+    }
+
+    .hc-header p {
+        font-size: 0.875rem;
+        color: var(--hc-text-muted);
+        margin: 0.25rem 0 0 0;
+    }
+
+    .hc-content {
+        padding: 1.5rem;
+    }
+
+    .hc-divider {
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--hc-border-light);
+    }
+
+    .hc-divider:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .hc-check-label {
+        font-weight: 600;
+        color: var(--hc-text-dark);
+        margin: 0 0 0.5rem 0;
+    }
+
+    .hc-check-desc {
+        font-size: 0.875rem;
+        color: var(--hc-text-muted);
+        margin: 0;
+    }
+
+    .hc-toggle-btn {
+        display: inline-block;
+        padding: 0.375rem 0.75rem;
+        border-radius: 0.375rem;
+        border: 1px solid var(--hc-border);
+        font-weight: 500;
+        cursor: pointer;
+        font-size: 0.875rem;
+        transition: all 0.2s;
+    }
+
+    .hc-toggle-enabled {
+        background: var(--hc-green-light);
+        color: var(--hc-enabled-text);
+    }
+
+    .hc-toggle-disabled {
+        background: var(--hc-disabled-bg);
+        color: var(--hc-disabled-text);
+    }
+
+    .hc-status-box {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        border-left: 4px solid;
+    }
+
+    .hc-status-ok {
+        background: var(--hc-green-light);
+        border-left-color: var(--hc-green);
+        color: var(--hc-green);
+    }
+
+    .hc-status-warning {
+        background: var(--hc-orange-light);
+        border-left-color: var(--hc-orange);
+        color: var(--hc-orange);
+    }
+
+    .hc-status-error {
+        background: var(--hc-red-light);
+        border-left-color: var(--hc-red);
+        color: var(--hc-red);
+    }
+
+    .hc-check-item {
+        padding: 1rem;
+        border-radius: 0.5rem;
+        border-left: 3px solid;
+    }
+
+    .hc-info-box {
+        background: var(--hc-blue-bg);
+        border: 1px solid var(--hc-blue);
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        color: var(--hc-blue-dark);
+    }
+
+    .hc-info-box h4 {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--hc-blue-dark);
+        margin: 0 0 0.75rem 0;
+    }
+
+    .hc-info-box p {
+        font-size: 0.875rem;
+        color: var(--hc-blue-dark);
+        line-height: 1.6;
+        margin: 0 0 0.5rem 0;
+    }
+
+    .hc-json-pre {
+        background: var(--hc-json-bg);
+        color: var(--hc-json-text);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+        font-size: 0.75rem;
+        line-height: 1.4;
+        margin: 0;
+    }
+
+    .hc-code {
+        background: var(--hc-bg-header);
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+    }
+</style>
+
 <x-filament-panels::page>
     <div class="space-y-6">
         <!-- Configuration Toggles -->
-        <div style="background: white; border: 1px solid #d1d5db; border-radius: 0.5rem; overflow: hidden;">
+        <div class="hc-card">
             <!-- Header -->
-            <div style="background: #f9fafb; padding: 1rem; border-bottom: 1px solid #e5e7eb;">
-                <h3 style="font-size: 1.125rem; font-weight: 600; color: #111827; margin: 0;">
-                    API Health Check Configuration
-                </h3>
-                <p style="font-size: 0.875rem; color: #6b7280; margin: 0.25rem 0 0 0;">
-                    Configure which checks are performed by GET /api/v1/health
-                </p>
+            <div class="hc-header">
+                <h3>API Health Check Configuration</h3>
+                <p>Configure which checks are performed by GET /api/v1/health</p>
             </div>
 
             <!-- Content -->
-            <div style="padding: 1.5rem;">
+            <div class="hc-content">
                 @php
                     $settings = \App\Models\HealthCheckSetting::getInstance();
                     $checks = [
@@ -29,30 +216,15 @@
                         @php
                             $isEnabled = $settings->{$checkKey . '_enabled'};
                         @endphp
-                        <div style="display: flex; align-items: flex-start; justify-content: space-between; padding-bottom: 1.5rem; border-bottom: 1px solid #e5e7eb;" class="last:border-0 last:pb-0">
+                        <div style="display: flex; align-items: flex-start; justify-content: space-between;" class="hc-divider">
                             <div style="flex: 1;">
-                                <p style="font-weight: 600; color: #111827; margin: 0 0 0.5rem 0;">
-                                    {{ $checkInfo['label'] }}
-                                </p>
-                                <p style="font-size: 0.875rem; color: #6b7280; margin: 0;">
-                                    {{ $checkInfo['description'] }}
-                                </p>
+                                <p class="hc-check-label">{{ $checkInfo['label'] }}</p>
+                                <p class="hc-check-desc">{{ $checkInfo['description'] }}</p>
                             </div>
                             <div style="margin-left: 1rem;">
                                 <button
                                     wire:click="toggleCheck('{{ $checkKey }}')"
-                                    style="
-                                        display: inline-block;
-                                        padding: 0.375rem 0.75rem;
-                                        border-radius: 0.375rem;
-                                        border: 1px solid #d1d5db;
-                                        background: {{ $isEnabled ? '#dcfce7' : '#f3f4f6' }};
-                                        color: {{ $isEnabled ? '#15803d' : '#6b7280' }};
-                                        font-weight: 500;
-                                        cursor: pointer;
-                                        font-size: 0.875rem;
-                                        transition: all 0.2s;
-                                    "
+                                    class="hc-toggle-btn {{ $isEnabled ? 'hc-toggle-enabled' : 'hc-toggle-disabled' }}"
                                     onmouseover="this.style.opacity='0.8'"
                                     onmouseout="this.style.opacity='1'"
                                 >
@@ -78,27 +250,22 @@
 
         <!-- Health Check Result Preview -->
         @if(session('health_check_result'))
-            <div style="background: white; border: 1px solid #d1d5db; border-radius: 0.5rem; overflow: hidden;">
+            <div class="hc-card">
                 <!-- Header -->
-                <div style="background: #f9fafb; padding: 1rem; border-bottom: 1px solid #e5e7eb;">
-                    <h3 style="font-size: 1.125rem; font-weight: 600; color: #111827; margin: 0;">
-                        🔍 Health Check Result
-                    </h3>
-                    <p style="font-size: 0.875rem; color: #6b7280; margin: 0.25rem 0 0 0;">
-                        Last test executed at {{ now()->format('H:i:s') }}
-                    </p>
+                <div class="hc-header">
+                    <h3>🔍 Health Check Result</h3>
+                    <p>Last test executed at {{ now()->format('H:i:s') }}</p>
                 </div>
 
                 <!-- Content -->
-                <div style="padding: 1.5rem;">
+                <div class="hc-content">
                     <!-- Status Indicator -->
                     @php
                         $status = session('health_check_result')['data']['status'] ?? 'unknown';
-                        $statusColor = $status === 'ok' ? '#10b981' : '#ef4444';
-                        $statusBg = $status === 'ok' ? '#d1fae5' : '#fee2e2';
+                        $statusClass = $status === 'ok' ? 'hc-status-ok' : 'hc-status-error';
                     @endphp
-                    <div style="margin-bottom: 1.5rem; padding: 1rem; background: {{ $statusBg }}; border-radius: 0.5rem; border-left: 4px solid {{ $statusColor }};">
-                        <p style="color: {{ $statusColor }}; font-weight: 600; margin: 0;">
+                    <div class="hc-status-box {{ $statusClass }}">
+                        <p style="font-weight: 600; margin: 0;">
                             Overall Status: <span style="text-transform: uppercase;">{{ $status }}</span>
                         </p>
                     </div>
@@ -106,20 +273,15 @@
                     <!-- Checks Status -->
                     @if(isset(session('health_check_result')['data']['checks']))
                         <div style="margin-bottom: 1.5rem;">
-                            <h4 style="font-size: 0.875rem; font-weight: 600; color: #111827; margin-bottom: 1rem;">Individual Checks:</h4>
+                            <h4 style="font-size: 0.875rem; font-weight: 600; color: var(--hc-text-dark); margin-bottom: 1rem;">Individual Checks:</h4>
                             <div style="display: grid; gap: 1rem;">
                                 @foreach(session('health_check_result')['data']['checks'] as $checkName => $checkResult)
                                     @php
                                         $checkStatus = $checkResult['status'] ?? 'unknown';
-                                        $checkColor = match($checkStatus) {
-                                            'ok' => '#10b981',
-                                            'warning' => '#f59e0b',
-                                            default => '#ef4444',
-                                        };
-                                        $checkBg = match($checkStatus) {
-                                            'ok' => '#d1fae5',
-                                            'warning' => '#fef3c7',
-                                            default => '#fee2e2',
+                                        $checkClass = match($checkStatus) {
+                                            'ok' => 'hc-status-ok',
+                                            'warning' => 'hc-status-warning',
+                                            default => 'hc-status-error',
                                         };
                                         $checkIcon = match($checkStatus) {
                                             'ok' => '✓',
@@ -127,25 +289,25 @@
                                             default => '✕',
                                         };
                                     @endphp
-                                    <div style="padding: 1rem; background: {{ $checkBg }}; border-radius: 0.5rem; border-left: 3px solid {{ $checkColor }};">
+                                    <div class="hc-check-item {{ $checkClass }}">
                                         <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
-                                            <span style="color: {{ $checkColor }}; font-weight: bold; font-size: 1.25rem;">{{ $checkIcon }}</span>
+                                            <span style="font-weight: bold; font-size: 1.25rem;">{{ $checkIcon }}</span>
                                             <div style="flex: 1;">
-                                                <p style="font-weight: 600; color: {{ $checkColor }}; margin: 0; text-transform: capitalize;">
+                                                <p style="font-weight: 600; margin: 0; text-transform: capitalize;">
                                                     {{ str_replace('_', ' ', $checkName) }}
                                                 </p>
-                                                <p style="font-size: 0.875rem; color: {{ $checkColor }}; margin: 0.25rem 0 0 0;">
+                                                <p style="font-size: 0.875rem; margin: 0.25rem 0 0 0;">
                                                     {{ $checkResult['message'] ?? 'No message' }}
                                                 </p>
                                                 @if(isset($checkResult['details']))
-                                                    <div style="font-size: 0.8rem; color: {{ $checkColor }}; margin-top: 0.5rem; opacity: 0.8;">
+                                                    <div style="font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.8;">
                                                         @foreach($checkResult['details'] as $key => $value)
                                                             <div>{{ $key }}: <strong>{{ $value }}</strong></div>
                                                         @endforeach
                                                     </div>
                                                 @endif
                                                 @if(isset($checkResult['free_gb']))
-                                                    <div style="font-size: 0.8rem; color: {{ $checkColor }}; margin-top: 0.5rem; opacity: 0.8;">
+                                                    <div style="font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.8;">
                                                         <div>Free: <strong>{{ $checkResult['free_gb'] }} GB</strong></div>
                                                         <div>Total: <strong>{{ $checkResult['total_gb'] }} GB</strong></div>
                                                         <div>Used: <strong>{{ $checkResult['percent_used'] }}%</strong></div>
@@ -161,29 +323,25 @@
 
                     <!-- JSON Preview -->
                     <div>
-                        <h4 style="font-size: 0.875rem; font-weight: 600; color: #111827; margin-bottom: 0.75rem;">Raw JSON Response:</h4>
-                        <pre style="background: #1f2937; color: #d1d5db; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; font-size: 0.75rem; line-height: 1.4; margin: 0;"><code>{{ json_encode(session('health_check_result'), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) }}</code></pre>
+                        <h4 style="font-size: 0.875rem; font-weight: 600; color: var(--hc-text-dark); margin-bottom: 0.75rem;">Raw JSON Response:</h4>
+                        <pre class="hc-json-pre"><code>{{ json_encode(session('health_check_result'), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) }}</code></pre>
                     </div>
                 </div>
             </div>
         @endif
 
         <!-- API Endpoint Info -->
-        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 0.5rem; padding: 1.5rem;">
-            <h4 style="font-size: 0.875rem; font-weight: 600; color: #1e40af; margin: 0 0 0.75rem 0;">
-                📍 Endpoint Information
-            </h4>
-            <div style="font-size: 0.875rem; color: #1e40af; line-height: 1.6;">
-                <p style="margin: 0 0 0.5rem 0;">
-                    <strong>URL:</strong> <code style="background: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">GET /api/v1/health</code>
-                </p>
-                <p style="margin: 0 0 0.5rem 0;">
-                    <strong>Authentication:</strong> Not required
-                </p>
-                <p style="margin: 0;">
-                    <strong>Response:</strong> JSON with status and configured health checks
-                </p>
-            </div>
+        <div class="hc-info-box">
+            <h4>📍 Endpoint Information</h4>
+            <p>
+                <strong>URL:</strong> <code class="hc-code">GET /api/v1/health</code>
+            </p>
+            <p>
+                <strong>Authentication:</strong> Not required
+            </p>
+            <p>
+                <strong>Response:</strong> JSON with status and configured health checks
+            </p>
         </div>
     </div>
 </x-filament-panels::page>

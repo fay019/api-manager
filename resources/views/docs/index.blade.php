@@ -112,6 +112,52 @@
             color: #667eea;
             font-weight: bold;
         }
+
+        html.dark .doc-card {
+            background: #374151;
+            color: #f3f4f6;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        html.dark .doc-card:hover {
+            box-shadow: 0 8px 20px rgba(129, 140, 248, 0.2);
+        }
+
+        html.dark .doc-card h3 {
+            color: #818cf8;
+        }
+
+        html.dark .doc-card p {
+            color: #d1d5db;
+        }
+
+        html.dark .doc-card .meta {
+            color: #9ca3af;
+            border-top-color: #4b5563;
+        }
+
+        html.dark .features {
+            background: #374151;
+            color: #f3f4f6;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        html.dark .features h3 {
+            color: #f3f4f6;
+        }
+
+        html.dark .features li {
+            color: #d1d5db;
+        }
+
+        html.dark .features li:before {
+            color: #818cf8;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
     </style>
 @endsection
 
@@ -134,7 +180,10 @@
                     <strong>Good things are on the way!</strong>
                 </p>
                 <p style="color: rgba(255,255,255,0.9); font-size: 0.95em; margin-bottom: 30px;">
-                    In the meantime, check out the API health status@if(auth()->check() && auth()->user()->is_admin) or explore the admin panel@endif:
+                    In the meantime, check out the API health status
+                    @if(auth()->check() && auth()->user()->is_admin)
+                        or explore the admin panel
+                    @endif
                 </p>
                 <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
                     <a href="/api/v1/health" style="background: rgba(255,255,255,0.2); color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; border: 2px solid rgba(255,255,255,0.3); transition: all 0.3s;">

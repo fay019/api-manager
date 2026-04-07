@@ -18,6 +18,8 @@ use UnitEnum;
  */
 class Settings extends Page
 {
+    protected static ?string $slug = 'app-settings';
+
     protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-cog-6-tooth';
 
     protected string $view = 'filament.pages.settings';

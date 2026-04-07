@@ -46,10 +46,20 @@
             margin-top: 10px;
         }
 
+        html.dark .version {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
         .content {
             background: white;
             padding: 40px;
             min-height: 400px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        html.dark .content {
+            background: #1f2937;
+            color: #f3f4f6;
         }
 
         .section {
@@ -62,6 +72,11 @@
             margin-bottom: 25px;
             padding-bottom: 10px;
             border-bottom: 2px solid #667eea;
+        }
+
+        html.dark .section h2 {
+            color: #818cf8;
+            border-bottom-color: #818cf8;
         }
 
         .quick-nav {
@@ -108,6 +123,24 @@
             line-height: 1.5;
         }
 
+        html.dark .nav-card {
+            background: #374151;
+            color: #f3f4f6;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        html.dark .nav-card:hover {
+            box-shadow: 0 8px 20px rgba(129, 140, 248, 0.2);
+        }
+
+        html.dark .nav-card h3 {
+            color: #818cf8;
+        }
+
+        html.dark .nav-card p {
+            color: #d1d5db;
+        }
+
         .getting-started {
             background: #f9f9f9;
             border-left: 4px solid #667eea;
@@ -130,6 +163,19 @@
 
         .getting-started li {
             margin-bottom: 10px;
+        }
+
+        html.dark .getting-started {
+            background: #374151;
+            border-left-color: #818cf8;
+        }
+
+        html.dark .getting-started h3 {
+            color: #f3f4f6;
+        }
+
+        html.dark .getting-started ol {
+            color: #d1d5db;
         }
 
         .endpoints-list {
@@ -179,6 +225,29 @@
             font-weight: 600;
         }
 
+        html.dark .endpoints-list {
+            background: #374151;
+            color: #d1d5db;
+        }
+
+        html.dark .endpoint {
+            border-bottom-color: #4b5563;
+        }
+
+        html.dark .method.get {
+            background: rgba(129, 140, 248, 0.2);
+            color: #a5b4fc;
+        }
+
+        html.dark .method.post {
+            background: rgba(168, 85, 247, 0.2);
+            color: #d8b4fe;
+        }
+
+        html.dark .path {
+            color: #a5b4fc;
+        }
+
         .features-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -214,6 +283,41 @@
             line-height: 1.5;
         }
 
+        html.dark .feature {
+            background: #374151;
+            border-color: #4b5563;
+        }
+
+        html.dark .feature::before {
+            color: #818cf8;
+        }
+
+        html.dark .feature h4 {
+            color: #f3f4f6;
+        }
+
+        html.dark .feature p {
+            color: #d1d5db;
+        }
+
+        .endpoint-code {
+            color: #333;
+        }
+
+        html.dark .endpoint-code {
+            color: #d1d5db;
+        }
+
+        .endpoint-note {
+            margin-left: 20px;
+            margin-top: 15px;
+            color: #666;
+        }
+
+        html.dark .endpoint-note {
+            color: #d1d5db;
+        }
+
         @media (max-width: 768px) {
             .quick-nav {
                 grid-template-columns: 1fr;
@@ -227,7 +331,7 @@
         <div class="header">
             <h1>🚀 API Manager</h1>
             <p>Production-Ready API Hub</p>
-            <div class="version">Laravel 12 • Filament v4 • Shared Hosting Ready</div>
+            <div class="version">Laravel 13 • Filament v5 • Shared Hosting Ready</div>
         </div>
 
         <div class="content">
@@ -267,9 +371,9 @@
                         <li>Check the health endpoint:</li>
                     </ol>
                     <div class="endpoints-list">
-                        <code style="color: #333;">curl http://api-manager.test/api/v1/health</code>
+                        <code class="endpoint-code">curl http://api-manager.test/api/v1/health</code>
                     </div>
-                    <li style="margin-left: 20px; color: #666;">See <strong><a href="{{ route('docs.api') }}">API Docs</a></strong> for authentication and examples</li>
+                    <p class="endpoint-note">See <strong><a href="{{ route('docs.api') }}">API Docs</a></strong> for authentication and examples</p>
                 </div>
             </section>
 
