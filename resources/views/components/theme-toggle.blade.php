@@ -1,100 +1,89 @@
-<button
-    id="theme-toggle"
-    aria-label="Toggle theme"
-    style="background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 0.5rem; padding: 0.5rem; cursor: pointer; transition: all 0.3s ease; color: white; position: relative;"
-    onmouseover="this.style.background='rgba(255, 255, 255, 0.25)'; this.style.borderColor='rgba(255, 255, 255, 0.3)'; showTooltip();"
-    onmouseout="this.style.background='rgba(255, 255, 255, 0.15)'; this.style.borderColor='rgba(255, 255, 255, 0.2)'; hideTooltip();"
+<div
+    x-data="{
+        theme: localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'),
+        init() {
+            this.apply();
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                if (!localStorage.getItem('theme')) {
+                    this.theme = e.matches ? 'dark' : 'light';
+                    this.apply();
+                }
+            });
+            // Synchronisation entre plusieurs instances du composant (ex: navbar et footer)
+            window.addEventListener('theme-changed', (e) => {
+                this.theme = e.detail.theme;
+            });
+        },
+        toggle() {
+            this.theme = this.theme === 'dark' ? 'light' : 'dark';
+            this.apply();
+            // Notifier les autres instances
+            window.dispatchEvent(new CustomEvent('theme-changed', { detail: { theme: this.theme } }));
+        },
+        apply() {
+            document.documentElement.classList.add('transition-colors', 'duration-300');
+            document.documentElement.classList.toggle('dark', this.theme === 'dark');
+            localStorage.setItem('theme', this.theme);
+        }
+    }"
+    class="relative inline-flex items-center justify-center"
 >
-    <!-- Icône soleil (visible en mode clair) -->
-    <svg id="theme-toggle-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
-        <circle cx="12" cy="12" r="5"></circle>
-        <line x1="12" y1="1" x2="12" y2="3"></line>
-        <line x1="12" y1="21" x2="12" y2="23"></line>
-        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-        <line x1="1" y1="12" x2="3" y2="12"></line>
-        <line x1="21" y1="12" x2="23" y2="12"></line>
-        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-    </svg>
+    <button
+        @click="toggle()"
+        type="button"
+        class="group relative inline-flex h-10 w-10 items-center justify-center rounded-lg border border-black/10 bg-black/5 p-2 transition-all hover:bg-black/10 dark:border-white/15 dark:bg-white/10 dark:hover:bg-white/20"
+        aria-label="{{ __('app.theme.toggle_label') }}"
+    >
+        <!-- Icône Soleil -->
+        <svg
+            x-cloak
+            x-show="theme === 'light'"
+            x-transition:enter="transition duration-300"
+            x-transition:enter-start="scale-0 rotate-90"
+            x-transition:enter-end="scale-100 rotate-0"
+            class="h-5 w-5 stroke-zinc-800"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+        >
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
 
-    <!-- Icône lune (visible en mode sombre) -->
-    <svg id="theme-toggle-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
-        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-    </svg>
+        <!-- Icône Lune -->
+        <svg
+            x-cloak
+            x-show="theme === 'dark'"
+            x-transition:enter="transition duration-300"
+            x-transition:enter-start="scale-0 -rotate-90"
+            x-transition:enter-end="scale-100 rotate-0"
+            class="h-5 w-5 stroke-white"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+        >
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
 
-    <!-- Tooltip -->
-    <div id="theme-tooltip" style="display: none; position: absolute; bottom: -45px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.9); color: white; padding: 0.5rem 0.75rem; border-radius: 0.25rem; font-size: 12px; white-space: nowrap; z-index: 1000; pointer-events: none;">
-        <span id="tooltip-text">Switch to Dark Mode</span>
-    </div>
-</button>
-
-<script>
-function showTooltip() {
-    const tooltip = document.getElementById('theme-tooltip');
-    const html = document.documentElement;
-    const tooltipText = document.getElementById('tooltip-text');
-
-    const currentTheme = html.classList.contains('dark') ? 'dark' : 'light';
-    tooltipText.textContent = currentTheme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode';
-
-    tooltip.style.display = 'block';
-}
-
-function hideTooltip() {
-    const tooltip = document.getElementById('theme-tooltip');
-    tooltip.style.display = 'none';
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    const toggle = document.getElementById('theme-toggle');
-    const sunIcon = document.getElementById('theme-toggle-sun');
-    const moonIcon = document.getElementById('theme-toggle-moon');
-    const html = document.documentElement;
-
-    // Récupérer le thème sauvegardé ou utiliser la préférence système
-    function getInitialTheme() {
-        const saved = localStorage.getItem('theme');
-        if (saved) return saved;
-
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            return 'dark';
-        }
-        return 'light';
-    }
-
-    // Appliquer le thème initial
-    function applyTheme(theme) {
-        if (theme === 'dark') {
-            html.classList.add('dark');
-            // En mode dark, montrer l'icone lune
-            moonIcon.style.display = 'block';
-            sunIcon.style.display = 'none';
-        } else {
-            html.classList.remove('dark');
-            // En mode light, montrer l'icone soleil
-            sunIcon.style.display = 'block';
-            moonIcon.style.display = 'none';
-        }
-        localStorage.setItem('theme', theme);
-    }
-
-    // Initialiser
-    const initialTheme = getInitialTheme();
-    applyTheme(initialTheme);
-
-    // Toggle au clic
-    toggle.addEventListener('click', function() {
-        const currentTheme = html.classList.contains('dark') ? 'dark' : 'light';
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        applyTheme(newTheme);
-    });
-
-    // Écouter les changements de préférence système
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-        if (!localStorage.getItem('theme')) {
-            applyTheme(e.matches ? 'dark' : 'light');
-        }
-    });
-});
-</script>
+        <div
+            class="invisible absolute top-full right-0 mt-5 flex scale-95 flex-col items-end opacity-0 transition-all duration-300 group-hover:visible group-hover:scale-100 group-hover:opacity-100"
+        >
+            <div
+                class="flex items-center justify-center whitespace-nowrap rounded-md border border-black/10 bg-zinc-900 !p-2.5 !mt-1 text-xs font-medium text-white shadow-xl backdrop-blur-sm transition-all duration-300 dark:border-zinc-200 dark:bg-zinc-50 dark:text-zinc-900"
+            >
+                <span x-text="theme === 'dark' ? '{{ __('app.theme.switch_light') }}' : '{{ __('app.theme.switch_dark') }}'"></span>
+            </div>
+        </div>
+    </button>
+</div>

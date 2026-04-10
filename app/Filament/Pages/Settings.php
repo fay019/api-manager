@@ -2,87 +2,94 @@
 
 namespace App\Filament\Pages;
 
-use App\Services\AppSettingService;
+use App\Models\Setting;
 use BackedEnum;
-use Filament\Actions\Action;
+use Exception;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Schema;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use UnitEnum;
 
-/**
- * Page d'Administration des Paramètres Globaux.
- *
- * Cette page affiche les paramètres de l'application.
- * Architecture extensible pour ajouter plus de configurations plus tard.
- */
-class Settings extends Page
+class Settings extends Page implements HasForms
 {
-    protected static ?string $slug = 'app-settings';
+    use InteractsWithForms;
+
+    protected static ?string $slug = 'settings';
 
     protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-cog-6-tooth';
 
-    protected string $view = 'filament.pages.settings';
+    protected static string|UnitEnum|null $navigationGroup = 'Settings';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Administration';
-
-    protected static ?int $navigationSort = 10;
-
-    public static function getNavigationLabel(): string
-    {
-        return 'Paramètres';
-    }
+    protected static ?string $title = 'Paramètres de l\'Application';
 
     public function getTitle(): string
     {
         return 'Paramètres de l\'Application';
     }
 
-    public function resetApplicationAction(): Action
+    protected string $view = 'filament.pages.settings';
+
+    public ?array $data = [];
+
+    public function mount(): void
     {
-        return Action::make('resetApplication')
-            ->label('Réinitialiser l\'Application')
-            ->color('danger')
-            ->icon('heroicon-m-exclamation-triangle')
-            ->requiresConfirmation()
-            ->modalHeading('Réinitialisation de l\'Application')
-            ->modalDescription('ATTENTION: Cette action est DESTRUCTIVE. Elle effacera la base de données (si SQLite), les logs, et remettra l\'application en mode installation. Veuillez saisir "Confirmer" pour valider.')
-            ->form([
-                TextInput::make('confirmation')
-                    ->label('Saisissez "Confirmer"')
+        $this->form->fill([
+            'contact_email' => Setting::get('contact_email'),
+        ]);
+    }
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                TextInput::make('contact_email')
+                    ->label('Email de Contact')
+                    ->email()
                     ->required()
-                    ->rules(['in:Confirmer']),
+                    ->placeholder('admin@example.com'),
             ])
-            ->action(function (AppSettingService $service) {
-                if (app()->environment('production') && ! config('installation.wizard.security.allow_production_reset', false)) {
-                    Notification::make()
-                        ->danger()
-                        ->title('Réinitialisation interdite')
-                        ->body('La réinitialisation est interdite en environnement de production pour des raisons de sécurité.')
-                        ->send();
+            ->statePath('data');
+    }
 
-                    return;
-                }
+    public function save(): void
+    {
+        try {
+            $state = $this->form->getState();
+            Setting::set('contact_email', $state['contact_email'], 'string', 'Email address for contact form');
 
-                try {
-                    if ($service->resetApplication()) {
-                        Notification::make()
-                            ->success()
-                            ->title('Application réinitialisée')
-                            ->body('L\'application a été remise à zéro. Vous allez être redirigé vers l\'installateur.')
-                            ->send();
+            Notification::make()
+                ->success()
+                ->title('Settings saved')
+                ->send();
+        } catch (Exception $e) {
+            Notification::make()
+                ->danger()
+                ->title('Error')
+                ->body($e->getMessage())
+                ->send();
+        }
+    }
 
-                        $this->redirect('/setup/welcome');
-                    } else {
-                        throw new \Exception('La réinitialisation a échoué.');
-                    }
-                } catch (\Exception $e) {
-                    Notification::make()
-                        ->danger()
-                        ->title('Erreur')
-                        ->body($e->getMessage())
-                        ->send();
-                }
-            });
+    public function resetApplication(): void
+    {
+        try {
+            Artisan::call('app:reset');
+            Notification::make()
+                ->success()
+                ->title('Application reset successfully')
+                ->send();
+        } catch (Exception $e) {
+            Notification::make()
+                ->danger()
+                ->title('Reset failed')
+                ->body($e->getMessage())
+                ->send();
+        }
     }
 }
