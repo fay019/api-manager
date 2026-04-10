@@ -114,8 +114,8 @@
         <div class="error-title">@yield('title')</div>
         <div class="error-description">@yield('message')</div>
         <div class="actions">
-            <a href="{{ url('/') }}" class="btn btn-primary">{{ __('errors.' . ($exception->getStatusCode() ?? '500') . '.back') }}</a>
-            <a href="{{ url()->previous() }}" class="btn btn-secondary">{{ __('errors.' . ($exception->getStatusCode() ?? '500') . '.back') }}</a>
+            <a href="{{ url('/') }}" class="btn btn-primary">{{ __('errors.' . ($exception->getStatusCode() ?? '500') . '.back_home') }}</a>
+            <a href="{{ url()->previous() }}" class="btn btn-secondary">{{ __('errors.' . ($exception->getStatusCode() ?? '500') . '.back_previous') }}</a>
         </div>
     </div>
 

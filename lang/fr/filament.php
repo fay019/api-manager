@@ -12,6 +12,33 @@ return [
         'keys' => 'Clés API',
         'logs' => 'Journaux de Requête',
         'contact_messages' => 'Messages de Contact',
+        'users' => 'Utilisateurs',
+    ],
+
+    // User Resource
+    'user' => [
+        'singular' => 'Utilisateur',
+        'plural' => 'Utilisateurs',
+        'title' => 'Gestion des Utilisateurs',
+        'section_info' => 'Informations de l\'Utilisateur',
+        'section_info_desc' => 'Nom, email et mot de passe',
+        'section_info_desc_edit' => 'Laissez le mot de passe vide pour ne pas le modifier',
+        'section_password' => 'Changer le Mot de Passe',
+        'section_password_desc' => 'Laissez vide pour garder le mot de passe actuel',
+        'section_permissions' => 'Permissions',
+        'section_permissions_desc' => 'Rôles et autorisations',
+        'name' => 'Nom',
+        'email' => 'E-mail',
+        'password' => 'Mot de Passe',
+        'password_confirmation' => 'Confirmer le Mot de Passe',
+        'is_admin' => 'Administrateur',
+        'is_admin_help' => 'Cocher pour accorder l\'accès au panneau d\'administration',
+        'created_at' => 'Créé le',
+        'updated_at' => 'Modifié le',
+        'edit_profile' => 'Modifier mon Profil',
+        'my_profile' => 'Mon Profil',
+        'profile_updated' => 'Profil mis à jour avec succès',
+        'password_updated' => 'Mot de passe mis à jour avec succès',
     ],
 
     // API Client Resource
@@ -148,6 +175,8 @@ return [
         'active' => 'Actif',
         'disabled' => 'Désactivé',
         'created' => 'Créé',
+        'created_at' => 'Créé le',
+        'updated_at' => 'Modifié le',
     ],
 
     // Settings Pages

@@ -3,12 +3,24 @@
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DocsController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ProfileController;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Authentication routes
+Route::get('/login', [LoginController::class, 'show'])->name('login.show')->middleware('guest');
+Route::post('/login', [LoginController::class, 'store'])->name('login.store')->middleware('guest');
+
+// User profile (non-admin)
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+});
 
 // Contact form
 Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');

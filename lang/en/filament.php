@@ -12,6 +12,33 @@ return [
         'keys' => 'API Keys',
         'logs' => 'Request Logs',
         'contact_messages' => 'Contact Messages',
+        'users' => 'Users',
+    ],
+
+    // User Resource
+    'user' => [
+        'singular' => 'User',
+        'plural' => 'Users',
+        'title' => 'User Management',
+        'section_info' => 'User Information',
+        'section_info_desc' => 'Name, email, and password',
+        'section_info_desc_edit' => 'Leave the password empty to keep it unchanged',
+        'section_password' => 'Change Password',
+        'section_password_desc' => 'Leave empty to keep your current password',
+        'section_permissions' => 'Permissions',
+        'section_permissions_desc' => 'Roles and authorizations',
+        'name' => 'Name',
+        'email' => 'Email',
+        'password' => 'Password',
+        'password_confirmation' => 'Confirm Password',
+        'is_admin' => 'Administrator',
+        'is_admin_help' => 'Check to grant access to the admin panel',
+        'created_at' => 'Created',
+        'updated_at' => 'Updated',
+        'edit_profile' => 'Edit My Profile',
+        'my_profile' => 'My Profile',
+        'profile_updated' => 'Profile updated successfully',
+        'password_updated' => 'Password updated successfully',
     ],
 
     // API Client Resource
@@ -148,6 +175,8 @@ return [
         'active' => 'Active',
         'disabled' => 'Disabled',
         'created' => 'Created',
+        'created_at' => 'Created',
+        'updated_at' => 'Updated',
     ],
 
     // Settings Pages

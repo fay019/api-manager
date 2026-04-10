@@ -92,6 +92,27 @@
                             <span class="text-sm font-medium text-zinc-500">{{ __('app.nav.theme') }}</span>
                             <x-theme-toggle />
                         </div>
+
+                        <!-- Auth buttons (mobile) -->
+                        <div class="border-t border-black/10 pt-4 dark:border-white/10">
+                            @if(auth()->check())
+                                <div class="flex items-center gap-4">
+                                    <a href="{{ route('profile.edit') }}" class="block rounded-lg px-4 py-3 text-sm font-semibold text-zinc-600 hover:bg-blue-600/10 dark:text-zinc-300 dark:hover:text-blue-400 flex-1">
+                                        {{ __('auth.my_profile') }}
+                                    </a>
+                                    <form action="{{ route('logout') }}" method="POST" class="flex-1">
+                                        @csrf
+                                        <button type="submit" class="w-full block rounded-lg px-4 py-3 text-sm font-semibold text-red-600 hover:bg-red-600/10 dark:text-red-400">
+                                            {{ __('auth.logout') }}
+                                        </button>
+                                    </form>
+                                </div>
+                            @else
+                                <a href="{{ route('login.show') }}" class="block rounded-lg px-4 py-3 text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-center">
+                                    {{ __('auth.login') }}
+                                </a>
+                            @endif
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -100,6 +121,29 @@
             <div class="hidden items-center gap-4 md:flex lg:gap-6">
                 <x-locale-switcher-flags />
                 <x-theme-toggle />
+
+                <!-- Auth buttons -->
+                @if(auth()->check())
+                    <a href="{{ route('profile.edit') }}" class="text-zinc-600 hover:text-blue-600 dark:text-zinc-300 dark:hover:text-blue-400 transition-colors" title="{{ __('auth.my_profile') }}">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                    </a>
+                    <form action="{{ route('logout') }}" method="POST" class="inline">
+                        @csrf
+                        <button type="submit" class="text-zinc-600 hover:text-blue-600 dark:text-zinc-300 dark:hover:text-blue-400 transition-colors" title="{{ __('auth.logout') }}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                            </svg>
+                        </button>
+                    </form>
+                @else
+                    <a href="{{ route('login.show') }}" class="text-zinc-600 hover:text-blue-600 dark:text-zinc-300 dark:hover:text-blue-400 transition-colors" title="{{ __('auth.login') }}">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                    </a>
+                @endif
             </div>
         </div>
     </nav>

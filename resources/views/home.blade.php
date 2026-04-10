@@ -25,6 +25,11 @@
             color: white;
         }
 
+        html.dark .header {
+            background: rgb(30, 41, 59);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        }
+
         .header h1 {
             font-size: 2.5em;
             margin-bottom: 10px;

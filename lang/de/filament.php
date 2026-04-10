@@ -12,6 +12,33 @@ return [
         'keys' => 'API-Schlüssel',
         'logs' => 'Anforderungsprotokolle',
         'contact_messages' => 'Kontaktnachrichten',
+        'users' => 'Benutzer',
+    ],
+
+    // User Resource
+    'user' => [
+        'singular' => 'Benutzer',
+        'plural' => 'Benutzer',
+        'title' => 'Benutzerverwaltung',
+        'section_info' => 'Benutzerinformationen',
+        'section_info_desc' => 'Name, E-Mail und Passwort',
+        'section_info_desc_edit' => 'Lassen Sie das Passwort leer, um es unverändert zu behalten',
+        'section_password' => 'Passwort ändern',
+        'section_password_desc' => 'Lassen Sie leer, um Ihr aktuelles Passwort zu behalten',
+        'section_permissions' => 'Berechtigungen',
+        'section_permissions_desc' => 'Rollen und Genehmigungen',
+        'name' => 'Name',
+        'email' => 'E-Mail',
+        'password' => 'Passwort',
+        'password_confirmation' => 'Passwort bestätigen',
+        'is_admin' => 'Administrator',
+        'is_admin_help' => 'Aktivieren, um Zugriff auf das Admin-Panel zu gewähren',
+        'created_at' => 'Erstellt',
+        'updated_at' => 'Aktualisiert',
+        'edit_profile' => 'Mein Profil bearbeiten',
+        'my_profile' => 'Mein Profil',
+        'profile_updated' => 'Profil erfolgreich aktualisiert',
+        'password_updated' => 'Passwort erfolgreich aktualisiert',
     ],
 
     // API Client Resource
@@ -148,6 +175,8 @@ return [
         'active' => 'Aktiv',
         'disabled' => 'Deaktiviert',
         'created' => 'Erstellt',
+        'created_at' => 'Erstellt',
+        'updated_at' => 'Aktualisiert',
     ],
 
     // Settings Pages

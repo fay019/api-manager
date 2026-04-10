@@ -54,9 +54,9 @@ return [
     'footer' => [
         'copyright' => '© :year API Manager. Alle Rechte vorbehalten.',
         'production' => 'Produktionsreife API-Hub für Laravel',
-        'environment' => 'Umgebung:',
-        'debug_off' => '• Debug: AUS ✓',
-        'debug_on' => '• Debug: AN (Entwicklung)',
+        'environment' => 'Umgebung',
+        'debug_off' => 'Debug: AUS',
+        'debug_on' => 'Debug: AN',
         'docs' => '📚 Dokumentation',
         'database' => '🗄️ Datenbankschema',
         'deployment' => '🚢 Bereitstellungsleitfaden',
@@ -66,6 +66,9 @@ return [
         'projects' => '🎯 Meine Projekte',
         'contact' => '💬 Kontakt',
         'contact_me' => '💬 Kontaktieren Sie mich',
+        'platform_description' => 'Hochleistungs-API-Verwaltungs- und Analyseplattform.',
+        'change_theme' => 'Thema wechseln',
+        'built_with' => 'Erstellt mit Laravel 13 & Tailwind 4',
     ],
 
     // Documentation pages
