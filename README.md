@@ -47,10 +47,12 @@ php artisan app:danger-reset
 | 🌍 **CORS Control** | Per-client allowed origins list with strict validation |
 | 📊 **Request Logging** | Complete audit trail with filtering and analytics |
 | 🎨 **Filament v5 Admin** | Comprehensive dashboard for managing clients, keys, and logs |
+| 👥 **User Management** | Public login/profile pages + Filament admin resource for user CRUD |
 | 🎯 **Promo API Module** | Multilingual banners (FR, EN, DE, AR), smart selection, tracking, version history |
 | 📦 **Shared Hosting Ready** | No Node.js, minimal dependencies, SQLite/MySQL support |
 | 📚 **Dynamic Documentation** | Markdown to HTML conversion with beautiful styling |
 | 🌐 **Multilingual Support** | Full i18n with FR, EN, DE translations for UI, admin, errors, and public pages |
+| 🌙 **Dark Mode** | Full CSS dark mode support across all pages (login, profile, error pages) |
 
 ---
 
@@ -109,6 +111,109 @@ lang/
 
 ---
 
+## 👥 Public Authentication & User Management
+
+The application features a complete public authentication system separate from the Filament admin panel, with user profile management and admin user management capabilities.
+
+### User Roles
+
+- 🔓 **Public Users** - Can login and manage their own profiles at `/profile`
+- 👨‍💼 **Admin Users** - Have access to Filament admin panel at `/admin` + all public features
+
+### Public Authentication
+
+**Login Page:** `GET /login` (or `POST /login` to authenticate)
+
+- Responsive design with gradient header
+- Form validation with helpful error messages
+- Dark mode compatible
+- Multilingual (FR, EN, DE)
+- Redirects admins to `/admin`, regular users to `/profile`
+
+**Profile Page:** `GET /profile` (protected, requires login)
+
+- Edit profile name and email
+- Change password securely
+- Form validation and success messages
+- Dark mode compatible
+- Multilingual (FR, EN, DE)
+
+### Admin User Management
+
+**Filament Resource:** `/admin/resources/users`
+
+Admins can:
+- ✅ Create new users (auto-generated temporary password)
+- ✅ Edit user details (name, email)
+- ✅ Change user passwords securely
+- ✅ Delete users
+- ✅ Assign admin roles
+- ✅ View user creation/update timestamps
+
+**Password Security:**
+- Passwords always hashed with bcrypt (never stored in plain text)
+- Passwords required on user creation
+- Passwords optional on user edit (only update if changed)
+- Separate password field with secure hashing on save
+
+### Authentication Flow
+
+```
+Public User → GET /login → Form → POST /login → Redirect to /profile
+           ↓
+Admin User → GET /login → Form → POST /login → Redirect to /admin
+
+Profile Edit → POST /profile → Validate → Save → Redirect with success message
+Password Change → Hash with bcrypt → Save → Validate → Success
+```
+
+---
+
+## 🎨 Dark Mode Support
+
+The application includes **complete dark mode support** across all pages with CSS-based theme switching:
+
+### Features
+
+✅ **Automatic Detection** - Respects browser's `prefers-color-scheme` preference  
+✅ **User Toggle** - Theme switcher button in navbar (☀️/🌙)  
+✅ **Persistent** - Theme preference stored in `localStorage`  
+✅ **No Flash** - Applies theme before page renders (no white flash)  
+✅ **Complete Coverage** - All pages support dark mode:
+  - Login page with dark gradient header
+  - Profile page with dark form styling
+  - Home page with dark background and text
+  - Error pages (404, 403, 401, 419, 500, 503)
+  - Admin panel (Filament v5)
+
+### Dark Mode Implementation
+
+Uses CSS with `html.dark` selector:
+
+```css
+/* Light mode (default) */
+.header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+/* Dark mode */
+html.dark .header {
+    background: rgb(30, 41, 59);
+    color: #f3f4f6;
+}
+```
+
+### Testing Dark Mode
+
+1. Click the theme toggle (☀️/🌙) in navbar
+2. Verify all text is readable in both light and dark modes
+3. Verify backgrounds contrast is sufficient
+4. Verify form inputs are visible
+5. Verify buttons have proper styling
+
+---
+
 ## 🎯 Quick Start
 
 ### Prerequisites
@@ -154,6 +259,12 @@ Password: password
 
 ⚠️ IMPORTANT: Change this password immediately in production!
 ```
+
+**Access:**
+- 🏠 **Public Pages**: `/` (no login required)
+- 🔐 **User Login**: `/login` (public users)
+- 👤 **User Profile**: `/profile` (requires login)
+- 🔧 **Admin Panel**: `/admin` (admin users only)
 
 ---
 
@@ -574,7 +685,9 @@ See **[TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md)** for detailed error recov
 
 | Document | Purpose |
 |----------|---------|
-| [**TROUBLESHOOTING.md**](./docs/TROUBLESHOOTING.md) | 🆕 Common issues, debugging, error solutions |
+| [**AUTH.md**](./docs/AUTH.md) | 🆕 Public authentication, user management, profiles |
+| [**MULTILINGUAL.md**](./docs/MULTILINGUAL.md) | Internationalization (i18n) with FR, EN, DE |
+| [**TROUBLESHOOTING.md**](./docs/TROUBLESHOOTING.md) | Common issues, debugging, error solutions |
 | [**INSTALLATION.md**](./docs/INSTALLATION.md) | Complete installation guide, deployment, troubleshooting |
 | [**MODULE_CREATION.md**](./docs/MODULE_CREATION.md) | Create custom modules (tutorial + examples) |
 | [**API.md**](./docs/API.md) | Complete API reference with endpoints, authentication, examples |
@@ -743,7 +856,7 @@ Private - Internal use only
 
 ### Enhanced Error Pages
 
-The application includes **custom error pages** that provide clear information when something goes wrong:
+The application includes **custom error pages** that provide clear, multilingual information when something goes wrong:
 
 | Error Code | Page | What It Shows |
 |-----------|------|---------------|
@@ -753,6 +866,15 @@ The application includes **custom error pages** that provide clear information w
 | **401** | Unauthorized | Authentication required |
 | **419** | Session Expired | CSRF token expired |
 | **503** | Service Unavailable | Application in maintenance |
+
+**Features:**
+- ✅ Gradient header background (dark mode compatible)
+- ✅ Two navigation buttons:
+  - "← Back to Home" - Returns to homepage (`/`)
+  - "← Previous Page" - Returns to previous page
+- ✅ Fully translated in FR, EN, DE
+- ✅ Responsive design (mobile & desktop)
+- ✅ Dark mode support with proper contrast
 
 ### Enabling Debug Mode
 
@@ -842,6 +964,58 @@ grep -i "exception" storage/logs/laravel.log
 
 ---
 
-**Last Updated:** 2026-01-25
+**Last Updated:** 2026-04-10
 **Installation System**: v1.1.0 (Modular, Idempotent, Auto-Discovery)
+**Authentication System**: v2.0.0 (Public + Admin, Full i18n, Dark Mode)
 **Status**: ✅ Production Ready
+
+---
+
+## 📝 Recent Changes (v2.0.0)
+
+### ✨ New Features
+
+- **Public Authentication System** (v1.0)
+  - Public login page at `/login` (separate from Filament admin)
+  - User profile management at `/profile` (name, email, password change)
+  - Automatic role-based redirects (admins → `/admin`, users → `/profile`)
+
+- **Filament User Management Resource** (v1.0)
+  - Create, read, update, delete users from admin panel
+  - Password hashing with bcrypt (secure, never stored plain)
+  - Admin role assignment
+  - User creation/update timestamps
+
+- **Complete Dark Mode Support** (v1.0)
+  - All pages now support dark mode (login, profile, home, errors)
+  - Automatic detection of browser preference
+  - Manual toggle via theme switcher button
+  - Persistent theme preference in `localStorage`
+  - No white flash on page load
+
+- **i18n Translations for Auth** (v1.0)
+  - Complete `auth.php` translation files (FR, EN, DE)
+  - Login page fully translated
+  - Profile page fully translated
+  - Password change validation messages
+
+- **Error Page Button Improvements** (v1.0)
+  - Separated "Back to Home" vs "Previous Page" buttons
+  - Both buttons with separate translation keys
+  - Proper routing: `url('/')` vs `url()->previous()`
+  - All error pages (401, 403, 404, 419, 500, 503) updated
+
+### 🐛 Fixed
+
+- Dark mode CSS visibility issues
+- Login/profile header backgrounds in dark mode
+- Button styling contrast in dark mode
+- Error page button messages (no longer identical)
+- Unicode quote issues in footer translations
+- Footer CSS isolation (prevented cross-page styling issues)
+
+### 📚 Documentation Updated
+
+- README.md: Added User Management and Dark Mode sections
+- MULTILINGUAL.md: Added auth.php section with key examples
+- Updated translation keys documentation

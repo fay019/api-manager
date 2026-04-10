@@ -67,18 +67,21 @@ The `app/Http/Middleware/SetLocale.php` middleware automatically detects and app
 lang/
 ├── fr/                          # French
 │   ├── app.php                  # Public pages (home, navbar, footer, docs, theme)
+│   ├── auth.php                 # Authentication (login, profile, password)
 │   ├── filament.php             # Admin panel (resources, pages, forms, labels)
 │   ├── errors.php               # Error pages (401-503)
 │   └── contact.php              # Contact form & emails
 │
 ├── en/                          # English
 │   ├── app.php
+│   ├── auth.php
 │   ├── filament.php
 │   ├── errors.php
 │   └── contact.php
 │
 └── de/                          # German
     ├── app.php
+    ├── auth.php
     ├── filament.php
     ├── errors.php
     └── contact.php
@@ -103,17 +106,57 @@ return [
         'home' => 'Home',
         'docs' => 'Documentation',
         'admin' => 'Admin Panel',
+        'profile' => 'My Profile',
+        'logout' => 'Logout',
     ],
     
     'footer' => [
         'copyright' => '© 2026 API Manager',
         'docs_link' => 'Documentation',
+        'change_theme' => 'Change theme',
     ],
     
     'theme' => [
         'toggle_label' => 'Toggle dark mode',
         'switch_dark' => 'Dark mode',
         'switch_light' => 'Light mode',
+    ],
+];
+```
+
+### auth.php (Authentication)
+
+Used for public login and profile pages:
+
+```php
+return [
+    'login' => [
+        'title' => 'Login',
+        'email' => 'Email',
+        'password' => 'Password',
+        'remember' => 'Remember me',
+        'button' => 'Login',
+        'no_account' => 'Don\'t have an account?',
+    ],
+    
+    'profile' => [
+        'title' => 'My Profile',
+        'edit_profile' => 'Edit Profile',
+        'name' => 'Name',
+        'email' => 'Email',
+        'change_password' => 'Change Password',
+        'current_password' => 'Current Password',
+        'new_password' => 'New Password',
+        'confirm_password' => 'Confirm Password',
+        'save' => 'Save Changes',
+    ],
+    
+    'validation' => [
+        'email_required' => 'Email is required',
+        'email_invalid' => 'Please enter a valid email',
+        'password_required' => 'Password is required',
+        'password_min' => 'Password must be at least 8 characters',
+        'name_required' => 'Name is required',
     ],
 ];
 ```
@@ -157,16 +200,29 @@ return [
     '404' => [
         'title' => 'Page Not Found',
         'message' => 'The page you are looking for does not exist.',
-        'back_button' => 'Go Back',
+        'back_home' => '← Back to Home',         // Returns to homepage (/)
+        'back_previous' => '← Previous Page',   // Returns to previous page
     ],
     
     '500' => [
         'title' => 'Server Error',
         'message' => 'Something went wrong on our end.',
-        'back_button' => 'Go Back',
+        'back_home' => '← Back to Home',
+        'back_previous' => '← Previous Page',
+        'debug_enabled' => 'Debug Mode Enabled',
+        'enable_debug' => 'Enable Debug Mode',
+        'recent_logs' => 'Recent Logs',
+        'full_log' => 'Full Log File',
+        'no_logs' => 'No logs found',
     ],
 ];
 ```
+
+**Note:** Each error code has two separate button translations:
+- `back_home` - Navigates to homepage with `url('/')` 
+- `back_previous` - Navigates to previous page with `url()->previous()`
+
+This allows users to either go back to the last visited page or return to the homepage.
 
 ### contact.php (Contact Form)
 
@@ -549,8 +605,27 @@ app.home.subtitle
 app.nav.home
 app.nav.docs
 app.nav.admin
+app.nav.profile
+app.nav.logout
 app.footer.copyright
+app.footer.change_theme
 app.theme.toggle_label
+```
+
+### auth.php
+
+```php
+auth.login.title
+auth.login.email
+auth.login.password
+auth.login.button
+auth.profile.title
+auth.profile.edit_profile
+auth.profile.name
+auth.profile.email
+auth.profile.change_password
+auth.validation.email_required
+auth.validation.password_min
 ```
 
 ### filament.php
@@ -562,14 +637,24 @@ filament.key.plural
 filament.log.timestamp
 filament.settings.general_section
 filament.settings.site_name
+filament.users.singular
+filament.users.plural
+filament.users.create
+filament.users.edit
 ```
 
 ### errors.php
 
 ```php
 errors.401.title
+errors.401.back_home
+errors.401.back_previous
 errors.404.title
+errors.404.back_home
+errors.404.back_previous
 errors.500.title
+errors.500.back_home
+errors.500.back_previous
 ```
 
 ### contact.php
