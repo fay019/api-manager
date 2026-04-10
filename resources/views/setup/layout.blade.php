@@ -1,194 +1,240 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Installation') - API Manager</title>
+    <title>@yield('title', __('setup.layout.title')) - API Manager</title>
     @vite(['resources/css/app.css'])
     <style>
-        .setup-container {
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-gradient: linear-gradient(135deg, #f5f7ff 0%, #e0e7ff 100%);
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --success: #10b981;
+            --error: #ef4444;
+        }
+
+        html.dark, :root[data-theme="dark"] {
+            --bg-gradient: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+            --card-bg: #1f2937;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --border: #374151;
+        }
+
+        body {
+            font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f7ff;
+            background: var(--bg-gradient);
+            color: #1f2937;
+            color: var(--text-main);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 20px;
-            transition: background-color 0.3s ease;
+        }
+
+        .setup-container {
+            width: 100%;
+            max-width: 600px;
+            padding: 2rem;
+            box-sizing: border-box;
         }
 
         .setup-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 500px;
-            width: 100%;
-            padding: 40px;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        html.dark .setup-container {
-            background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-        }
-
-        html.dark .setup-card {
-            background: #374151;
-            color: #f3f4f6;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            background: #ffffff;
+            background: var(--card-bg);
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            padding: 2.5rem;
+            border: 1px solid #e5e7eb;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
         }
 
         .setup-header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 2.5rem;
         }
 
         .setup-header h1 {
-            font-size: 28px;
-            margin: 0 0 10px 0;
-            color: #333;
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin: 0 0 0.5rem 0;
+            background: linear-gradient(to right, #4f46e5, #818cf8);
+            background: linear-gradient(to right, var(--primary), #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .setup-header p {
-            color: #666;
+            color: #6b7280;
+            color: var(--text-muted);
+            font-size: 1.125rem;
             margin: 0;
-            font-size: 14px;
-        }
-
-        html.dark .setup-header h1 {
-            color: #f3f4f6;
-        }
-
-        html.dark .setup-header p {
-            color: #d1d5db;
         }
 
         .setup-steps {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 30px;
-            gap: 10px;
+            gap: 0.75rem;
+            margin-bottom: 2.5rem;
         }
 
         .setup-step {
             flex: 1;
-            height: 4px;
+            height: 6px;
             background: #e5e7eb;
-            border-radius: 2px;
+            background: var(--border);
+            border-radius: 1rem;
             position: relative;
             overflow: hidden;
         }
 
-        .setup-step.active,
+        .setup-step.active {
+            background: #4f46e5;
+            background: var(--primary);
+            box-shadow: 0 0 10px rgba(79, 70, 229, 0.3);
+        }
+
         .setup-step.completed {
-            background: linear-gradient(90deg, #667eea, #764ba2);
+            background: #10b981;
+            background: var(--success);
+        }
+
+        .setup-body h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 1.5rem;
         }
 
         .form-group label {
             display: block;
-            font-size: 14px;
+            font-size: 0.875rem;
             font-weight: 600;
-            margin-bottom: 8px;
-            color: #333;
+            margin-bottom: 0.5rem;
+            color: #1f2937;
+            color: var(--text-main);
         }
 
         .form-group input,
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            font-size: 14px;
-            font-family: inherit;
-            transition: border-color 0.3s;
+            padding: 0.75rem 1rem;
+            background: #ffffff;
+            background: var(--card-bg);
+            color: #1f2937;
+            color: var(--text-main);
+            border: 2px solid #e5e7eb;
+            border: 2px solid var(--border);
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: all 0.2s;
         }
 
         .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
+        .form-group select:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .form-group .error {
-            color: #dc2626;
-            font-size: 12px;
-            margin-top: 5px;
-        }
-
-        .form-group input:invalid:not(:placeholder-shown) {
-            border-color: #dc2626;
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 30px;
+            border-color: #4f46e5;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
         }
 
         .btn {
-            flex: 1;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            padding: 0.875rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            border: none;
+            gap: 0.5rem;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: #4f46e5;
+            background: var(--primary);
             color: white;
+            width: 100%;
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            background: #4338ca;
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4);
         }
 
         .btn-secondary {
             background: #e5e7eb;
-            color: #333;
+            background: var(--border);
+            color: #1f2937;
+            color: var(--text-main);
         }
 
         .btn-secondary:hover {
-            background: #d1d5db;
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
+            background: #6b7280;
+            background: var(--text-muted);
+            color: white;
         }
 
         .alert {
-            padding: 12px 16px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            font-size: 14px;
+            padding: 1rem 1.25rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-left: 4px solid transparent;
         }
 
         .alert-success {
-            background: #dcfce7;
-            color: #166534;
-            border: 1px solid #bbf7d0;
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            color: var(--success);
+            border-left-color: #10b981;
+            border-left-color: var(--success);
         }
 
         .alert-error {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            color: var(--error);
+            border-left-color: #ef4444;
+            border-left-color: var(--error);
         }
+
+        .flex { display: flex; }
+        .justify-between { justify-content: space-between; }
+        .items-center { align-items: center; }
+        .mb-0 { margin-bottom: 0; }
+        .mt-4 { margin-top: 1rem; }
+        .gap-2 { gap: 0.5rem; }
+        .text-xs { font-size: 0.75rem; }
+        .text-sm { font-size: 0.875rem; }
+        .font-semibold { font-weight: 600; }
+        .text-gray-500 { color: #6b7280; color: var(--text-muted); }
+        .uppercase { text-transform: uppercase; }
+        .tracking-wider { letter-spacing: 0.05em; }
 
         .alert-info {
             background: #dbeafe;
@@ -315,12 +361,16 @@
         }
     </style>
 </head>
-<body>
-    <div class="setup-container">
-        <div class="setup-card">
-            @yield('content')
+    <body>
+        <div class="setup-container">
+            <div class="setup-card">
+                <div class="setup-header">
+                    <h1>API Manager</h1>
+                    <p>{{ __('setup.layout.subtitle') }}</p>
+                </div>
+                @yield('content')
+            </div>
         </div>
-    </div>
 
     <script>
         // Theme management

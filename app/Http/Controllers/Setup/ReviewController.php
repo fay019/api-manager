@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Setup;
 
+use App\Http\Controllers\Controller;
+use App\Services\Installation\SetupSession;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -26,7 +28,7 @@ use Illuminate\View\View;
  * // Affiche récapitulatif depuis session
  * // Vérifie que toutes les étapes précédentes sont complètes
  */
-class ReviewController extends \App\Http\Controllers\Controller
+class ReviewController extends Controller
 {
     /**
      * Affiche le récapitulatif avant installation.
@@ -42,7 +44,7 @@ class ReviewController extends \App\Http\Controllers\Controller
      */
     public function index(Request $request): View
     {
-        $setupSession = app(\App\Services\Installation\SetupSession::class);
+        $setupSession = app(SetupSession::class);
 
         \Log::channel('installation')->info('🔍 ÉTAPE 6: Review GET /setup/review', [
             'setup_token' => $setupSession->getToken(),
@@ -85,19 +87,19 @@ class ReviewController extends \App\Http\Controllers\Controller
 
         if (! $setupSession->get('setup.app_name')) {
             $isComplete = false;
-            $warnings[] = 'Paramètres applicatifs incomplets';
+            $warnings[] = __('setup.steps.review.sections.app');
         }
         if (! $setupSession->get('setup.database_driver')) {
             $isComplete = false;
-            $warnings[] = 'Configuration base de données manquante';
+            $warnings[] = __('setup.steps.review.sections.database');
         }
         if (! $setupSession->get('setup.mail_driver')) {
             $isComplete = false;
-            $warnings[] = 'Configuration email manquante';
+            $warnings[] = __('setup.steps.review.sections.mail');
         }
         if (! $setupSession->get('setup.admin_name')) {
             $isComplete = false;
-            $warnings[] = 'Administrateur non créé';
+            $warnings[] = __('setup.steps.review.sections.admin');
         }
 
         return view('setup.steps.review', [

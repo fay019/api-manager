@@ -4,13 +4,7 @@
 
 @section('styles')
     <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-        }
-
-        .container {
+        .home-container {
             max-width: 1200px;
             margin: 0 auto;
             width: 100%;
@@ -332,7 +326,7 @@
 @endsection
 
 @section('content')
-    <div class="container">
+<div class="home-container">
         <div class="header">
             <h1>{{ __('app.home.header_title') }}</h1>
             <p>{{ __('app.home.header_subtitle') }}</p>

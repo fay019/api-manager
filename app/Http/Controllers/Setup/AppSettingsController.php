@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Setup;
 
 use App\Http\Controllers\Controller;
+use App\Services\Installation\EnvManager;
+use App\Services\Installation\SetupSession;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -49,7 +51,7 @@ class AppSettingsController extends Controller
      */
     public function index(Request $request): View
     {
-        $setupSession = app(\App\Services\Installation\SetupSession::class);
+        $setupSession = app(SetupSession::class);
 
         \Log::channel('installation')->info('✅ ÉTAPE 2: App Settings GET /setup/app-settings', [
             'setup_token' => $setupSession->getToken(),
@@ -75,18 +77,22 @@ class AppSettingsController extends Controller
             'app_debug' => $setupSession->get('setup.app_debug', $defaultAppEnv === 'local'),
             'allow_production_reset' => $setupSession->get('setup.allow_production_reset', config('installation.wizard.security.allow_production_reset', false)),
             'timezone' => $setupSession->get('setup.timezone', config('app.timezone', 'UTC')),
-            'locale' => $setupSession->get('setup.locale', config('app.locale', 'fr')),
+            'locale' => $setupSession->get('setup.locale', app()->getLocale()),
         ];
 
-        // Listes timezones et locales
+        // Listes timezones et locales supportées
         $timezones = timezone_identifiers_list();
-        $locales = ['fr' => 'Français', 'en' => 'English', 'es' => 'Español'];
+        $locales = ['fr' => 'Français', 'en' => 'English', 'de' => 'Deutsch'];
 
         return view('setup.steps.app-settings', [
             'formData' => $formData,
             'timezones' => $timezones,
             'locales' => $locales,
-            'environments' => ['local' => 'Local (Développement)', 'staging' => 'Staging (Test)', 'production' => 'Production'],
+            'environments' => [
+                'local' => __('setup.steps.app_settings.environments.local'),
+                'staging' => __('setup.steps.app_settings.environments.staging'),
+                'production' => __('setup.steps.app_settings.environments.production'),
+            ],
             'errors' => $setupSession->get('errors', []),
         ]);
     }
@@ -105,7 +111,7 @@ class AppSettingsController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $setupSession = app(\App\Services\Installation\SetupSession::class);
+        $setupSession = app(SetupSession::class);
 
         \Log::channel('installation')->info('📝 ÉTAPE 2: App Settings POST /setup/app-settings', [
             'setup_token' => $setupSession->getToken(),
@@ -122,7 +128,7 @@ class AppSettingsController extends Controller
             'app_debug' => 'nullable|boolean',
             'allow_production_reset' => 'nullable|boolean',
             'timezone' => 'required|timezone',
-            'locale' => 'required|string|in:fr,en,es',
+            'locale' => 'required|string|in:fr,en,de',
         ]);
 
         if ($validator->fails()) {
@@ -151,6 +157,25 @@ class AppSettingsController extends Controller
         $setupSession->set('setup.allow_production_reset', $validated['allow_production_reset'] ?? false);
         $setupSession->set('setup.timezone', $validated['timezone']);
         $setupSession->set('setup.locale', $validated['locale']);
+
+        // Mettre à jour le .env immédiatement pour assurer la cohérence
+        try {
+            $envManager = app(EnvManager::class);
+            $envManager->update([
+                'APP_NAME' => $validated['app_name'],
+                'APP_URL' => $validated['app_url'],
+                'APP_ENV' => $validated['app_env'],
+                'APP_DEBUG' => ($validated['app_debug'] ?? ($validated['app_env'] === 'local')) ? 'true' : 'false',
+                'APP_ALLOW_PRODUCTION_RESET' => ($validated['allow_production_reset'] ?? false) ? 'true' : 'false',
+                'APP_TIMEZONE' => $validated['timezone'],
+                'APP_LOCALE' => $validated['locale'],
+            ]);
+            $envManager->flushCache();
+
+            \Log::channel('installation')->info('✅ .env mis à jour avec les paramètres applicatifs');
+        } catch (\Exception $e) {
+            \Log::channel('installation')->warning('⚠️ Impossible de mettre à jour le .env: '.$e->getMessage());
+        }
 
         // Rediriger vers étape suivante
         return redirect()->route('setup.database', ['setup_token' => $setupSession->getToken()]);

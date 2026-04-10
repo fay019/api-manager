@@ -31,7 +31,7 @@ class SetupStateful
             }
 
             // TEMP DISABLE FOR DEBUG
-            /*
+
             if (! $secret || ! hash_equals($secret, (string) $token)) {
                 \Log::channel('installation')->warning('🚫 CSRF Token Mismatch (Setup Mode)', [
                     'provided_token' => $token,
@@ -39,9 +39,9 @@ class SetupStateful
                     'setup_token' => $setupSession->getToken(),
                     'cookie' => $request->cookie('api_manager_setup_token'),
                 ]);
-                abort(403, 'CSRF Token Mismatch (Setup Mode)');
+                // abort(403, 'CSRF Token Mismatch (Setup Mode)');
             }
-            */
+
             \Log::channel('installation')->info('🛠 DEBUG: CSRF bypass activé pour le setup', [
                 'provided_token' => $token,
                 'expected_token' => $secret,

@@ -5,7 +5,11 @@ namespace App\Http\Controllers\Setup;
 use App\Contracts\Installation\InstallationCheckInterface;
 use App\Contracts\Installation\RequirementsCheckerInterface;
 use App\Http\Controllers\Controller;
+use App\Services\Installation\EnvManager;
+use App\Services\Installation\SetupSession;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\View\View;
 
@@ -72,7 +76,7 @@ class WelcomeController extends Controller
         Artisan::call('optimize:clear');
 
         // Initialiser la session de setup si inexistante ou si le token cookie ne pointe vers rien
-        $setupSession = app(\App\Services\Installation\SetupSession::class);
+        $setupSession = app(SetupSession::class);
         if (! $setupSession->getToken() || ! $setupSession->getCsrfToken()) {
             $token = $setupSession->initialize();
             \Log::channel('installation')->info('🆕 Session setup initialisée (Nouvelle)', ['token' => $token]);
@@ -132,5 +136,63 @@ class WelcomeController extends Controller
             'warningCount' => count($checkResults['warnings']),
             'rechecked' => true, // Flag pour afficher "Vérifications relancées"
         ]);
+    }
+
+    /**
+     * Change la langue pour le wizard d'installation.
+     *
+     * @return RedirectResponse
+     */
+    public function setLocale(Request $request)
+    {
+        $locale = $request->input('locale');
+        $supportedLocales = ['fr', 'en', 'de'];
+        $setupSession = app(SetupSession::class);
+
+        \Log::channel('installation')->info('🌐 POST setLocale', [
+            'locale' => $locale,
+            'token' => $setupSession->getToken(),
+        ]);
+
+        if (in_array($locale, $supportedLocales)) {
+            // Utiliser SetupSession pour persister la langue pendant l'installation
+            // car le driver session standard (DB) peut ne pas être prêt.
+            $setupSession->set('locale', $locale);
+            $setupSession->set('setup.locale', $locale); // Keep consistent with AppSettings
+
+            // Mettre à jour le fichier .env immédiatement pour refléter le choix de langue
+            try {
+                $envManager = new EnvManager;
+                $envManager->update(['APP_LOCALE' => $locale]);
+                $envManager->flushCache();
+                \Log::channel('installation')->info('✅ APP_LOCALE mis à jour dans .env', ['locale' => $locale]);
+            } catch (\Exception $e) {
+                \Log::channel('installation')->warning('⚠️ Impossible de mettre à jour APP_LOCALE dans .env: '.$e->getMessage());
+            }
+
+            // S'assurer que les données sont bien écrites sur disque avant redirection
+            $setupSession->save();
+
+            // Tenter aussi la session standard si disponible
+            try {
+                session(['locale' => $locale]);
+            } catch (\Exception $e) {
+                // Ignorer si la session n'est pas accessible
+            }
+
+            App::setLocale($locale);
+        }
+
+        return redirect()->route('setup.welcome', ['setup_token' => $setupSession->getToken()])->withCookie(cookie(
+            'locale',
+            $locale,
+            60 * 24 * 365, // 1 an
+            '/',
+            null,
+            false,
+            false, // non HttpOnly pour lecture JS si besoin
+            false,
+            'Lax'
+        ));
     }
 }

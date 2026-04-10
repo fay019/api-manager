@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Setting;
+use App\Services\Installation\EnvManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -33,7 +34,19 @@ Route::get('/locale/{locale}', function (string $locale) {
         session(['locale' => $locale]);
         App::setLocale($locale);
 
-        return back()->withCookie(cookie('locale', $locale, 60 * 24 * 365, '/', null, false, false));
+        // Update .env if the service is available
+        try {
+            $envManager = app(EnvManager::class);
+            $envManager->update(['APP_LOCALE' => $locale]);
+            $envManager->flushCache();
+        } catch (Exception $e) {
+            // Service not available or .env not writable, continue
+        }
+
+        // Permanent cookie for non-authenticated users, expires in 1 year
+        $cookie = cookie('locale', $locale, 60 * 24 * 365, '/', null, false, false);
+
+        return back()->withCookie($cookie);
     }
 
     return back();

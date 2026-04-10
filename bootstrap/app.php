@@ -16,6 +16,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->redirectTo(
+            guests: '/login',
+            users: '/',
+        );
+
         $middleware->encryptCookies(except: [
             'api_manager_setup_token',
             'locale',

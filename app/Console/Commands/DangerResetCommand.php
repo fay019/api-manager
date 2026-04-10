@@ -77,6 +77,12 @@ class DangerResetCommand extends Command
             $this->warn('Non-SQLite database detected. Please clear tables manually.');
         }
 
+        // S'assurer que le dossier database est scriptable pour la recréation
+        if (File::isDirectory(database_path())) {
+            chmod(database_path(), 0777);
+            $this->line('✓ ensured database directory permissions (0777)');
+        }
+
         // 4. Backup and reset .env
         $envPath = base_path('.env');
         if (File::exists($envPath)) {

@@ -21,7 +21,7 @@ class SetupSession
         }
 
         // On cherche le token dans le paramètre d'URL d'abord, puis dans le cookie
-        $this->token = request()->query('setup_token') ?? request()->cookie('api_manager_setup_token');
+        $this->token = request()->query('setup_token') ?? request()->input('_setup_token') ?? request()->cookie('api_manager_setup_token');
 
         if ($this->token) {
             $this->load();

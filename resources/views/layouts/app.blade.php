@@ -24,15 +24,42 @@
     @endif
 
     <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-gradient: linear-gradient(135deg, #f5f7ff 0%, #e0e7ff 100%);
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --success: #10b981;
+            --error: #ef4444;
+            --nav-bg: #ffffff;
+            --nav-border: rgba(0, 0, 0, 0.1);
+        }
+
+        html.dark, :root[data-theme="dark"] {
+            --bg-gradient: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+            --card-bg: #1f2937;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --border: #374151;
+            --nav-bg: #18181b;
+            --nav-border: rgba(255, 255, 255, 0.1);
+        }
+
         body {
             padding-bottom: 0;
+            padding-top: 3.5rem; /* Space for fixed navbar */
+            color: var(--text-main);
+            background: var(--card-bg); /* Use card-bg or similar for consistent background */
         }
 
         .main-content {
             width: 100%;
             margin: 0;
             padding: 0;
-            min-height: calc(100vh - 3.5rem - 400px); /* Ajustement pour éviter que le footer soit trop haut sur pages vides */
+            min-height: calc(100vh - 7rem - 400px); /* Adjust min-height for padding-top/bottom */
         }
     </style>
 

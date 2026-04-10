@@ -2,27 +2,23 @@
 
 @section('title', __('app.docs.page_title'))
 
-@section('styles')
+    @section('styles')
     <style>
-        body {
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
+        .docs-container {
             max-width: 1100px;
             margin: 0 auto;
             padding: 40px 20px;
         }
 
-        h1 {
-            color: white;
+        .docs-container h1 {
+            color: var(--text-main);
             margin-bottom: 10px;
-            font-size: 2em;
+            font-size: 2.5em;
+            font-weight: 800;
         }
 
         .subtitle {
-            color: rgba(255, 255, 255, 0.85);
+            color: var(--text-muted);
             margin-bottom: 40px;
             font-size: 1.1em;
         }
@@ -41,7 +37,7 @@
         }
 
         .doc-card {
-            background: rgba(255, 255, 255, 0.9);
+            background: var(--card-bg);
             border-radius: 24px;
             padding: 30px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -49,26 +45,29 @@
             text-decoration: none;
             color: inherit;
             display: block;
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid var(--border);
+        }
+
+        .dark .doc-card {
+            box-shadow: none;
         }
 
         .doc-card:hover {
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
             transform: translateY(-5px);
-            border-color: rgba(79, 70, 229, 0.3);
-            background: white;
+            border-color: var(--primary);
+            background: rgba(79, 70, 229, 0.05);
         }
 
         .doc-card h3 {
-            color: #4f46e5;
+            color: var(--primary);
             margin-bottom: 12px;
             font-size: 1.4em;
             font-weight: 700;
         }
 
         .doc-card p {
-            color: #4b5563;
+            color: var(--text-muted);
             line-height: 1.6;
             margin-bottom: 15px;
         }
@@ -80,28 +79,31 @@
         }
 
         .doc-card .meta {
-            color: #9ca3af;
+            color: var(--text-muted);
             font-size: 0.8em;
             margin-top: 15px;
             padding-top: 15px;
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            border-top: 1px solid var(--border);
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
 
         .features {
-            background: rgba(255, 255, 255, 0.8);
+            background: var(--card-bg);
             padding: 30px;
             border-radius: 24px;
             margin-top: 40px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid var(--border);
+        }
+
+        .dark .features {
+            box-shadow: none;
         }
 
         .features h3 {
-            color: #1f2937;
+            color: var(--text-main);
             margin-bottom: 20px;
             font-weight: 700;
         }
@@ -112,10 +114,10 @@
 
         .features li {
             padding: 10px 0;
-            color: #4b5563;
+            color: var(--text-muted);
             padding-left: 25px;
             position: relative;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+            border-bottom: 1px solid var(--border);
         }
 
         .features li:last-child {
@@ -126,64 +128,14 @@
             content: "→";
             position: absolute;
             left: 0;
-            color: #4f46e5;
+            color: var(--primary);
             font-weight: bold;
-        }
-
-        .dark .doc-card {
-            background: rgba(24, 24, 27, 0.8);
-            color: #f3f4f6;
-            border-color: rgba(255, 255, 255, 0.05);
-            box-shadow: none;
-        }
-
-        .dark .doc-card:hover {
-            background: rgba(39, 39, 42, 0.9);
-            border-color: rgba(129, 140, 248, 0.3);
-        }
-
-        .dark .doc-card h3 {
-            color: #818cf8;
-        }
-
-        .dark .doc-card p {
-            color: #a1a1aa;
-        }
-
-        .dark .doc-card .meta {
-            color: #71717a;
-            border-top-color: rgba(255, 255, 255, 0.05);
-        }
-
-        .dark .features {
-            background: rgba(24, 24, 27, 0.8);
-            color: #f3f4f6;
-            border-color: rgba(255, 255, 255, 0.05);
-            box-shadow: none;
-        }
-
-        .dark .features h3 {
-            color: #f4f4f5;
-        }
-
-        .dark .features li {
-            color: #a1a1aa;
-            border-bottom-color: rgba(255, 255, 255, 0.05);
-        }
-
-        .dark .features li:before {
-            color: #818cf8;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
         }
     </style>
 @endsection
 
 @section('content')
-    <div class="container">
+<div class="docs-container">
         <h1>📚 {{ __('app.docs.title') }}</h1>
         <p class="subtitle">{{ __('app.docs.subtitle') }}</p>
 

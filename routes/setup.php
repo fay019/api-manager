@@ -75,6 +75,7 @@ Route::prefix('setup')
         Route::controller(WelcomeController::class)->group(function () {
             Route::get('/welcome', 'index')->name('welcome');
             Route::post('/welcome', 'store')->name('welcome.store');
+            Route::post('/welcome/locale', 'setLocale')->name('welcome.locale');
         });
 
         /**
@@ -210,7 +211,7 @@ Route::prefix('setup')
          * Phase 7: Success Page
          *
          * Affiche succès installation avec récapitulatif et lien /admin.
-         * Auto-redirection vers /admin/login après N secondes.
+         * Auto-redirection vers /login après N secondes.
          *
          * GET /setup/success
          * POST /setup/install (lance le processus)

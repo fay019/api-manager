@@ -2,54 +2,54 @@
 
 @section('content')
 <div class="setup-header">
-    <h1>Réviser la Configuration</h1>
-    <p>Étape {{ $currentStep }}/{{ $totalSteps }}</p>
+    <h1>{{ __('setup.steps.review.title') }}</h1>
+    <p>{{ __('setup.steps.review.subtitle', ['current' => $currentStep, 'total' => $totalSteps]) }}</p>
 </div>
 
 @if (!$isComplete)
     <div class="alert alert-error">
-        <strong>⚠️ Configuration incomplète!</strong>
+        <strong>⚠️ {{ __('setup.steps.review.incomplete') }}</strong>
         <ul style="margin-top: 8px; padding-left: 20px; margin-bottom: 0;">
             @foreach ($warnings as $warning)
                 <li>{{ $warning }}</li>
             @endforeach
         </ul>
-        <p style="margin-top: 8px; font-size: 12px;">Veuillez compléter les étapes précédentes avant de continuer.</p>
+        <p style="margin-top: 8px; font-size: 12px;">{{ __('setup.steps.review.incomplete_help') }}</p>
     </div>
 @else
     <div class="alert alert-success">
-        ✅ Configuration complète et valide. Prêt pour l'installation.
+        ✅ {{ __('setup.steps.review.complete') }}
     </div>
 @endif
 
 <!-- Section Paramètres Applicatifs -->
 <div class="review-section">
     <div class="review-header">
-        <h3>📋 Paramètres Applicatifs</h3>
+        <h3>📋 {{ __('setup.steps.review.sections.app') }}</h3>
     </div>
     <div class="review-grid">
         <div class="review-item">
-            <div class="review-label">Nom de l'Application</div>
+            <div class="review-label">{{ __('setup.steps.review.labels.app_name') }}</div>
             <div class="review-value">{{ $appSettings['app_name'] }}</div>
         </div>
         <div class="review-item">
-            <div class="review-label">URL d'accès</div>
+            <div class="review-label">{{ __('setup.steps.review.labels.app_url') }}</div>
             <div class="review-value">{{ $appSettings['app_url'] }}</div>
         </div>
         <div class="review-item">
-            <div class="review-label">Environnement</div>
+            <div class="review-label">{{ __('setup.steps.review.labels.environment') }}</div>
             <div class="review-value">
-                <span style="background: {{ $appSettings['app_env'] === 'production' ? '#fee2e2' : '#dcfce7' }}; padding: 2px 8px; border-radius: 3px; font-size: 12px;">
+                <span class="badge badge-{{ $appSettings['app_env'] === 'production' ? 'danger' : 'success' }}">
                     {{ ucfirst($appSettings['app_env']) }}
                 </span>
             </div>
         </div>
         <div class="review-item">
-            <div class="review-label">Fuseau Horaire</div>
+            <div class="review-label">{{ __('setup.steps.review.labels.timezone') }}</div>
             <div class="review-value">{{ $appSettings['timezone'] }}</div>
         </div>
         <div class="review-item">
-            <div class="review-label">Langue</div>
+            <div class="review-label">{{ __('setup.steps.review.labels.locale') }}</div>
             <div class="review-value">{{ strtoupper($appSettings['locale']) }}</div>
         </div>
     </div>
@@ -58,25 +58,25 @@
 <!-- Section Base de Données -->
 <div class="review-section">
     <div class="review-header">
-        <h3>🗄️ Base de Données</h3>
+        <h3>🗄️ {{ __('setup.steps.review.sections.database') }}</h3>
     </div>
     <div class="review-grid">
         <div class="review-item">
-            <div class="review-label">Type</div>
+            <div class="review-label">{{ __('setup.steps.review.labels.type') }}</div>
             <div class="review-value">{{ ucfirst($database['driver']) }}</div>
         </div>
         @if ($database['driver'] !== 'sqlite')
             <div class="review-item">
-                <div class="review-label">Serveur</div>
+                <div class="review-label">{{ __('setup.steps.review.labels.host') }}</div>
                 <div class="review-value">{{ $database['host'] }}:{{ $database['port'] }}</div>
             </div>
             <div class="review-item">
-                <div class="review-label">Utilisateur</div>
+                <div class="review-label">{{ __('setup.steps.review.labels.username') }}</div>
                 <div class="review-value">{{ $database['username'] }}</div>
             </div>
         @endif
         <div class="review-item">
-            <div class="review-label">Base de Données</div>
+            <div class="review-label">{{ __('setup.steps.review.labels.database') }}</div>
             <div class="review-value">{{ $database['database'] }}</div>
         </div>
     </div>
@@ -85,21 +85,21 @@
 <!-- Section Email -->
 <div class="review-section">
     <div class="review-header">
-        <h3>📧 Configuration Email</h3>
+        <h3>📧 {{ __('setup.steps.review.sections.mail') }}</h3>
     </div>
     <div class="review-grid">
         <div class="review-item">
-            <div class="review-label">Type</div>
+            <div class="review-label">{{ __('setup.steps.review.labels.type') }}</div>
             <div class="review-value">{{ ucfirst($mail['driver']) }}</div>
         </div>
         @if ($mail['driver'] === 'smtp')
             <div class="review-item">
-                <div class="review-label">Serveur SMTP</div>
+                <div class="review-label">{{ __('setup.steps.review.labels.smtp_server') }}</div>
                 <div class="review-value">{{ $mail['host'] }}:{{ $mail['port'] }}</div>
             </div>
         @endif
         <div class="review-item">
-            <div class="review-label">Adresse Source</div>
+            <div class="review-label">{{ __('setup.steps.review.labels.from') }}</div>
             <div class="review-value">{{ $mail['from_address'] }} ({{ $mail['from_name'] }})</div>
         </div>
     </div>
@@ -108,33 +108,33 @@
 <!-- Section Administrateur -->
 <div class="review-section">
     <div class="review-header">
-        <h3>👤 Administrateur</h3>
+        <h3>👤 {{ __('setup.steps.review.sections.admin') }}</h3>
     </div>
     <div class="review-grid">
         <div class="review-item">
-            <div class="review-label">Nom Complet</div>
+            <div class="review-label">{{ __('setup.steps.review.labels.full_name') }}</div>
             <div class="review-value">{{ $admin['name'] }}</div>
         </div>
         <div class="review-item">
-            <div class="review-label">Email</div>
+            <div class="review-label">{{ __('setup.steps.review.labels.email') }}</div>
             <div class="review-value">{{ $admin['email'] }}</div>
         </div>
         <div class="review-item">
-            <div class="review-label">Mot de Passe</div>
-            <div class="review-value" style="color: #999;">••••••••</div>
+            <div class="review-label">{{ __('setup.steps.review.labels.password') }}</div>
+            <div class="review-value review-password">••••••••</div>
         </div>
     </div>
 </div>
 
 <!-- Info importantes -->
 <div class="review-section">
-    <div class="info-box">
-        ℹ️ <strong>Notes importantes:</strong>
-        <ul style="margin: 8px 0 0 0; padding-left: 20px; font-size: 12px;">
-            <li>Les informations sensibles (mots de passe) ne sont pas affichées</li>
-            <li>Une fois l'installation complète, vous devrez vous connecter avec l'email et mot de passe de l'administrateur</li>
-            <li>Conservez ces informations en lieu sûr</li>
-            <li>Vous pourrez créer d'autres utilisateurs après l'installation</li>
+    <div class="info-box info-review">
+        ℹ️ <strong>{{ __('setup.steps.review.notes_title') }}</strong>
+        <ul class="info-list">
+            <li>{{ __('setup.steps.review.notes.passwords') }}</li>
+            <li>{{ __('setup.steps.review.notes.login') }}</li>
+            <li>{{ __('setup.steps.review.notes.safe') }}</li>
+            <li>{{ __('setup.steps.review.notes.others') }}</li>
         </ul>
     </div>
 </div>
@@ -144,7 +144,7 @@
     <input type="hidden" name="_setup_token" value="{{ app(\App\Services\Installation\SetupSession::class)->getCsrfToken() }}">
     <div class="form-actions">
         <button type="submit" class="btn btn-primary" {{ !$isComplete ? 'disabled' : '' }}>
-            🚀 Installer l'Application →
+            🚀 {{ __('setup.steps.review.install') }}
         </button>
     </div>
 </form>
@@ -155,15 +155,16 @@
     }
 
     .review-header {
-        border-bottom: 2px solid #667eea;
+        border-bottom: 2px solid var(--primary);
         padding-bottom: 10px;
         margin-bottom: 15px;
     }
 
     .review-header h3 {
         margin: 0;
-        color: #333;
-        font-size: 16px;
+        color: var(--text-main);
+        font-size: 1.1rem;
+        font-weight: 700;
     }
 
     .review-grid {
@@ -174,33 +175,76 @@
 
     .review-item {
         padding: 12px;
-        background: #f9fafb;
-        border-radius: 6px;
-        border-left: 3px solid #667eea;
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        border-left: 4px solid var(--primary);
+        transition: all 0.2s ease;
+    }
+
+    .review-item:hover {
+        border-color: var(--primary);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }
 
     .review-label {
-        font-size: 12px;
-        font-weight: 600;
-        color: #666;
-        margin-bottom: 5px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        margin-bottom: 6px;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.05em;
     }
 
     .review-value {
-        font-size: 14px;
-        color: #333;
+        font-size: 0.95rem;
+        color: var(--text-main);
         word-break: break-word;
+        font-weight: 500;
     }
 
-    .info-box {
-        background: #f3f4f6;
-        border-left: 4px solid #667eea;
-        padding: 12px 16px;
-        border-radius: 4px;
-        font-size: 13px;
-        color: #333;
+    .review-password {
+        color: var(--text-muted);
+        letter-spacing: 2px;
+    }
+
+    .badge {
+        padding: 2px 8px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .badge-success {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--success);
+    }
+
+    .badge-danger {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--error);
+    }
+
+    .info-review {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-left: 4px solid var(--primary);
+        padding: 16px;
+        border-radius: 12px;
+        color: var(--text-main);
+    }
+
+    .info-list {
+        margin: 10px 0 0 0;
+        padding-left: 20px;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        line-height: 1.5;
+    }
+
+    .info-list li {
+        margin-bottom: 4px;
     }
 
     .setup-header h1 {
@@ -208,8 +252,8 @@
     }
 
     .setup-header p {
-        color: #666;
-        font-size: 14px;
+        color: var(--text-muted);
+        font-size: 1rem;
     }
 
     .btn:disabled {
@@ -219,6 +263,14 @@
 
     .btn:disabled:hover {
         transform: none;
+    }
+
+    html.dark .review-item {
+        background: rgba(31, 41, 55, 0.5);
+    }
+
+    html.dark .info-review {
+        background: rgba(31, 41, 55, 0.5);
     }
 </style>
 @endsection

@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Widgets\ApiRequestStatsWidget;
+use App\Http\Middleware\FilamentAuth;
 use App\Http\Middleware\SetLocale;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -31,7 +32,6 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
             ->homeUrl(url('/'))
             ->darkMode(true)
             ->colors([
@@ -73,6 +73,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+                FilamentAuth::class,
             ]);
     }
 }

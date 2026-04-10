@@ -51,10 +51,11 @@
                         <svg class="h-5 w-5 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                         </svg>
-                        <h4 class="text-sm font-bold tracking-widest uppercase">{{ __('app.nav.admin') }}</h4>
+                        <h4 class="text-sm font-bold tracking-widest uppercase">{{ (auth()->check() && auth()->user()->is_admin) ? __('app.nav.admin') : __('app.nav.user') }}</h4>
                     </div>
                     <ul class="space-y-4 text-sm font-medium">
                         @if(auth()->check())
+                            <li><a href="{{ route('profile.edit') }}" class="group flex items-center text-gray-700 transition-all hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400"><span class="mr-0 h-px w-0 bg-blue-600 transition-all group-hover:mr-2 group-hover:w-3 dark:bg-blue-400"></span>{{ __('app.footer.my_profile') }}</a></li>
                             <li>
                                 <form action="{{ route('logout') }}" method="POST" class="inline">
                                     @csrf
@@ -64,9 +65,11 @@
                                     </button>
                                 </form>
                             </li>
-                            <li><a href="/admin" class="group flex items-center text-gray-700 transition-all hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400"><span class="mr-0 h-px w-0 bg-blue-600 transition-all group-hover:mr-2 group-hover:w-3 dark:bg-blue-400"></span>{{ __('app.footer.admin_panel') }}</a></li>
+                            @if(auth()->user()->is_admin)
+                                <li><a href="/admin" class="group flex items-center text-gray-700 transition-all hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400"><span class="mr-0 h-px w-0 bg-blue-600 transition-all group-hover:mr-2 group-hover:w-3 dark:bg-blue-400"></span>{{ __('app.footer.admin_panel') }}</a></li>
+                            @endif
                         @else
-                            <li><a href="/admin/login" class="group flex items-center text-gray-700 transition-all hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400"><span class="mr-0 h-px w-0 bg-blue-600 transition-all group-hover:mr-2 group-hover:w-3 dark:bg-blue-400"></span>{{ __('app.footer.admin') }}</a></li>
+                            <li><a href="{{ route('login.show') }}" class="group flex items-center text-gray-700 transition-all hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400"><span class="mr-0 h-px w-0 bg-blue-600 transition-all group-hover:mr-2 group-hover:w-3 dark:bg-blue-400"></span>{{ __('app.footer.login') }}</a></li>
                         @endif
                     </ul>
                 </div>

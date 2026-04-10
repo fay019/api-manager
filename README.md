@@ -67,16 +67,18 @@ The application is **fully internationalized** with support for **French, Englis
 
 ### Features
 - ✅ **Automatic Detection** - Browser language preference automatically detected via `Accept-Language` header
-- ✅ **User Selection** - Language selector buttons (F/EN/FR/DE) in navbar
+- ✅ **User Selection** - Language selector buttons (FR/EN/DE) in navbar
 - ✅ **Session Persistence** - Selected language persists across pages
 - ✅ **No URL Prefixes** - Clean URLs `/admin` instead of `/en/admin`
 - ✅ **Complete Coverage**:
+  - 📖 Setup Wizard (multilingual installation)
   - 📖 Public pages (home, docs, footer)
   - ⚙️ Admin panel (all resources, pages, forms)
   - ❌ Error pages (401, 403, 404, 419, 500, 503)
   - 📧 Contact form and notifications
   - 🎨 All UI labels and buttons
 - ✅ **Dark Mode Aware** - Translations respect light/dark theme
+- ✅ **V4 Styles** - Modernized CSS for setup and public pages
 
 ### Language Files Structure
 ```
@@ -85,21 +87,25 @@ lang/
 │   ├── app.php          # Public pages, navbar, footer, theme
 │   ├── errors.php       # Error pages
 │   ├── filament.php     # Admin panel, resources
-│   └── contact.php      # Contact form
+│   ├── contact.php      # Contact form
+│   └── setup.php        # Installation wizard
 ├── en/
 │   ├── app.php
 │   ├── errors.php
 │   ├── filament.php
-│   └── contact.php
+│   ├── contact.php
+│   └── setup.php
 └── de/
     ├── app.php
     ├── errors.php
     ├── filament.php
-    └── contact.php
+    ├── contact.php
+    └── setup.php
 ```
 
 ### Switching Languages
-- **Admin Panel**: Click language button (F/EN/FR/DE) in top navbar
+- **Setup Wizard**: Choose language on welcome page (Step 1)
+- **Admin Panel**: Click language button (FR/EN/DE) in top navbar
 - **Public Pages**: Click locale switcher in navbar
 - **Programmatically**: `POST /locale/{locale}` where locale is `fr`, `en`, or `de`
 

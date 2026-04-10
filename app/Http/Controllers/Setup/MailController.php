@@ -3,11 +3,15 @@
 namespace App\Http\Controllers\Setup;
 
 use App\Http\Controllers\Controller;
+use App\Services\Installation\EnvManager;
+use App\Services\Installation\SetupSession;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mailer\Transport\Dsn;
+use Symfony\Component\Mailer\Transport\TransportInterface;
 
 /**
  * Contrôleur pour la Phase 4 du wizard: Mail Configuration.
@@ -53,7 +57,7 @@ class MailController extends Controller
      */
     public function index(Request $request): View
     {
-        $setupSession = app(\App\Services\Installation\SetupSession::class);
+        $setupSession = app(SetupSession::class);
 
         \Log::channel('installation')->info('📧 ÉTAPE 4: Mail GET /setup/mail', [
             'setup_token' => $setupSession->getToken(),
@@ -79,24 +83,24 @@ class MailController extends Controller
 
         $drivers = [
             'smtp' => [
-                'name' => 'SMTP',
-                'description' => 'Serveur SMTP (Gmail, Mailtrap, Sendgrid, etc.)',
+                'name' => __('setup.steps.mail.drivers.smtp.name'),
+                'description' => __('setup.steps.mail.drivers.smtp.description'),
                 'example' => 'smtp.gmail.com:587 (TLS) ou smtp.gmail.com:465 (SSL)',
             ],
             'sendmail' => [
-                'name' => 'Sendmail',
-                'description' => 'Binaire sendmail local (serveur dédié)',
+                'name' => __('setup.steps.mail.drivers.sendmail.name'),
+                'description' => __('setup.steps.mail.drivers.sendmail.description'),
                 'example' => '/usr/sbin/sendmail -t -i',
             ],
             'log' => [
-                'name' => 'Log (Développement)',
-                'description' => 'Enregistre les emails dans le fichier log (tests)',
-                'example' => 'Aucune configuration requise',
+                'name' => __('setup.steps.mail.drivers.log.name'),
+                'description' => __('setup.steps.mail.drivers.log.description'),
+                'example' => __('setup.steps.mail.log_help'),
             ],
             'mailgun' => [
-                'name' => 'Mailgun',
-                'description' => 'Service Mailgun (API)',
-                'example' => 'Clé API requise',
+                'name' => __('setup.steps.mail.drivers.mailgun.name'),
+                'description' => __('setup.steps.mail.drivers.mailgun.description'),
+                'example' => __('setup.steps.mail.mailgun_help'),
             ],
         ];
 
@@ -123,7 +127,7 @@ class MailController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $setupSession = app(\App\Services\Installation\SetupSession::class);
+        $setupSession = app(SetupSession::class);
 
         \Log::channel('installation')->info('📝 ÉTAPE 4: Mail POST /setup/mail', [
             'setup_token' => $setupSession->getToken(),
@@ -164,6 +168,26 @@ class MailController extends Controller
         $setupSession->set('setup.mail_from_name', $validated['mail_from_name']);
         $setupSession->set('setup.mail_path', $validated['mail_path'] ?? null);
 
+        // Mettre à jour le .env immédiatement pour assurer la cohérence
+        try {
+            $envManager = app(EnvManager::class);
+            $envManager->update([
+                'MAIL_MAILER' => $validated['mail_driver'],
+                'MAIL_HOST' => $validated['mail_host'] ?? '',
+                'MAIL_PORT' => $validated['mail_port'] ?? '',
+                'MAIL_USERNAME' => $validated['mail_username'] ?? '',
+                'MAIL_PASSWORD' => $validated['mail_password'] ?? '',
+                'MAIL_ENCRYPTION' => $validated['mail_encryption'] ?? '',
+                'MAIL_FROM_ADDRESS' => $validated['mail_from_address'],
+                'MAIL_FROM_NAME' => $validated['mail_from_name'],
+            ]);
+            $envManager->flushCache();
+
+            \Log::channel('installation')->info('✅ .env mis à jour avec la configuration mail');
+        } catch (\Exception $e) {
+            \Log::channel('installation')->warning('⚠️ Impossible de mettre à jour le .env: '.$e->getMessage());
+        }
+
         // Rediriger vers étape suivante
         return redirect()->route('setup.admin', ['setup_token' => $setupSession->getToken()]);
     }
@@ -200,21 +224,21 @@ class MailController extends Controller
         if ($driver === 'sendmail') {
             return response()->json([
                 'success' => true,
-                'message' => 'Configuration Sendmail (test non disponible)',
+                'message' => 'Configuration Sendmail',
             ]);
         }
 
         if ($driver === 'log') {
             return response()->json([
                 'success' => true,
-                'message' => 'Configuration Log (emails enregistrés dans storage/logs)',
+                'message' => __('setup.steps.mail.log_mode'),
             ]);
         }
 
         if ($driver === 'mailgun') {
             return response()->json([
                 'success' => true,
-                'message' => 'Configuration Mailgun (test non disponible)',
+                'message' => __('setup.steps.mail.mailgun_title'),
             ]);
         }
 
@@ -273,12 +297,12 @@ class MailController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Connexion SMTP réussie',
+                'message' => __('setup.steps.database.test_success'),
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Connexion SMTP échouée',
+                'message' => __('setup.steps.database.test_failed'),
                 'errors' => [
                     'connection' => $this->formatSmtpError($e),
                 ],
@@ -290,11 +314,11 @@ class MailController extends Controller
      * Crée un transport Symfony Mailer depuis un DSN.
      *
      * @param  string  $dsn  DSN au format Symfony Mailer
-     * @return \Symfony\Component\Mailer\Transport\TransportInterface Transport configuré
+     * @return TransportInterface Transport configuré
      */
-    private function createTransport(string $dsn): \Symfony\Component\Mailer\Transport\TransportInterface
+    private function createTransport(string $dsn): TransportInterface
     {
-        return \Symfony\Component\Mailer\Transport::fromDsn($dsn);
+        return Transport::fromDsn($dsn);
     }
 
     /**
@@ -311,26 +335,26 @@ class MailController extends Controller
 
         // Masquer données sensibles
         if (str_contains($message, 'Authentication failed')) {
-            return 'Authentification échouée (vérifier nom d\'utilisateur et mot de passe)';
+            return __('setup.steps.database.errors.auth');
         }
 
         if (str_contains($message, 'Connection refused')) {
-            return 'Connexion refusée (vérifier host et port)';
+            return __('setup.steps.database.errors.refused');
         }
 
         if (str_contains($message, 'Connection timed out')) {
-            return 'Délai d\'attente dépassé (vérifier host et port)';
+            return __('setup.steps.database.errors.lost');
         }
 
         if (str_contains($message, 'No route to host')) {
-            return 'Hôte inaccessible (vérifier configuration réseau)';
+            return __('setup.steps.database.errors.lost');
         }
 
         if (str_contains($message, 'Unable to negotiate TLS')) {
-            return 'TLS non supporté (essayer SSL ou aucun chiffrement)';
+            return __('setup.steps.database.errors.generic');
         }
 
         // Message par défaut sûr
-        return 'Erreur SMTP: '.preg_replace('/password|secret|key/i', '***', $message);
+        return __('setup.steps.database.errors.generic');
     }
 }

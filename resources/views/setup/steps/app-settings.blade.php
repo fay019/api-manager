@@ -1,122 +1,100 @@
 @extends('setup.layout')
 
 @section('content')
-<style>
-    .text-muted {
-        color: #6b7280;
-        font-size: 0.875em;
-    }
-
-    .form-check {
-        margin-top: 0.5rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .form-check-input {
-        margin-right: 0.5rem;
-        margin-top: 0.25rem;
-        accent-color: #667eea;
-        cursor: pointer;
-    }
-
-    .form-check-label {
-        cursor: pointer;
-        color: #333;
-    }
-
-    .invalid-feedback {
-        color: #dc2626;
-        font-size: 0.875em;
-        margin-top: 0.25rem;
-        display: none;
-    }
-
-    .is-invalid ~ .invalid-feedback {
-        display: block;
-    }
-</style>
-
-<h2>Paramètres Applicatifs</h2>
-<p>Étape 2/7 - Configuration de l'application</p>
-
-<form method="POST" action="{{ route('setup.app-settings.store', ['setup_token' => app(\App\Services\Installation\SetupSession::class)->getToken()]) }}">
-    <input type="hidden" name="_setup_token" value="{{ app(\App\Services\Installation\SetupSession::class)->getCsrfToken() }}">
-    <!-- Token debug: {{ app(\App\Services\Installation\SetupSession::class)->getCsrfToken() }} -->
-
-    <div class="form-group">
-        <label class="form-label">Nom de l'application</label>
-        <input type="text" name="app_name" class="form-control @if(isset($errors['app_name'])) is-invalid @endif"
-               value="{{ old('app_name', $formData['app_name'] ?? '') }}" required>
-        @if(isset($errors['app_name'])) <span class="invalid-feedback">{{ is_array($errors['app_name']) ? $errors['app_name'][0] : $errors['app_name'] }}</span> @endif
+<div class="setup-body">
+    <div class="setup-steps">
+        <div class="setup-step completed"></div>
+        <div class="setup-step active"></div>
+        <div class="setup-step"></div>
+        <div class="setup-step"></div>
+        <div class="setup-step"></div>
+        <div class="setup-step"></div>
     </div>
 
-    <div class="form-group">
-        <label class="form-label">URL de l'application</label>
-        <input type="url" name="app_url" class="form-control @if(isset($errors['app_url'])) is-invalid @endif"
-               value="{{ old('app_url', $formData['app_url'] ?? '') }}" required>
-        @if(isset($errors['app_url'])) <span class="invalid-feedback">{{ is_array($errors['app_url']) ? $errors['app_url'][0] : $errors['app_url'] }}</span> @endif
-    </div>
+    <h2>
+        <span style="color: var(--primary)">⚙️</span>
+        {{ __('setup.steps.app_settings.title') }}
+    </h2>
+    <p style="color: var(--text-muted); margin-bottom: 2rem;">{{ __('setup.steps.app_settings.subtitle') }}</p>
 
-    <div class="form-group">
-        <label class="form-label">Environnement</label>
-        <select name="app_env" class="form-control @if(isset($errors['app_env'])) is-invalid @endif" required>
-            <option value="">-- Sélectionner --</option>
-            @foreach($environments ?? ['local' => 'Local (Développement)', 'staging' => 'Staging (Test)', 'production' => 'Production'] as $key => $label)
-                <option value="{{ $key }}" @selected(old('app_env', $formData['app_env'] ?? '') === $key)>
-                    {{ $label }}
-                </option>
-            @endforeach
-        </select>
-        @if(isset($errors['app_env'])) <span class="invalid-feedback">{{ is_array($errors['app_env']) ? $errors['app_env'][0] : $errors['app_env'] }}</span> @endif
-    </div>
+    <form method="POST" action="{{ route('setup.app-settings.store', ['setup_token' => app(\App\Services\Installation\SetupSession::class)->getToken()]) }}">
+        @csrf
+        <input type="hidden" name="_setup_token" value="{{ app(\App\Services\Installation\SetupSession::class)->getToken() }}">
 
-    <div class="form-group">
-        <label class="form-label">Mode Debug</label>
-        <div class="form-check">
-            <input type="checkbox" name="app_debug" value="1" class="form-check-input @if(isset($errors['app_debug'])) is-invalid @endif"
-                   @checked(old('app_debug', $formData['app_debug'] ?? false))>
-            <label class="form-check-label">Activer le mode debug</label>
+        <div class="form-group">
+            <label class="form-label">{{ __('setup.steps.app_settings.app_name') }}</label>
+            <input type="text" name="app_name" class="form-control @if(isset($errors['app_name'])) is-invalid @endif"
+                   value="{{ old('app_name', $formData['app_name'] ?? 'API Manager') }}" required placeholder="Ex: Mon Application API">
+            @if(isset($errors['app_name'])) <span class="error">{{ is_array($errors['app_name']) ? $errors['app_name'][0] : $errors['app_name'] }}</span> @endif
         </div>
-        @if(isset($errors['app_debug'])) <span class="invalid-feedback" style="display: block;">{{ is_array($errors['app_debug']) ? $errors['app_debug'][0] : $errors['app_debug'] }}</span> @endif
-    </div>
 
-    <div class="form-group">
-        <label class="form-label">Réinitialisation (Danger)</label>
-        <div class="form-check">
-            <input type="checkbox" name="allow_production_reset" value="1" class="form-check-input @if(isset($errors['allow_production_reset'])) is-invalid @endif"
-                   @checked(old('allow_production_reset', $formData['allow_production_reset'] ?? false))>
-            <label class="form-check-label">Autoriser le bouton de réinitialisation en production</label>
+        <div class="form-group">
+            <label class="form-label">{{ __('setup.steps.app_settings.app_url') }}</label>
+            <input type="url" name="app_url" class="form-control @if(isset($errors['app_url'])) is-invalid @endif"
+                   value="{{ old('app_url', $formData['app_url'] ?? (isset($_SERVER['HTTP_HOST']) ? (isset($_SERVER['HTTPS']) ? 'https://' : 'http://').$_SERVER['HTTP_HOST'] : 'http://localhost')) }}" required placeholder="https://votre-site.com">
+            @if(isset($errors['app_url'])) <span class="error">{{ is_array($errors['app_url']) ? $errors['app_url'][0] : $errors['app_url'] }}</span> @endif
         </div>
-        @if(isset($errors['allow_production_reset'])) <span class="invalid-feedback" style="display: block;">{{ is_array($errors['allow_production_reset']) ? $errors['allow_production_reset'][0] : $errors['allow_production_reset'] }}</span> @endif
-        <small class="text-muted">Si activé, le bouton "Réinitialiser l'application" sera visible même en environnement de production.</small>
-    </div>
 
-    <div class="form-group">
-        <label class="form-label">Fuseau horaire</label>
-        <select name="timezone" class="form-control @if(isset($errors['timezone'])) is-invalid @endif" required>
-            <option value="">-- Sélectionner --</option>
-            @foreach($timezones ?? [] as $tz)
-                <option value="{{ $tz }}" @selected(old('timezone', $formData['timezone'] ?? '') === $tz)>
-                    {{ $tz }}
-                </option>
-            @endforeach
-        </select>
-        @if(isset($errors['timezone'])) <span class="invalid-feedback">{{ is_array($errors['timezone']) ? $errors['timezone'][0] : $errors['timezone'] }}</span> @endif
-    </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+                <label class="form-label">{{ __('setup.steps.app_settings.environment') }}</label>
+                <select name="app_env" required>
+                    @foreach($environments ?? [
+                        'local' => __('setup.steps.app_settings.environments.local'),
+                        'staging' => __('setup.steps.app_settings.environments.staging'),
+                        'production' => __('setup.steps.app_settings.environments.production')
+                    ] as $key => $label)
+                        <option value="{{ $key }}" @selected(old('app_env', $formData['app_env'] ?? 'local') === $key)>
+                            {{ $label }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
 
-    <div class="form-group">
-        <label class="form-label">Langue par défaut</label>
-        <select name="locale" class="form-control @if(isset($errors['locale'])) is-invalid @endif" required>
-            <option value="">-- Sélectionner --</option>
-            @foreach($locales ?? ['fr' => 'Français', 'en' => 'English', 'es' => 'Español'] as $code => $label)
-                <option value="{{ $code }}" @selected(old('locale', $formData['locale'] ?? '') === $code)>
-                    {{ $label }}
-                </option>
-            @endforeach
-        </select>
-        @if(isset($errors['locale'])) <span class="invalid-feedback">{{ is_array($errors['locale']) ? $errors['locale'][0] : $errors['locale'] }}</span> @endif
-    </div>
+            <div class="form-group">
+                <label class="form-label">{{ __('setup.steps.app_settings.locale') }}</label>
+                <select name="locale" required>
+                    @foreach($locales ?? ['fr' => '🇫🇷 Français', 'en' => '🇺🇸 English', 'de' => '🇩🇪 Deutsch'] as $code => $label)
+                        <option value="{{ $code }}" @selected(old('locale', $formData['locale'] ?? app()->getLocale()) === $code)>
+                            {{ $label }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
 
-    <button type="submit" class="btn btn-primary">Continuer →</button>
-</form>
+        <div class="form-group">
+            <label class="form-label">{{ __('setup.steps.app_settings.timezone') }}</label>
+            <select name="timezone" required>
+                @foreach($timezones ?? ['UTC', 'Europe/Paris', 'America/New_York'] as $tz)
+                    <option value="{{ $tz }}" @selected(old('timezone', $formData['timezone'] ?? 'Europe/Paris') === $tz)>
+                        {{ $tz }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div style="background: rgba(79, 70, 229, 0.05); padding: 1.25rem; border-radius: 1rem; margin-bottom: 2rem; border: 1px solid var(--border);">
+            <div class="form-group" style="margin-bottom: 0.75rem;">
+                <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; margin-bottom: 0;">
+                    <input type="checkbox" name="app_debug" value="1" style="width: auto;" @checked(old('app_debug', $formData['app_debug'] ?? true))>
+                    <span>{{ __('setup.steps.app_settings.debug_enable') }}</span>
+                </label>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+                <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; margin-bottom: 0.25rem;">
+                    <input type="checkbox" name="allow_production_reset" value="1" style="width: auto;" @checked(old('allow_production_reset', $formData['allow_production_reset'] ?? false))>
+                    <span>{{ __('setup.steps.app_settings.reset_allow') }}</span>
+                </label>
+                <p style="margin: 0 0 0 2rem; font-size: 0.75rem; color: var(--text-muted);">{{ __('setup.steps.app_settings.reset_help') }}</p>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            {{ __('setup.steps.app_settings.continue') }}
+            <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+        </button>
+    </form>
+</div>
 @endsection

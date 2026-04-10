@@ -6,7 +6,8 @@
 @endphp
 
 <header
-    class="fixed top-0 left-0 z-50 h-14 w-full border-b border-black/10 bg-white shadow-xs transition-colors duration-300 dark:border-white/10 dark:bg-zinc-900"
+    class="fixed top-0 left-0 z-50 h-14 w-full border-b transition-colors duration-300"
+    style="background-color: var(--nav-bg); border-color: var(--nav-border);"
     id="navbar-header"
 >
     <nav class="h-full px-4" id="navbar-nav">
@@ -51,7 +52,8 @@
 
             <!-- Menu -->
             <div
-                class="fixed top-14 left-0 hidden h-[calc(100vh-3.5rem)] w-full flex-col overflow-y-auto bg-white/95 backdrop-blur-md transition-all duration-300 dark:bg-zinc-900/95 md:static md:top-0 md:flex md:h-auto md:w-auto md:flex-row md:bg-transparent md:dark:bg-transparent"
+                class="fixed top-14 left-0 hidden h-[calc(100vh-3.5rem)] w-full flex-col overflow-y-auto backdrop-blur-md transition-all duration-300 md:static md:top-0 md:flex md:h-auto md:w-auto md:flex-row md:bg-transparent md:dark:bg-transparent"
+                style="background-color: var(--nav-bg);"
                 id="nav-menu"
             >
                 <ul class="flex w-full flex-col gap-2 p-8 md:w-auto md:flex-row md:items-center md:gap-4 md:p-0 lg:gap-8">
@@ -63,7 +65,7 @@
                             {{ __('app.nav.all_docs') ?? 'Docs' }}
                         </a>
                     </li>
-                    @if(auth()->check())
+                    @if(auth()->check() && auth()->user()->is_admin)
                         <li>
                             <a
                                 href="/admin"
@@ -164,10 +166,7 @@
         display: flex !important;
     }
 
-    /* Main content spacing adjustment - added here or globally */
-    .main-content {
-        margin-top: 3.5rem;
-    }
+    /* Main content spacing adjustment - handled in layout.app */
 </style>
 
 <script>

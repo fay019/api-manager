@@ -41,6 +41,7 @@ return [
     'nav' => [
         'back_home' => '← Retour à l\'accueil',
         'admin' => '🔐 Admin',
+        'user' => '👤 Utilisateur',
         'docs' => '📚 Documentation',
         'all_docs' => '📚 Tous les Docs',
         'contact' => '💬 Contact',
@@ -61,7 +62,9 @@ return [
         'database' => '🗄️ Schéma de Base de Données',
         'deployment' => '🚢 Guide de Déploiement',
         'admin' => '🔐 Connexion Admin',
+        'login' => '🔐 Connexion',
         'admin_panel' => '⚙️ Panneau Admin',
+        'my_profile' => '👤 Mon Profil',
         'logout' => '🚪 Déconnexion',
         'projects' => '🎯 Mes Projets',
         'contact' => '💬 Contact',

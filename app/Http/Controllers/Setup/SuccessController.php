@@ -136,7 +136,7 @@ class SuccessController extends Controller
             $setupSession->flush();
 
             // 10. Redirect
-            return redirect()->to('/admin/login')
+            return redirect()->route('login.show')
                 ->withCookie(cookie()->forget('api_manager_setup_token'))
                 ->withCookie(cookie()->forget(Str::slug($appSettings['name']).'_session'))
                 ->header('Clear-Site-Data', '"cookies", "storage"');

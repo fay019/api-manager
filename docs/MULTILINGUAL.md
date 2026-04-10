@@ -23,12 +23,13 @@ The application is **fully internationalized** with automatic browser language d
 ### Key Features
 
 ✅ **Automatic Detection** - Browser `Accept-Language` header detection  
-✅ **User Selection** - Language switcher in navbar (F/EN/FR/DE)  
-✅ **Session Persistence** - Selected language persists across pages  
+✅ **User Selection** - Language switcher in navbar (FR/EN/DE)  
+✅ **Session Persistence** - Selected language persists across pages (Session & Cookie Sync)  
 ✅ **Clean URLs** - No URL prefixes (`/admin` not `/en/admin`)  
-✅ **Complete Coverage** - Public pages, admin panel, errors, forms  
+✅ **Complete Coverage** - Setup Wizard, Public pages, Admin panel, Errors, Forms  
 ✅ **Dark Mode Aware** - Translations respect light/dark themes  
 ✅ **Fallback System** - Missing translations fallback to English → key name  
+✅ **Manual Sync** - `.env` sync for `APP_LOCALE` on user selection
 
 ---
 
@@ -52,9 +53,11 @@ The `app/Http/Middleware/SetLocale.php` middleware automatically detects and app
 
 ```php
 // Detection order:
-1. Session ('locale' key)           // User previously selected
-2. Browser Accept-Language header   // Browser preference
-3. config('app.locale')             // Application default (FR)
+1. SetupSession ('locale' key)      // Only during installation
+2. Session ('locale' key)           // User previously selected
+3. Cookie ('locale' key)            // Persists 1 year
+4. Browser Accept-Language header   // Browser preference
+5. config('app.locale')             // Application default (FR)
 ```
 
 **Registration:**
@@ -70,21 +73,24 @@ lang/
 │   ├── auth.php                 # Authentication (login, profile, password)
 │   ├── filament.php             # Admin panel (resources, pages, forms, labels)
 │   ├── errors.php               # Error pages (401-503)
-│   └── contact.php              # Contact form & emails
+│   ├── contact.php              # Contact form & emails
+│   └── setup.php                # Installation Wizard
 │
 ├── en/                          # English
 │   ├── app.php
 │   ├── auth.php
 │   ├── filament.php
 │   ├── errors.php
-│   └── contact.php
+│   ├── contact.php
+│   └── setup.php
 │
 └── de/                          # German
     ├── app.php
     ├── auth.php
     ├── filament.php
     ├── errors.php
-    └── contact.php
+    ├── contact.php
+    └── setup.php
 ```
 
 ---

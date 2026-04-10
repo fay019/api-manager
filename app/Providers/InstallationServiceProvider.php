@@ -35,24 +35,31 @@ class InstallationServiceProvider extends ServiceProvider
      */
     protected function loadSetupRoutes(): void
     {
-        // Redirect root to setup during installation
-        Route::get('/', function () {
-            return redirect('/setup/welcome');
-        });
+        // Load setup routes FIRST to ensure they take precedence
+        Route::middleware([SetupStateful::class])
+            ->group(base_path('routes/setup.php'));
 
-        // Load web routes (public pages, docs, etc.)
+        // Load web routes (public pages, docs, etc.) - after redirection to allow overriding if needed
         Route::middleware('web')
             ->group(base_path('routes/web.php'));
+
+        // Redirection globale vers setup si on n'y est pas déjà
+        Route::middleware('web')->group(function () {
+            // Si on tente d'accéder à autre chose que /setup/*, on redirige
+            Route::any('{any}', function () {
+                return redirect('/setup/welcome');
+            })->where('any', '^(?!setup|api|up|livewire|_debugbar).*$');
+
+            Route::get('/', function () {
+                return redirect('/setup/welcome');
+            });
+        });
 
         // Load API routes
         Route::middleware('api')
             ->prefix('api')
             ->name('api.')
             ->group(base_path('routes/api.php'));
-
-        // Load setup routes
-        Route::middleware([SetupStateful::class])
-            ->group(base_path('routes/setup.php'));
     }
 
     /**

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Setup;
 
 use App\Http\Controllers\Controller;
+use App\Services\Installation\EnvManager;
+use App\Services\Installation\SetupSession;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -52,7 +54,7 @@ class DatabaseController extends Controller
      */
     public function index(Request $request): View
     {
-        $setupSession = app(\App\Services\Installation\SetupSession::class);
+        $setupSession = app(SetupSession::class);
 
         \Log::channel('installation')->info('🗄️ ÉTAPE 3: Database GET /setup/database', [
             'setup_token' => $setupSession->getToken(),
@@ -76,22 +78,22 @@ class DatabaseController extends Controller
         // Configurations disponibles par driver
         $drivers = [
             'sqlite' => [
-                'name' => 'SQLite (Fichier local)',
-                'description' => 'Base de données fichier local, idéale pour développement',
+                'name' => __('setup.steps.database.drivers.sqlite.name'),
+                'description' => __('setup.steps.database.drivers.sqlite.description'),
                 'default_port' => null,
                 'requires_host' => false,
                 'requires_username' => false,
             ],
             'mysql' => [
-                'name' => 'MySQL',
-                'description' => 'Serveur MySQL (5.7+) ou MariaDB',
+                'name' => __('setup.steps.database.drivers.mysql.name'),
+                'description' => __('setup.steps.database.drivers.mysql.description'),
                 'default_port' => 3306,
                 'requires_host' => true,
                 'requires_username' => true,
             ],
             'pgsql' => [
-                'name' => 'PostgreSQL',
-                'description' => 'Serveur PostgreSQL (10+)',
+                'name' => __('setup.steps.database.drivers.pgsql.name'),
+                'description' => __('setup.steps.database.drivers.pgsql.description'),
                 'default_port' => 5432,
                 'requires_host' => true,
                 'requires_username' => true,
@@ -121,7 +123,7 @@ class DatabaseController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $setupSession = app(\App\Services\Installation\SetupSession::class);
+        $setupSession = app(SetupSession::class);
 
         \Log::channel('installation')->info('📝 ÉTAPE 3: Database POST /setup/database', [
             'setup_token' => $setupSession->getToken(),
@@ -132,10 +134,10 @@ class DatabaseController extends Controller
         // Valider données manuellement
         $validator = \Validator::make($request->all(), [
             'database_driver' => 'required|in:sqlite,mysql,pgsql',
-            'database_host' => 'required_if:database_driver,mysql,pgsql|nullable|string',
-            'database_port' => 'required_if:database_driver,mysql,pgsql|nullable|integer',
-            'database_database' => 'required_if:database_driver,mysql,pgsql|nullable|string',
-            'database_username' => 'required_if:database_driver,mysql,pgsql|nullable|string',
+            'database_host' => 'required_unless:database_driver,sqlite|nullable|string',
+            'database_port' => 'required_unless:database_driver,sqlite|nullable|integer',
+            'database_database' => 'required_unless:database_driver,sqlite|nullable|string',
+            'database_username' => 'required_unless:database_driver,sqlite|nullable|string',
             'database_password' => 'nullable|string',
         ]);
 
@@ -147,6 +149,31 @@ class DatabaseController extends Controller
 
         $validated = $validator->validated();
         $setupSession->set('errors', []);
+
+        // Assurer que les champs host, port, etc. sont présents dans $validated
+        // même s'ils ont été envoyés vides (car required_if peut passer si le driver changeait malicieusement)
+        $validated['database_host'] = $request->input('database_host', $validated['database_host'] ?? null);
+        $validated['database_port'] = $request->input('database_port', $validated['database_port'] ?? null);
+        $validated['database_database'] = $request->input('database_database', $validated['database_database'] ?? null);
+        $validated['database_username'] = $request->input('database_username', $validated['database_username'] ?? null);
+        $validated['database_password'] = $request->input('database_password', $validated['database_password'] ?? null);
+
+        // Tenter de créer la base de données si nécessaire avant de sauvegarder
+        if ($validated['database_driver'] !== 'sqlite') {
+            try {
+                $dsn = $this->buildDsn($validated['database_driver'], $request);
+                new \PDO(
+                    $dsn,
+                    $validated['database_username'],
+                    $validated['database_password'],
+                    [\PDO::ATTR_TIMEOUT => 3, \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]
+                );
+            } catch (\PDOException $e) {
+                if ($e->getCode() == 1049 || str_contains($e->getMessage(), 'Unknown database') || str_contains($e->getMessage(), 'database "'.$validated['database_database'].'" does not exist')) {
+                    $this->tryCreateDatabase($validated['database_driver'], $request);
+                }
+            }
+        }
 
         // Pour SQLite, utiliser le chemin par défaut
         $databaseName = $validated['database_database'] ?? 'database.sqlite';
@@ -161,6 +188,29 @@ class DatabaseController extends Controller
         $setupSession->set('setup.database_database', $databaseName);
         $setupSession->set('setup.database_username', $validated['database_username'] ?? null);
         $setupSession->set('setup.database_password', $validated['database_password'] ?? null);
+
+        // Mettre à jour le .env immédiatement pour assurer la cohérence
+        try {
+            $envManager = app(EnvManager::class);
+            $dbData = ['DB_CONNECTION' => $validated['database_driver']];
+
+            if ($validated['database_driver'] === 'sqlite') {
+                $dbData['DB_DATABASE'] = database_path('database.sqlite');
+            } else {
+                $dbData['DB_HOST'] = $validated['database_host'];
+                $dbData['DB_PORT'] = $validated['database_port'];
+                $dbData['DB_DATABASE'] = $validated['database_database'];
+                $dbData['DB_USERNAME'] = $validated['database_username'];
+                $dbData['DB_PASSWORD'] = $validated['database_password'] ?? '';
+            }
+
+            $envManager->update($dbData);
+            $envManager->flushCache();
+
+            \Log::channel('installation')->info('✅ .env mis à jour avec la configuration base de données');
+        } catch (\Exception $e) {
+            \Log::channel('installation')->warning('⚠️ Impossible de mettre à jour le .env: '.$e->getMessage());
+        }
 
         // Rediriger vers étape suivante
         return redirect()->route('setup.mail', ['setup_token' => $setupSession->getToken()]);
@@ -204,24 +254,43 @@ class DatabaseController extends Controller
             ];
 
             // Tentative de connexion
-            $pdo = new \PDO(
-                $dsn,
-                $request->input('database_username'),
-                $request->input('database_password'),
-                $options
-            );
+            try {
+                $pdo = new \PDO(
+                    $dsn,
+                    $request->input('database_username'),
+                    $request->input('database_password'),
+                    $options
+                );
+            } catch (\PDOException $e) {
+                // Si la base de données n'existe pas, tenter de la créer (uniquement pour MySQL/PgSQL)
+                if ($driver !== 'sqlite' && ($e->getCode() == 1049 || str_contains($e->getMessage(), 'Unknown database') || str_contains($e->getMessage(), 'database "'.$request->input('database_database').'" does not exist'))) {
+                    if ($this->tryCreateDatabase($driver, $request)) {
+                        // Réessayer la connexion après création
+                        $pdo = new \PDO(
+                            $dsn,
+                            $request->input('database_username'),
+                            $request->input('database_password'),
+                            $options
+                        );
+                    } else {
+                        throw $e;
+                    }
+                } else {
+                    throw $e;
+                }
+            }
 
             // Test requête simple
             $pdo->query('SELECT 1');
 
             return response()->json([
                 'success' => true,
-                'message' => 'Connexion réussie',
+                'message' => __('setup.steps.database.test_success'),
             ]);
         } catch (\PDOException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Connexion échouée',
+                'message' => __('setup.steps.database.test_failed'),
                 'errors' => [
                     'connection' => $this->formatPdoError($e),
                 ],
@@ -235,6 +304,39 @@ class DatabaseController extends Controller
                 ],
             ], 500);
         }
+    }
+
+    /**
+     * Tente de créer la base de données si elle n'existe pas.
+     */
+    private function tryCreateDatabase(string $driver, Request $request): bool
+    {
+        try {
+            $host = $request->input('database_host', '127.0.0.1');
+            $port = $request->input('database_port', $this->getDefaultPort($driver));
+            $database = $request->input('database_database');
+            $username = $request->input('database_username');
+            $password = $request->input('database_password');
+
+            // Connexion sans spécifier la DB pour créer la DB
+            if ($driver === 'mysql') {
+                $dsn = "mysql:host={$host};port={$port}";
+                $pdo = new \PDO($dsn, $username, $password, [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]);
+                $pdo->exec("CREATE DATABASE IF NOT EXISTS `{$database}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+
+                return true;
+            } elseif ($driver === 'pgsql') {
+                $dsn = "pgsql:host={$host};port={$port};dbname=postgres";
+                $pdo = new \PDO($dsn, $username, $password, [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]);
+                $pdo->exec("CREATE DATABASE \"{$database}\"");
+
+                return true;
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Échec création DB: '.$e->getMessage());
+        }
+
+        return false;
     }
 
     /**
@@ -351,30 +453,30 @@ class DatabaseController extends Controller
 
         // Masquer données sensibles
         if (str_contains($message, 'password')) {
-            return 'Authentification échouée (vérifier nom d\'utilisateur et mot de passe)';
+            return __('setup.steps.database.errors.auth');
         }
 
         if (str_contains($message, 'Unknown database')) {
-            return 'Base de données inexistante (la créer avant de continuer)';
+            return __('setup.steps.database.errors.unknown');
         }
 
         if (str_contains($message, 'Lost connection')) {
-            return 'Connexion perdue avec le serveur (vérifier serveur en ligne)';
+            return __('setup.steps.database.errors.lost');
         }
 
         if (str_contains($message, 'Access denied')) {
-            return 'Accès refusé (vérifier permissions utilisateur)';
+            return __('setup.steps.database.errors.denied');
         }
 
         if (str_contains($message, 'Connection refused')) {
-            return 'Connexion refusée (vérifier host et port)';
+            return __('setup.steps.database.errors.refused');
         }
 
         if (str_contains($message, 'SQLSTATE[28000]')) {
-            return 'Erreur d\'authentification';
+            return __('setup.steps.database.errors.auth');
         }
 
         // Message par défaut sûr
-        return 'Connexion échouée (vérifier paramètres de connexion)';
+        return __('setup.steps.database.errors.generic');
     }
 }

@@ -5,53 +5,53 @@
     <div class="success-icon">✅</div>
 
     <div class="setup-header">
-        <h1>Installation Réussie!</h1>
-        <p>Étape {{ $currentStep }}/{{ $totalSteps }}</p>
+        <h1>{{ __('setup.steps.success.title') }}</h1>
+        <p>{{ __('setup.steps.success.subtitle', ['current' => $currentStep, 'total' => $totalSteps]) }}</p>
     </div>
 
     <div class="success-content">
         <p style="font-size: 16px; margin-bottom: 20px; color: #333;">
-            Félicitations! L'application a été installée et configurée avec succès.
+            {{ __('setup.steps.success.congratulations') }}
         </p>
 
         <div class="info-box success-box">
-            <strong>✨ Prochaines étapes:</strong>
+            <strong>{{ __('setup.steps.success.next_steps_title') }}</strong>
             <ul style="margin: 12px 0 0 0; padding-left: 20px; font-size: 13px;">
-                <li>Vous allez être redirigé vers la page de connexion</li>
-                <li>Connectez-vous avec l'email et mot de passe de l'administrateur que vous avez créé</li>
-                <li>Vous pourrez alors accéder au tableau de bord complet</li>
+                <li>{{ __('setup.steps.success.next_steps.redirect') }}</li>
+                <li>{{ __('setup.steps.success.next_steps.login') }}</li>
+                <li>{{ __('setup.steps.success.next_steps.dashboard') }}</li>
             </ul>
         </div>
 
         <div style="margin: 20px 0; padding: 15px; background: #fffbeb; border-radius: 6px; border-left: 3px solid #f59e0b;">
-            <strong style="color: #92400e;">⚠️ Actions manuelles obligatoires:</strong>
+            <strong style="color: #92400e;">{{ __('setup.steps.success.manual_actions_title') }}</strong>
             <ul style="margin: 8px 0 0 0; padding-left: 20px; font-size: 12px; color: #b45309; text-align: left;">
-                <li><strong>Vider vos cookies :</strong> Si vous rencontrez une erreur à la connexion, videz les cookies de votre navigateur pour ce domaine.</li>
-                <li><strong>Permissions SQLite :</strong> Vérifiez que le dossier <code>database/</code> est accessible en écriture pour l'application.</li>
-                <li><strong>Sécurité :</strong> Assurez-vous que le dossier <code>storage/app/setup/</code> est désormais vide.</li>
+                <li><strong>{{ __('setup.steps.success.manual_actions.cookies') }}</strong></li>
+                <li><strong>{{ __('setup.steps.success.manual_actions.sqlite') }}</strong></li>
+                <li><strong>{{ __('setup.steps.success.manual_actions.security') }}</strong></li>
             </ul>
         </div>
 
         <div style="margin: 20px 0; padding: 15px; background: #f3f4f6; border-radius: 6px; border-left: 3px solid #667eea;">
-            <strong style="color: #333;">ℹ️ Informations importantes:</strong>
+            <strong style="color: #333;">{{ __('setup.steps.success.important_info_title') }}</strong>
             <ul style="margin: 8px 0 0 0; padding-left: 20px; font-size: 12px; color: #666; text-align: left;">
-                <li>L'application est maintenant bloquée contre les réinstallations</li>
-                <li>Les informations de configuration sont sauvegardées dans .env</li>
-                <li>Vous pouvez créer d'autres utilisateurs dans le tableau de bord</li>
-                <li>Conservez vos identifiants de connexion en lieu sûr</li>
+                <li>{{ __('setup.steps.success.important_info.blocked') }}</li>
+                <li>{{ __('setup.steps.success.important_info.env') }}</li>
+                <li>{{ __('setup.steps.success.important_info.users') }}</li>
+                <li>{{ __('setup.steps.success.important_info.safe') }}</li>
             </ul>
         </div>
     </div>
 
     <div class="form-actions">
-        <a href="/admin" class="btn btn-primary">
-            🚀 Accéder au Tableau de Bord
+        <a href="{{ route('login.show') }}" class="btn btn-primary">
+            🚀 {{ __('setup.steps.success.access_login') }}
         </a>
     </div>
 
     <!-- Compteur décompte -->
     <div style="text-align: center; margin-top: 30px; color: #999; font-size: 12px;">
-        Redirection automatique dans <span id="countdown">5</span> secondes...
+        {{ __('setup.steps.success.redirection', ['seconds' => '<span id="countdown">5</span>']) }}
     </div>
 </div>
 
@@ -66,7 +66,7 @@
 
         if (count === 0) {
             clearInterval(interval);
-            window.location.href = '/admin';
+            window.location.href = "{{ route('login.show') }}";
         }
     }, 1000);
 </script>

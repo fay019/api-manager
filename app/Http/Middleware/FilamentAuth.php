@@ -12,7 +12,7 @@ class FilamentAuth
         if ($request->user() && ! $request->user()->is_admin) {
             auth()->logout();
 
-            return redirect('/admin/login')->with('error', 'Unauthorized access');
+            return redirect()->route('login.show')->with('error', 'Unauthorized access');
         }
 
         return $next($request);
