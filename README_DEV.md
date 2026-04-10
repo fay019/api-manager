@@ -186,3 +186,126 @@ The logs table supports:
 ### Detail View
 
 Click the **View** button on any log entry to see all captured information, including the full Origin and Referer headers.
+
+---
+
+## 🌐 Internationalization (i18n) & Multilingual Support
+
+The application is **fully internationalized** with support for **French (FR), English (EN), and German (DE)**.
+
+### Language Files Structure
+
+All translation strings are stored in `lang/{locale}/` directories:
+
+```
+lang/
+├── fr/
+│   ├── app.php          # Public pages: home, navbar, footer, docs, theme toggle
+│   ├── filament.php     # Admin panel: resources, pages, forms, labels
+│   ├── errors.php       # Error pages: 401, 403, 404, 419, 500, 503
+│   └── contact.php      # Contact form and email notifications
+├── en/
+│   ├── app.php
+│   ├── filament.php
+│   ├── errors.php
+│   └── contact.php
+└── de/
+    ├── app.php
+    ├── filament.php
+    ├── errors.php
+    └── contact.php
+```
+
+### Adding New Translatable Strings
+
+**In Blade Templates:**
+```blade
+<h1>{{ __('app.home.title') }}</h1>
+<button>{{ __('app.buttons.save') }}</button>
+```
+
+**In Filament Resources:**
+```php
+TextInput::make('name')
+    ->label(__('filament.client.name'))
+    ->placeholder(__('filament.client.name_placeholder'));
+
+Section::make(__('filament.settings.general_section'))
+    ->description(__('filament.settings.general_section_desc'));
+```
+
+### How Locale Detection Works
+
+The `SetLocale` middleware automatically detects the user's language in this order:
+
+1. **Session Storage** - If user previously selected a language, it persists
+2. **Browser Accept-Language Header** - Automatic detection from browser settings
+3. **Application Default** - Falls back to `APP_LOCALE` (French) from `config/app.php`
+
+### Switching Languages
+
+**Via POST Request:**
+```bash
+POST /locale/en
+POST /locale/fr
+POST /locale/de
+```
+
+This persists the language choice in the session and redirects back to the previous page.
+
+### Translation Fallback System
+
+If a translation key is missing:
+
+1. **First**: Checks the selected locale file
+2. **Second**: Falls back to English (`en/` folder)
+3. **Third**: Returns the key name itself
+
+This ensures the application never breaks even if translations are incomplete.
+
+### Testing Translations
+
+To verify all 3 languages work correctly:
+
+1. **Admin Panel**: Click F/EN/FR/DE buttons in navbar
+2. **Check all sections update**: Settings, Resources, Pages
+3. **Public Pages**: Verify home, docs, error pages translate
+4. **Forms & Validation**: Test form messages in each language
+
+### Adding Translations for New Features
+
+When adding new UI text:
+
+1. **Never hardcode strings** in Blade templates or PHP classes
+2. **Add the key to all 3 language files**:
+   - `lang/fr/app.php` or `lang/fr/filament.php`
+   - `lang/en/app.php` or `lang/en/filament.php`
+   - `lang/de/app.php` or `lang/de/filament.php`
+3. **Use consistent key naming**: `filament.resource_name.field_name`
+4. **Test in all 3 languages** before committing
+
+### Performance Considerations
+
+- Language files are cached in production
+- After modifying translations, run:
+  ```bash
+  php artisan cache:clear
+  php artisan config:clear
+  ```
+- In development, caching is bypassed automatically
+- Translations are lazy-loaded by locale, not all at once
+
+### Developer Best Practices
+
+✅ **DO:**
+- Use `__('key')` in all Blade templates and Filament resources
+- Keep translation keys organized by feature
+- Translate all user-facing text
+- Test in all 3 languages
+
+❌ **DON'T:**
+- Hardcode English strings and translate later
+- Use complex logic in translation keys
+- Mix English and translated text
+- Forget to update all 3 language files
+

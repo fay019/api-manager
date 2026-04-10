@@ -349,6 +349,77 @@ php artisan install
 # Les routes, modèles et services sont automatiquement disponibles
 ```
 
+### 9️⃣ Ajouter les traductions (Multilingue)
+
+L'application supporte **FR, EN, DE**. Créer les fichiers de traduction:
+
+**Fichier: `lang/fr/filament.php` (ajouter à la clé `module_name`)**
+```php
+'module_name' => [
+    'singular' => 'Métrique',
+    'plural' => 'Métriques',
+    'name' => 'Nom',
+    'value' => 'Valeur',
+    'category' => 'Catégorie',
+],
+```
+
+**Fichier: `lang/en/filament.php`**
+```php
+'module_name' => [
+    'singular' => 'Metric',
+    'plural' => 'Metrics',
+    'name' => 'Name',
+    'value' => 'Value',
+    'category' => 'Category',
+],
+```
+
+**Fichier: `lang/de/filament.php`**
+```php
+'module_name' => [
+    'singular' => 'Metrik',
+    'plural' => 'Metriken',
+    'name' => 'Name',
+    'value' => 'Wert',
+    'category' => 'Kategorie',
+],
+```
+
+**Utiliser dans le Filament Resource:**
+```php
+class MetricResource extends Resource
+{
+    // ...
+    
+    public static function getModelLabel(): string
+    {
+        return __('filament.module_name.singular');
+    }
+    
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament.module_name.plural');
+    }
+    
+    public static function getFormSchema(): array
+    {
+        return [
+            TextInput::make('name')
+                ->label(__('filament.module_name.name'))
+                ->required(),
+            
+            TextInput::make('value')
+                ->label(__('filament.module_name.value'))
+                ->numeric()
+                ->required(),
+        ];
+    }
+}
+```
+
+**Voir aussi:** [MULTILINGUAL.md](/docs/MULTILINGUAL.md) pour le guide complet i18n
+
 ---
 
 ## Avancé

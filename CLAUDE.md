@@ -40,6 +40,29 @@ This application is a Laravel application and its main Laravel ecosystems packag
 ## Documentation Files
 - You must only create documentation files if explicitly requested by the user.
 
+## Internationalization (i18n) & Translations
+- The application supports **3 languages: French (FR), English (EN), German (DE)**
+- **Always use translation keys** in Blade templates: `__('app.key')` or `__('filament.resource.key')`
+- **Never hardcode strings** - use the i18n system instead
+- **Translation Files Structure**:
+  ```
+  lang/{locale}/
+  ├── app.php          # Public pages: home, docs, navbar, footer, theme toggle
+  ├── filament.php     # Admin panel: resources, pages, forms, labels
+  ├── errors.php       # Error pages: 401, 403, 404, 419, 500, 503
+  └── contact.php      # Contact form and email notifications
+  ```
+- **Default Locale**: `fr` (French) - set in `config/app.php`
+- **Middleware**: `SetLocale` middleware automatically detects language from:
+  1. User's session (if previously selected)
+  2. Browser `Accept-Language` header
+  3. Application default locale
+- **Switching Locale**: Use `POST /locale/{locale}` route (fr, en, or de)
+- **In Filament Resources**: Use `__('filament.resource.key')` for labels, descriptions, validation messages
+- **In Blade Templates**: Use `__('app.key')` for public pages, `__('filament.key')` for admin
+- **Fallback**: If translation key missing, falls back to English, then key name itself
+- **Testing**: Always test translations in all 3 languages when modifying UI text
+
 === boost rules ===
 
 ## Laravel Boost

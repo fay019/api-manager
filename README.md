@@ -50,6 +50,62 @@ php artisan app:danger-reset
 | 🎯 **Promo API Module** | Multilingual banners (FR, EN, DE, AR), smart selection, tracking, version history |
 | 📦 **Shared Hosting Ready** | No Node.js, minimal dependencies, SQLite/MySQL support |
 | 📚 **Dynamic Documentation** | Markdown to HTML conversion with beautiful styling |
+| 🌐 **Multilingual Support** | Full i18n with FR, EN, DE translations for UI, admin, errors, and public pages |
+
+---
+
+## 🌐 Multilingual Support (i18n)
+
+The application is **fully internationalized** with support for **French, English, and German**.
+
+### Supported Languages
+- 🇫🇷 **Français** (FR) - Default
+- 🇬🇧 **English** (EN)
+- 🇩🇪 **Deutsch** (DE)
+
+### Features
+- ✅ **Automatic Detection** - Browser language preference automatically detected via `Accept-Language` header
+- ✅ **User Selection** - Language selector buttons (F/EN/FR/DE) in navbar
+- ✅ **Session Persistence** - Selected language persists across pages
+- ✅ **No URL Prefixes** - Clean URLs `/admin` instead of `/en/admin`
+- ✅ **Complete Coverage**:
+  - 📖 Public pages (home, docs, footer)
+  - ⚙️ Admin panel (all resources, pages, forms)
+  - ❌ Error pages (401, 403, 404, 419, 500, 503)
+  - 📧 Contact form and notifications
+  - 🎨 All UI labels and buttons
+- ✅ **Dark Mode Aware** - Translations respect light/dark theme
+
+### Language Files Structure
+```
+lang/
+├── fr/
+│   ├── app.php          # Public pages, navbar, footer, theme
+│   ├── errors.php       # Error pages
+│   ├── filament.php     # Admin panel, resources
+│   └── contact.php      # Contact form
+├── en/
+│   ├── app.php
+│   ├── errors.php
+│   ├── filament.php
+│   └── contact.php
+└── de/
+    ├── app.php
+    ├── errors.php
+    ├── filament.php
+    └── contact.php
+```
+
+### Switching Languages
+- **Admin Panel**: Click language button (F/EN/FR/DE) in top navbar
+- **Public Pages**: Click locale switcher in navbar
+- **Programmatically**: `POST /locale/{locale}` where locale is `fr`, `en`, or `de`
+
+### Developer Notes
+- Use `__('app.key.nested')` for translations in Blade templates
+- Locale middleware (`SetLocale`) auto-loads based on session > browser preference > config
+- New strings automatically fallback to English if translation missing
+- All forms and validation messages translated
 
 ---
 
