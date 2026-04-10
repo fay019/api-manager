@@ -173,10 +173,12 @@ return [
     // Common Filament Keys
     'common' => [
         'active' => 'Active',
+        'enabled' => 'Enabled',
         'disabled' => 'Disabled',
         'created' => 'Created',
         'created_at' => 'Created',
         'updated_at' => 'Updated',
+        'error' => 'Error',
     ],
 
     // Settings Pages
@@ -431,11 +433,6 @@ return [
         'no_data_available' => 'No data available',
         'all_time_title' => 'All Time',
         'total_all_time' => 'Total All Time',
-    ],
-
-    // Common Keys
-    'common' => [
-        'error' => 'Error',
     ],
 
     // General Filament

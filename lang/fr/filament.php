@@ -173,10 +173,12 @@ return [
     // Common Filament Keys
     'common' => [
         'active' => 'Actif',
+        'enabled' => 'Activé',
         'disabled' => 'Désactivé',
         'created' => 'Créé',
         'created_at' => 'Créé le',
         'updated_at' => 'Modifié le',
+        'error' => 'Erreur',
     ],
 
     // Settings Pages
@@ -205,6 +207,8 @@ return [
     'ads' => [
         'title' => 'Paramètres des Annonces',
         'section' => 'Configuration Google AdSense',
+        'section_desc' => 'Activez ou désactivez Google AdSense sur l\'ensemble de l\'application.',
+        'helper' => 'Cochez pour activer l\'affichage des publicités.',
         'saved' => 'Paramètres enregistrés',
     ],
 
@@ -431,11 +435,6 @@ return [
         'no_data_available' => 'Aucune donnée disponible',
         'all_time_title' => 'Depuis le Début',
         'total_all_time' => 'Total Depuis le Début',
-    ],
-
-    // Common Keys
-    'common' => [
-        'error' => 'Erreur',
     ],
 
     // General Filament

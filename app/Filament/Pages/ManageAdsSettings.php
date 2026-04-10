@@ -4,12 +4,15 @@ namespace App\Filament\Pages;
 
 use App\Models\Setting;
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use UnitEnum;
 
@@ -25,11 +28,9 @@ class ManageAdsSettings extends Page implements HasForms
 
     protected static ?int $navigationSort = 100;
 
-    protected static ?string $title = null;
+    public ?array $data = [];
 
     protected string $view = 'filament.pages.manage-ads-settings';
-
-    public ?array $data = [];
 
     public function getTitle(): string
     {
@@ -48,13 +49,20 @@ class ManageAdsSettings extends Page implements HasForms
         return $schema
             ->components([
                 Section::make(__('filament.ads.section'))
-                    ->description(__('filament.ads.section') ?? 'Manage AdSense settings for your application')
-                    ->extraAttributes(['class' => 'mb-6'])
+                    ->description(__('filament.ads.section_desc'))
                     ->schema([
                         Toggle::make('ads_enabled')
-                            ->label(__('filament.common.active'))
-                            ->helperText(__('filament.ads.section') ?? 'Enable or disable Google AdSense across the application'),
+                            ->label(fn (Get $get): string => $get('ads_enabled') ? __('filament.common.enabled') : __('filament.common.disabled'))
+                            ->helperText(__('filament.ads.helper') ?? 'Enable or disable Google AdSense across the application')
+                            ->live(),
                     ]),
+
+                Actions::make([
+                    Action::make('save')
+                        ->label(__('filament.actions.save'))
+                        ->action('save')
+                        ->keyBindings(['mod+s']),
+                ]),
             ])
             ->statePath('data');
     }
@@ -66,7 +74,7 @@ class ManageAdsSettings extends Page implements HasForms
 
             Setting::set(
                 'ads_enabled',
-                (bool) $state['ads_enabled'],
+                (bool) ($state['ads_enabled'] ?? false),
                 'boolean',
                 'Enable or disable Google AdSense'
             );
