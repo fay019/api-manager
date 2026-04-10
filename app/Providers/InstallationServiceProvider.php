@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Http\Middleware\SetupStateful;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
@@ -30,17 +31,28 @@ class InstallationServiceProvider extends ServiceProvider
     }
 
     /**
-     * Charge uniquement les routes du wizard d'installation.
+     * Charge les routes du wizard d'installation + routes publiques.
      */
     protected function loadSetupRoutes(): void
     {
-        Route::middleware([\App\Http\Middleware\SetupStateful::class])
-            ->group(base_path('routes/setup.php'));
-
-        // Rediriger la racine vers le setup si non installé
+        // Redirect root to setup during installation
         Route::get('/', function () {
             return redirect('/setup/welcome');
         });
+
+        // Load web routes (public pages, docs, etc.)
+        Route::middleware('web')
+            ->group(base_path('routes/web.php'));
+
+        // Load API routes
+        Route::middleware('api')
+            ->prefix('api')
+            ->name('api.')
+            ->group(base_path('routes/api.php'));
+
+        // Load setup routes
+        Route::middleware([SetupStateful::class])
+            ->group(base_path('routes/setup.php'));
     }
 
     /**

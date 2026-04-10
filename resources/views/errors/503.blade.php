@@ -1,5 +1,5 @@
 @extends('errors.layout')
 
-@section('title', 'Service indisponible')
+@section('title', __('errors.503.title'))
 @section('code', '503')
-@section('message', 'Le service est actuellement en maintenance. Veuillez réessayer plus tard.')
+@section('message', __('errors.503.message'))

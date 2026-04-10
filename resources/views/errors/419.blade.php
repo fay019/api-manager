@@ -1,5 +1,5 @@
 @extends('errors.layout')
 
-@section('title', 'Session expirée')
+@section('title', __('errors.419.title'))
 @section('code', '419')
-@section('message', 'Votre session a expiré. Veuillez rafraîchir la page et réessayer.')
+@section('message', __('errors.419.message'))

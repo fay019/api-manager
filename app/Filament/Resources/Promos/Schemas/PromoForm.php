@@ -18,6 +18,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\HtmlString;
 
@@ -27,50 +28,50 @@ class PromoForm
     {
         return $schema
             ->components([
-                Section::make('Configuration du Slug')
+                Section::make(__('filament.promos.slug_section'))
                     ->schema([
                         TextInput::make('slug')
-                            ->label('Slug / Public Path')
+                            ->label(__('filament.promos.slug_label'))
                             ->unique(Promo::class, 'slug', ignoreRecord: true)
                             ->rules(['alpha_dash'])
                             ->maxLength(255)
                             ->required()
-                            ->helperText('Utilisé pour l\'URL publique. Ex: banner-hiver.'),
+                            ->helperText(__('filament.promos.slug_help')),
                     ]),
 
-                Tabs::make('Contenu Multilingue')
+                Tabs::make(__('filament.promos.multilingual_content'))
                     ->tabs([
-                        self::getLocaleTab('fr', 'Français'),
-                        self::getLocaleTab('en', 'English'),
-                        self::getLocaleTab('de', 'Deutsch'),
+                        self::getLocaleTab('fr', __('filament.contact.lang_fr')),
+                        self::getLocaleTab('en', __('filament.contact.lang_en')),
+                        self::getLocaleTab('de', __('filament.contact.lang_de')),
                         self::getLocaleTab('ar', 'العربية', 'rtl'),
                     ])
                     ->columnSpanFull(),
 
-                Section::make('Auteur & Informations')
+                Section::make(__('filament.promos.author_section'))
                     ->schema([
                         Grid::make(3)
                             ->schema([
                                 TextInput::make('author_name')
-                                    ->label('Nom de l\'auteur')
+                                    ->label(__('filament.promos.author_name'))
                                     ->placeholder('Ex: Fayçal Moussouni')
                                     ->maxLength(255),
                                 TextInput::make('author_role')
-                                    ->label('Rôle de l\'auteur')
+                                    ->label(__('filament.promos.author_role'))
                                     ->placeholder('Ex: Développeur Fullstack')
                                     ->maxLength(255),
                                 FileUpload::make('image_url')
-                                    ->label('Image du banner')
+                                    ->label(__('filament.promos.image_label'))
                                     ->image()
                                     ->disk('public')
                                     ->directory('promos')
                                     ->visibility('public'),
                             ]),
                         Placeholder::make('public_url')
-                            ->label('URL de l\'API')
+                            ->label(__('filament.promos.api_url'))
                             ->content(function (?Promo $record) {
                                 if (! $record) {
-                                    return 'L\'URL sera générée après la création.';
+                                    return __('filament.promos.api_url_info');
                                 }
 
                                 try {
@@ -99,25 +100,25 @@ class PromoForm
                                 ");
                             })
                             ->columnSpanFull()
-                            ->helperText('C\'est l\'URL à utiliser dans votre intégration frontend.'),
+                            ->helperText(__('filament.promos.api_url_help')),
                     ]),
 
-                Section::make('Planification & Affichage')
-                    ->description('Gérez quand et comment le banner s\'affiche')
+                Section::make(__('filament.promos.schedule_section'))
+                    ->description(__('filament.promos.schedule_desc'))
                     ->schema([
                         // Planification - Statut & Dates
                         Grid::make(2)
                             ->schema([
                                 Select::make('status')
-                                    ->label('Statut')
+                                    ->label(__('filament.promos.status'))
                                     ->options(PromoStatus::class)
                                     ->required()
                                     ->default(PromoStatus::DRAFT)
                                     ->live()
                                     ->native(false)
-                                    ->helperText('Automatique selon les dates (sauf Brouillon)'),
+                                    ->helperText(__('filament.promos.status_help')),
                                 Slider::make('priority')
-                                    ->label('Priorité')
+                                    ->label(__('filament.promos.priority'))
                                     ->required()
                                     ->minValue(1)
                                     ->maxValue(10)
@@ -127,12 +128,12 @@ class PromoForm
                                     ->decimalPlaces(0)
                                     ->default(1)
                                     ->tooltips()
-                                    ->helperText('10 = plus prioritaire'),
+                                    ->helperText(__('filament.promos.priority_help')),
                             ]),
                         Grid::make(2)
                             ->schema([
                                 DateTimePicker::make('starts_at')
-                                    ->label('Date de début')
+                                    ->label(__('filament.promos.start_date'))
                                     ->native(false)
                                     ->live()
                                     ->afterStateUpdated(function (callable $set, callable $get, $livewire) {
@@ -140,11 +141,11 @@ class PromoForm
                                         $livewire->validateOnly('data.ends_at');
                                     }),
                                 DateTimePicker::make('ends_at')
-                                    ->label('Date de fin')
+                                    ->label(__('filament.promos.end_date'))
                                     ->native(false)
                                     ->afterOrEqual('starts_at')
                                     ->validationMessages([
-                                        'after_or_equal' => 'La date de fin doit être postérieure ou égale à la date de début.',
+                                        'after_or_equal' => __('filament.promos.end_date_validation'),
                                     ])
                                     ->live()
                                     ->afterStateUpdated(function (callable $set, callable $get, $livewire) {
@@ -157,66 +158,66 @@ class PromoForm
                         Grid::make(2)
                             ->schema([
                                 Select::make('display_mode')
-                                    ->label('Mode d\'affichage')
+                                    ->label(__('filament.promos.display_mode'))
                                     ->options([
-                                        'fixed_count' => 'Nombre fixe de vues',
-                                        'unlimited' => 'Illimité',
-                                        'once_per_day' => 'Une fois par jour',
-                                        'once_per_week' => 'Une fois par semaine',
+                                        'fixed_count' => __('filament.promos.display_mode_fixed'),
+                                        'unlimited' => __('filament.promos.display_mode_unlimited'),
+                                        'once_per_day' => __('filament.promos.display_mode_daily'),
+                                        'once_per_week' => __('filament.promos.display_mode_weekly'),
                                     ])
                                     ->default('fixed_count')
                                     ->required()
                                     ->native(false)
                                     ->live()
-                                    ->helperText('Règle de fréquence d\'affichage'),
+                                    ->helperText(__('filament.promos.display_mode_help')),
                                 Select::make('message_display_mode')
-                                    ->label('Mode d\'affichage du texte')
+                                    ->label(__('filament.promos.message_display_mode'))
                                     ->options([
-                                        'multiline' => 'V - Vertical (scroll)',
-                                        'marquee' => 'H - Horizontal (ticker)',
-                                        'none' => 'N - Statique',
+                                        'multiline' => __('filament.promos.message_display_multiline'),
+                                        'marquee' => __('filament.promos.message_display_marquee'),
+                                        'none' => __('filament.promos.message_display_none'),
                                     ])
                                     ->default('multiline')
                                     ->native(false)
-                                    ->helperText('Défilement du texte'),
+                                    ->helperText(__('filament.promos.message_display_help')),
                             ]),
                         TextInput::make('max_impressions')
-                            ->label('Nombre max de vues')
+                            ->label(__('filament.promos.max_impressions'))
                             ->numeric()
                             ->default(9999)
                             ->required()
                             ->visible(fn ($get) => $get('display_mode') === 'fixed_count')
-                            ->helperText('Si 0 = illimité'),
+                            ->helperText(__('filament.promos.max_impressions_help')),
                         Grid::make(2)
                             ->schema([
                                 TextInput::make('cooldown_seconds')
-                                    ->label('Attendre après fermeture (sec)')
+                                    ->label(__('filament.promos.cooldown_seconds'))
                                     ->numeric()
                                     ->default(0)
                                     ->required()
-                                    ->helperText('Ex: 86400 pour 24h'),
+                                    ->helperText(__('filament.promos.cooldown_help')),
                                 Select::make('animation_style')
-                                    ->label('Animation')
+                                    ->label(__('filament.promos.animation_style'))
                                     ->options([
-                                        'fade' => 'Fondu (fade)',
-                                        'slide' => 'Glissement (slide)',
-                                        'zoom' => 'Zoom',
+                                        'fade' => __('filament.promos.animation_fade'),
+                                        'slide' => __('filament.promos.animation_slide'),
+                                        'zoom' => __('filament.promos.animation_zoom'),
                                     ])
                                     ->native(false)
-                                    ->helperText('À l\'apparition du banner'),
+                                    ->helperText(__('filament.promos.animation_help')),
                             ]),
 
                         // Comportement avancé
                         Grid::make(2)
                             ->schema([
                                 TextInput::make('auto_close_timer')
-                                    ->label('Fermeture automatique (sec)')
+                                    ->label(__('filament.promos.auto_close'))
                                     ->numeric()
                                     ->minValue(0)
-                                    ->helperText('0 = désactivé. Ex: 15'),
+                                    ->helperText(__('filament.promos.auto_close_help')),
                                 Toggle::make('show_countdown')
-                                    ->label('Afficher le compte à rebours')
-                                    ->helperText('Avant la fermeture automatique'),
+                                    ->label(__('filament.promos.show_countdown'))
+                                    ->helperText(__('filament.promos.show_countdown_help')),
                             ]),
                     ]),
 
@@ -246,8 +247,8 @@ class PromoForm
             return;
         }
 
-        $startsAt = $startsAtRaw ? \Illuminate\Support\Carbon::parse($startsAtRaw) : null;
-        $endsAt = $endsAtRaw ? \Illuminate\Support\Carbon::parse($endsAtRaw) : null;
+        $startsAt = $startsAtRaw ? Carbon::parse($startsAtRaw) : null;
+        $endsAt = $endsAtRaw ? Carbon::parse($endsAtRaw) : null;
         $now = now();
 
         // 1. Archivé : Si la date de fin est passée
@@ -291,15 +292,15 @@ class PromoForm
                 Grid::make(2)
                     ->schema([
                         TextInput::make("cta_text.{$locale}")
-                            ->label("Texte du bouton ({$label})")
+                            ->label(__('filament.promos.button_text_label')." ({$label})")
                             ->maxLength(255)
                             ->extraInputAttributes(['dir' => $direction]),
 
                         TextInput::make('cta_url')
-                            ->label('Lien du bouton (URL globale)')
+                            ->label(__('filament.promos.button_url_label'))
                             ->url()
                             ->maxLength(255)
-                            ->helperText('L\'URL est généralement la même pour toutes les langues.'),
+                            ->helperText(__('filament.promos.button_url_help')),
                     ]),
             ]);
     }

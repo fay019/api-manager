@@ -1,5 +1,5 @@
 @extends('errors.layout')
 
-@section('title', 'Accès refusé')
+@section('title', __('errors.403.title'))
 @section('code', '403')
-@section('message', 'Vous n\'avez pas la permission d\'accéder à cette ressource.')
+@section('message', __('errors.403.message'))

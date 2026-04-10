@@ -25,11 +25,16 @@ class ManageAdsSettings extends Page implements HasForms
 
     protected static ?int $navigationSort = 100;
 
-    protected static ?string $title = 'Ads Settings';
+    protected static ?string $title = null;
 
     protected string $view = 'filament.pages.manage-ads-settings';
 
     public ?array $data = [];
+
+    public function getTitle(): string
+    {
+        return __('filament.ads.title');
+    }
 
     public function mount(): void
     {
@@ -42,13 +47,13 @@ class ManageAdsSettings extends Page implements HasForms
     {
         return $schema
             ->components([
-                Section::make('Google AdSense Configuration')
-                    ->description('Manage AdSense settings for your application')
+                Section::make(__('filament.ads.section'))
+                    ->description(__('filament.ads.section') ?? 'Manage AdSense settings for your application')
                     ->extraAttributes(['class' => 'mb-6'])
                     ->schema([
                         Toggle::make('ads_enabled')
-                            ->label('Enable AdSense')
-                            ->helperText('Enable or disable Google AdSense across the application'),
+                            ->label(__('filament.common.active'))
+                            ->helperText(__('filament.ads.section') ?? 'Enable or disable Google AdSense across the application'),
                     ]),
             ])
             ->statePath('data');
@@ -68,8 +73,8 @@ class ManageAdsSettings extends Page implements HasForms
 
             Notification::make()
                 ->success()
-                ->title('Settings saved')
-                ->body('Ads settings have been updated successfully.')
+                ->title(__('filament.ads.saved'))
+                ->body(__('filament.ads.saved') ?? 'Ads settings have been updated successfully.')
                 ->send();
         } catch (\Exception $e) {
             Notification::make()

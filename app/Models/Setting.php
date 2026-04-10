@@ -10,17 +10,21 @@ class Setting extends Model
 
     public static function get(string $key, mixed $default = null): mixed
     {
-        $setting = static::where('key', $key)->first();
+        try {
+            $setting = static::where('key', $key)->first();
 
-        if (! $setting) {
+            if (! $setting) {
+                return $default;
+            }
+
+            return match ($setting->type) {
+                'boolean' => (bool) $setting->value,
+                'integer' => (int) $setting->value,
+                default => $setting->value,
+            };
+        } catch (\Exception) {
             return $default;
         }
-
-        return match ($setting->type) {
-            'boolean' => (bool) $setting->value,
-            'integer' => (int) $setting->value,
-            default => $setting->value,
-        };
     }
 
     public static function set(string $key, mixed $value, string $type = 'boolean', ?string $description = null): void

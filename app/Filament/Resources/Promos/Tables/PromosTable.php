@@ -4,6 +4,10 @@ namespace App\Filament\Resources\Promos\Tables;
 
 use App\Enums\PromoStatus;
 use App\Models\Promo;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -19,63 +23,63 @@ class PromosTable
         return $table
             ->columns([
                 TextColumn::make('title')
-                    ->label('Titre')
+                    ->label(__('filament.promos.table_title'))
                     ->state(fn (Promo $record): string => $record->getTranslation('title') ?? '')
                     ->searchable()
                     ->sortable(),
                 ImageColumn::make('image_url')
-                    ->label('Image')
+                    ->label(__('filament.promos.table_image'))
                     ->circular()
                     ->disk('public'),
                 TextColumn::make('status')
-                    ->label('Statut')
+                    ->label(__('filament.promos.table_status'))
                     ->badge()
                     ->sortable(),
                 TextColumn::make('starts_at')
-                    ->label('Début')
+                    ->label(__('filament.promos.table_start'))
                     ->dateTime('d/m/Y H:i')
                     ->sortable(),
                 TextColumn::make('ends_at')
-                    ->label('Fin')
+                    ->label(__('filament.promos.table_end'))
                     ->dateTime('d/m/Y H:i')
                     ->sortable(),
                 TextColumn::make('priority')
-                    ->label('Priorité')
+                    ->label(__('filament.promos.table_priority'))
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('creator.name')
-                    ->label('Créé par')
+                    ->label(__('filament.promos.table_creator'))
                     ->sortable()
                     ->toggleable(),
                 TextColumn::make('created_at')
-                    ->label('Créé le')
+                    ->label(__('filament.promos.table_created'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 SelectFilter::make('status')
-                    ->label('Statut')
+                    ->label(__('filament.promos.table_status'))
                     ->options(PromoStatus::class),
             ])
             ->defaultSort('priority', 'desc')
             ->recordActions([
-                \Filament\Actions\Action::make('preview_json')
-                    ->label('Aperçu JSON')
+                Action::make('preview_json')
+                    ->label(__('filament.promos.preview_json'))
                     ->icon('heroicon-o-code-bracket')
                     ->color('info')
-                    ->modalHeading('Aperçu de la réponse API')
+                    ->modalHeading(__('filament.promos.preview_heading'))
                     ->modalSubmitAction(false)
-                    ->modalCancelActionLabel('Fermer')
+                    ->modalCancelActionLabel(__('filament.promos.preview_close'))
                     ->modalWidth('2xl')
                     ->form(fn (Promo $record) => [
                         Tabs::make('API Responses')
                             ->tabs([
-                                Tab::make('Succès (200 OK)')
+                                Tab::make(__('filament.promos.preview_success'))
                                     ->icon('heroicon-m-check-circle')
                                     ->schema([
                                         Textarea::make('json_success')
-                                            ->label('Corps de la réponse')
+                                            ->label(__('filament.promos.preview_response_body'))
                                             ->rows(12)
                                             ->formatStateUsing(function () use ($record) {
                                                 $data = [
@@ -101,11 +105,11 @@ class PromosTable
                                             })
                                             ->disabled(),
                                     ]),
-                                Tab::make('Erreur (401 Unauthorized)')
+                                Tab::make(__('filament.promos.preview_unauthorized'))
                                     ->icon('heroicon-m-lock-closed')
                                     ->schema([
                                         Textarea::make('json_unauthorized')
-                                            ->label('Corps de la réponse')
+                                            ->label(__('filament.promos.preview_response_body'))
                                             ->rows(12)
                                             ->formatStateUsing(function () {
                                                 return json_encode([
@@ -119,11 +123,11 @@ class PromosTable
                                             })
                                             ->disabled(),
                                     ]),
-                                Tab::make('Erreur (404 Not Found)')
+                                Tab::make(__('filament.promos.preview_not_found'))
                                     ->icon('heroicon-m-x-circle')
                                     ->schema([
                                         Textarea::make('json_error')
-                                            ->label('Corps de la réponse')
+                                            ->label(__('filament.promos.preview_response_body'))
                                             ->rows(12)
                                             ->formatStateUsing(function () {
                                                 return json_encode([
@@ -137,11 +141,11 @@ class PromosTable
                                             })
                                             ->disabled(),
                                     ]),
-                                Tab::make('Erreur (429 Too Many Requests)')
+                                Tab::make(__('filament.promos.preview_rate_limit'))
                                     ->icon('heroicon-m-bolt')
                                     ->schema([
                                         Textarea::make('json_throttle')
-                                            ->label('Corps de la réponse')
+                                            ->label(__('filament.promos.preview_response_body'))
                                             ->rows(12)
                                             ->formatStateUsing(function () {
                                                 return json_encode([
@@ -157,11 +161,11 @@ class PromosTable
                                     ]),
                             ]),
                     ]),
-                \Filament\Actions\EditAction::make(),
+                EditAction::make(),
             ])
             ->toolbarActions([
-                \Filament\Actions\BulkActionGroup::make([
-                    \Filament\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

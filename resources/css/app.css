@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 
+@variant dark (&:where(.dark, .dark *));
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
@@ -23,4 +25,24 @@
     --spacing-10: 2.5rem;
     --spacing-11: 2.75rem;
     --spacing-12: 3rem;
+}
+
+@layer base {
+    html {
+        transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 300ms;
+    }
+
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #333;
+        transition: background 0.3s ease, color 0.3s ease;
+        min-height: 100vh;
+    }
+
+    .dark body {
+        background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+        color: #f3f4f6;
+    }
 }

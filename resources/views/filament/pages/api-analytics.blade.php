@@ -212,14 +212,14 @@
 
     <!-- Today Stats -->
     <div class="analytics-section">
-        <h2 class="analytics-title">Today</h2>
+        <h2 class="analytics-title">{{ __('filament.analytics.today_title') }}</h2>
 
         <div class="grid" style="margin-bottom: 2rem;">
             <!-- Total Requests Card -->
             <div class="card card-blue">
                 <div class="card-header">
                     <div>
-                        <p class="card-label">Total Requests</p>
+                        <p class="card-label">{{ __('filament.analytics.total_requests') }}</p>
                         <p class="card-value">{{ $todayStats['total_requests'] }}</p>
                     </div>
                     <span class="icon">📊</span>
@@ -230,7 +230,7 @@
             <div class="card card-green">
                 <div class="card-header">
                     <div>
-                        <p class="card-label">Avg Duration</p>
+                        <p class="card-label">{{ __('filament.analytics.avg_duration') }}</p>
                         <p class="card-value">{{ $todayStats['avg_duration'] }}ms</p>
                     </div>
                     <span class="icon">⚡</span>
@@ -241,9 +241,9 @@
             <div class="card card-orange">
                 <div class="card-header">
                     <div>
-                        <p class="card-label">Top Client</p>
+                        <p class="card-label">{{ __('filament.analytics.top_client') }}</p>
                         <p class="card-secondary-value">{{ $todayStats['top_client']['name'] }}</p>
-                        <p class="card-subtext">{{ $todayStats['top_client']['count'] }} requests</p>
+                        <p class="card-subtext">{{ $todayStats['top_client']['count'] }} {{ __('filament.analytics.requests_label') }}</p>
                     </div>
                     <span class="icon">👤</span>
                 </div>
@@ -252,7 +252,7 @@
 
         <!-- Status Codes Today -->
         <div class="card" style="margin-bottom: 2rem;">
-            <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem; color: var(--color-text-dark);">Status Codes Distribution</h3>
+            <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem; color: var(--color-text-dark);">{{ __('filament.analytics.status_codes_distribution') }}</h3>
 
             <div style="display: flex; flex-direction: column; gap: 0.75rem;">
                 @php
@@ -278,7 +278,7 @@
                         <span class="status-count">{{ $count }}</span>
                     </div>
                 @empty
-                    <p class="no-data">No requests today</p>
+                    <p class="no-data">{{ __('filament.analytics.no_requests_today') }}</p>
                 @endforelse
             </div>
         </div>
@@ -286,15 +286,15 @@
 
     <!-- Endpoints Breakdown -->
     <div class="analytics-section">
-        <h2 class="analytics-title">Top Endpoints</h2>
+        <h2 class="analytics-title">{{ __('filament.analytics.top_endpoints_title') }}</h2>
 
         <div class="card" style="overflow: hidden;">
             <table>
                 <thead>
                     <tr>
-                        <th>Endpoint</th>
-                        <th>Requests</th>
-                        <th>Avg Duration</th>
+                        <th>{{ __('filament.analytics.endpoint_header') }}</th>
+                        <th>{{ __('filament.analytics.requests_header') }}</th>
+                        <th>{{ __('filament.analytics.avg_duration_header') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -306,7 +306,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" style="padding: 2rem; text-align: center; color: var(--color-text-muted);">No data available</td>
+                            <td colspan="3" style="padding: 2rem; text-align: center; color: var(--color-text-muted);">{{ __('filament.analytics.no_data_available') }}</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -316,11 +316,11 @@
 
     <!-- All Time Stats -->
     <div>
-        <h2 class="analytics-title">All Time</h2>
+        <h2 class="analytics-title">{{ __('filament.analytics.all_time_title') }}</h2>
 
         <div class="grid">
             <div class="card card-purple">
-                <p class="card-label">Total All Time</p>
+                <p class="card-label">{{ __('filament.analytics.total_all_time') }}</p>
                 <p class="card-value">{{ $allTimeStats['total_requests'] }}</p>
             </div>
         </div>

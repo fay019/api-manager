@@ -195,8 +195,8 @@
         <div class="hc-card">
             <!-- Header -->
             <div class="hc-header">
-                <h3>API Health Check Configuration</h3>
-                <p>Configure which checks are performed by GET /api/v1/health</p>
+                <h3>{{ __('filament.health.page_header') }}</h3>
+                <p>{{ __('filament.health.page_description') }}</p>
             </div>
 
             <!-- Content -->
@@ -204,10 +204,10 @@
                 @php
                     $settings = \App\Models\HealthCheckSetting::getInstance();
                     $checks = [
-                        'cache' => ['label' => 'Cache Check', 'description' => 'Test cache write/read functionality'],
-                        'logs' => ['label' => 'Logs Check', 'description' => 'Verify logs directory is writable'],
-                        'disk_space' => ['label' => 'Disk Space Check', 'description' => 'Monitor available disk space and show warning if > 90% used'],
-                        'storage' => ['label' => 'Storage Check', 'description' => 'Verify all storage directories (logs, app, cache, sessions) are writable'],
+                        'cache' => ['label' => __('filament.health.cache_check'), 'description' => __('filament.health.cache_check_desc')],
+                        'logs' => ['label' => __('filament.health.logs_check'), 'description' => __('filament.health.logs_check_desc')],
+                        'disk_space' => ['label' => __('filament.health.disk_space_check'), 'description' => __('filament.health.disk_space_check_desc')],
+                        'storage' => ['label' => __('filament.health.storage_check'), 'description' => __('filament.health.storage_check_desc')],
                     ];
                 @endphp
 
@@ -228,7 +228,7 @@
                                     onmouseover="this.style.opacity='0.8'"
                                     onmouseout="this.style.opacity='1'"
                                 >
-                                    {{ $isEnabled ? '✓ Enabled' : '○ Disabled' }}
+                                    {{ $isEnabled ? __('filament.health.enabled') : __('filament.health.disabled') }}
                                 </button>
                             </div>
                         </div>
@@ -244,7 +244,7 @@
                 color="info"
                 icon="heroicon-m-play"
             >
-                Test Health Check
+                {{ __('filament.health.test_button') }}
             </x-filament::button>
         </div>
 
@@ -253,8 +253,8 @@
             <div class="hc-card">
                 <!-- Header -->
                 <div class="hc-header">
-                    <h3>🔍 Health Check Result</h3>
-                    <p>Last test executed at {{ now()->format('H:i:s') }}</p>
+                    <h3>{{ __('filament.health.result_header') }}</h3>
+                    <p>{{ __('filament.health.result_executed') }} {{ now()->format('H:i:s') }}</p>
                 </div>
 
                 <!-- Content -->
@@ -266,14 +266,14 @@
                     @endphp
                     <div class="hc-status-box {{ $statusClass }}">
                         <p style="font-weight: 600; margin: 0;">
-                            Overall Status: <span style="text-transform: uppercase;">{{ $status }}</span>
+                            {{ __('filament.health.overall_status') }} <span style="text-transform: uppercase;">{{ $status }}</span>
                         </p>
                     </div>
 
                     <!-- Checks Status -->
                     @if(isset(session('health_check_result')['data']['checks']))
                         <div style="margin-bottom: 1.5rem;">
-                            <h4 style="font-size: 0.875rem; font-weight: 600; color: var(--hc-text-dark); margin-bottom: 1rem;">Individual Checks:</h4>
+                            <h4 style="font-size: 0.875rem; font-weight: 600; color: var(--hc-text-dark); margin-bottom: 1rem;">{{ __('filament.health.individual_checks') }}</h4>
                             <div style="display: grid; gap: 1rem;">
                                 @foreach(session('health_check_result')['data']['checks'] as $checkName => $checkResult)
                                     @php
@@ -323,7 +323,7 @@
 
                     <!-- JSON Preview -->
                     <div>
-                        <h4 style="font-size: 0.875rem; font-weight: 600; color: var(--hc-text-dark); margin-bottom: 0.75rem;">Raw JSON Response:</h4>
+                        <h4 style="font-size: 0.875rem; font-weight: 600; color: var(--hc-text-dark); margin-bottom: 0.75rem;">{{ __('filament.health.raw_json') }}</h4>
                         <pre class="hc-json-pre"><code>{{ json_encode(session('health_check_result'), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) }}</code></pre>
                     </div>
                 </div>
@@ -332,15 +332,15 @@
 
         <!-- API Endpoint Info -->
         <div class="hc-info-box">
-            <h4>📍 Endpoint Information</h4>
+            <h4>{{ __('filament.health.endpoint_info') }}</h4>
             <p>
-                <strong>URL:</strong> <code class="hc-code">GET /api/v1/health</code>
+                <strong>{{ __('filament.health.endpoint_url') }}</strong> <code class="hc-code">GET /api/v1/health</code>
             </p>
             <p>
-                <strong>Authentication:</strong> Not required
+                <strong>{{ __('filament.health.endpoint_auth') }}</strong> {{ __('filament.health.endpoint_auth_not_required') }}
             </p>
             <p>
-                <strong>Response:</strong> JSON with status and configured health checks
+                <strong>{{ __('filament.health.endpoint_response') }}</strong> {{ __('filament.health.endpoint_response_desc') }}
             </p>
         </div>
     </div>

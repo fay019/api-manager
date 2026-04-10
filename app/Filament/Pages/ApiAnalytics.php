@@ -19,7 +19,7 @@ class ApiAnalytics extends Page
 
     public function getTitle(): string
     {
-        return 'API Analytics';
+        return __('filament.nav.analytics');
     }
 
     public function getTodayStats(): array

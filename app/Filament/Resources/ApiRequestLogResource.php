@@ -2,8 +2,12 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\ApiRequestLogResource\Pages\ListApiRequestLogs;
 use App\Models\ApiRequestLog;
 use BackedEnum;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
@@ -25,87 +29,90 @@ class ApiRequestLogResource extends Resource
 
     protected static ?int $navigationSort = 3;
 
-    protected static ?string $label = 'Request Logs';
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.nav.logs');
+    }
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
                 TextInput::make('created_at')
-                    ->label('Timestamp')
+                    ->label(__('filament.log.timestamp'))
                     ->disabled(),
 
                 TextInput::make('method')
-                    ->label('HTTP Method')
+                    ->label(__('filament.log.method'))
                     ->disabled(),
 
                 TextInput::make('path')
-                    ->label('Endpoint')
+                    ->label(__('filament.log.endpoint'))
                     ->disabled(),
 
                 TextInput::make('status_code')
-                    ->label('Status Code')
+                    ->label(__('filament.log.status'))
                     ->disabled(),
 
                 TextInput::make('duration_ms')
-                    ->label('Duration (ms)')
+                    ->label(__('filament.log.duration'))
                     ->disabled(),
 
                 TextInput::make('ip')
-                    ->label('IP Address')
+                    ->label(__('filament.log.ip'))
                     ->disabled(),
 
                 TextInput::make('hostname')
-                    ->label('Hostname')
+                    ->label(__('filament.log.hostname'))
                     ->disabled(),
 
                 TextInput::make('domain')
-                    ->label('Domain')
+                    ->label(__('filament.log.domain'))
                     ->disabled(),
 
                 TextInput::make('site_name')
-                    ->label('Site Name')
+                    ->label(__('filament.log.site_name'))
                     ->disabled(),
 
                 TextInput::make('page_path')
-                    ->label('Page Path')
+                    ->label(__('filament.log.page_path'))
                     ->disabled(),
 
                 TextInput::make('full_url')
-                    ->label('Full URL')
+                    ->label(__('filament.log.full_url'))
                     ->disabled(),
 
                 TextInput::make('client_request_time')
-                    ->label('Client Request Time')
+                    ->label(__('filament.log.client_time'))
                     ->disabled(),
 
                 TextInput::make('client_user_agent')
-                    ->label('Client Browser')
+                    ->label(__('filament.log.browser'))
                     ->disabled(),
 
                 TextInput::make('user_agent')
-                    ->label('User Agent')
+                    ->label(__('filament.log.user_agent'))
                     ->disabled(),
 
                 TextInput::make('origin')
-                    ->label('Origin')
+                    ->label(__('filament.log.origin'))
                     ->disabled()
-                    ->placeholder('Not provided'),
+                    ->placeholder(__('filament.log.not_provided') ?? 'Not provided'),
 
                 TextInput::make('referer')
-                    ->label('Referer')
+                    ->label(__('filament.log.referer'))
                     ->disabled()
-                    ->placeholder('Not provided'),
+                    ->placeholder(__('filament.log.not_provided') ?? 'Not provided'),
 
                 TextInput::make('apiClient.name')
-                    ->label('API Client')
+                    ->label(__('filament.log.api_client'))
                     ->disabled()
-                    ->placeholder('Public API'),
+                    ->placeholder(__('filament.log.public_api') ?? 'Public API'),
 
                 TextInput::make('apiKey.name')
-                    ->label('API Key')
+                    ->label(__('filament.log.api_key'))
                     ->disabled()
-                    ->placeholder('Not used'),
+                    ->placeholder(__('filament.log.not_used') ?? 'Not used'),
             ]);
     }
 
@@ -114,13 +121,13 @@ class ApiRequestLogResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('created_at')
-                    ->label('Time')
+                    ->label(__('filament.log.table_time'))
                     ->dateTime('M d H:i:s')
                     ->sortable()
                     ->searchable(),
 
                 TextColumn::make('method')
-                    ->label('Method')
+                    ->label(__('filament.log.table_method'))
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'GET' => 'info',
@@ -133,13 +140,13 @@ class ApiRequestLogResource extends Resource
                     ->sortable(),
 
                 TextColumn::make('path')
-                    ->label('Endpoint')
+                    ->label(__('filament.log.table_endpoint'))
                     ->searchable()
                     ->sortable()
                     ->limit(40),
 
                 TextColumn::make('status_code')
-                    ->label('Status')
+                    ->label(__('filament.log.table_status'))
                     ->badge()
                     ->getStateUsing(fn (ApiRequestLog $record): int => $record->status_code)
                     ->color(fn (int $state): string => match (true) {
@@ -151,45 +158,45 @@ class ApiRequestLogResource extends Resource
                     ->sortable(),
 
                 TextColumn::make('apiClient.name')
-                    ->label('Client')
+                    ->label(__('filament.log.table_client'))
                     ->searchable()
                     ->sortable()
                     ->placeholder('(public)'),
 
                 TextColumn::make('domain')
-                    ->label('Domain')
+                    ->label(__('filament.log.table_domain'))
                     ->searchable()
                     ->sortable()
                     ->placeholder('-')
                     ->limit(40),
 
                 TextColumn::make('page_path')
-                    ->label('Page')
+                    ->label(__('filament.log.table_page'))
                     ->searchable()
                     ->sortable()
                     ->placeholder('-')
                     ->limit(30),
 
                 TextColumn::make('ip')
-                    ->label('Source')
+                    ->label(__('filament.log.table_source'))
                     ->description(fn (ApiRequestLog $record): ?string => $record->hostname)
                     ->searchable(['ip', 'hostname'])
                     ->sortable()
                     ->limit(20),
 
                 TextColumn::make('duration_ms')
-                    ->label('Duration')
+                    ->label(__('filament.log.table_duration'))
                     ->suffix(' ms')
                     ->sortable()
                     ->placeholder('-'),
 
                 TextColumn::make('user_agent')
-                    ->label('User Agent')
+                    ->label(__('filament.log.table_user_agent'))
                     ->limit(30)
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('origin')
-                    ->label('Origin')
+                    ->label(__('filament.log.table_origin'))
                     ->limit(30)
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -204,20 +211,20 @@ class ApiRequestLogResource extends Resource
                     ]),
 
                 Filter::make('status_code_2xx')
-                    ->label('2xx Success')
+                    ->label(__('filament.log.filter_2xx'))
                     ->query(fn (Builder $query) => $query->whereBetween('status_code', [200, 299])),
 
                 Filter::make('status_code_4xx')
-                    ->label('4xx Errors')
+                    ->label(__('filament.log.filter_4xx'))
                     ->query(fn (Builder $query) => $query->whereBetween('status_code', [400, 499])),
 
                 Filter::make('status_code_5xx')
-                    ->label('5xx Errors')
+                    ->label(__('filament.log.filter_5xx'))
                     ->query(fn (Builder $query) => $query->whereBetween('status_code', [500, 599])),
 
                 SelectFilter::make('api_client_id')
                     ->relationship('apiClient', 'name')
-                    ->label('Client'),
+                    ->label(__('filament.log.filter_client')),
 
                 Filter::make('created_at')
                     ->form([
@@ -237,11 +244,11 @@ class ApiRequestLogResource extends Resource
                     }),
             ])
             ->actions([
-                \Filament\Actions\ViewAction::make(),
+                ViewAction::make(),
             ])
             ->bulkActions([
-                \Filament\Actions\BulkActionGroup::make([
-                    \Filament\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ])
             ->defaultSort('created_at', 'desc')
@@ -252,7 +259,7 @@ class ApiRequestLogResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Resources\ApiRequestLogResource\Pages\ListApiRequestLogs::route('/'),
+            'index' => ListApiRequestLogs::route('/'),
         ];
     }
 }

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Erreur Serveur 500</title>
+    <title>{{ __('errors.500.title') }} - {{ config('app.name') }}</title>
     <style>
         * {
             margin: 0;
@@ -18,7 +18,13 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
+            transition: background-color 0.3s ease;
         }
+
+        html.dark body {
+            background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+        }
+
         .container {
             background: white;
             border-radius: 8px;
@@ -28,24 +34,45 @@
             padding: 40px;
             text-align: center;
         }
+
+        html.dark .container {
+            background: #374151;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
         .error-code {
             font-size: 72px;
             font-weight: bold;
             color: #dc2626;
             margin-bottom: 10px;
         }
+
+        html.dark .error-code {
+            color: #f87171;
+        }
+
         .error-title {
             font-size: 24px;
             font-weight: 600;
             color: #111827;
             margin-bottom: 15px;
         }
+
+        html.dark .error-title {
+            color: #f3f4f6;
+        }
+
         .error-description {
             font-size: 14px;
             color: #6b7280;
             line-height: 1.6;
             margin-bottom: 25px;
         }
+
+        html.dark .error-description {
+            color: #d1d5db;
+        }
+
         .log-section {
             background: #f3f4f6;
             border: 1px solid #d1d5db;
@@ -59,11 +86,23 @@
             color: #374151;
             line-height: 1.4;
         }
+
+        html.dark .log-section {
+            background: #4b5563;
+            border-color: #6b7280;
+            color: #e5e7eb;
+        }
+
         .log-section h4 {
             color: #111827;
             margin-bottom: 10px;
             font-size: 13px;
         }
+
+        html.dark .log-section h4 {
+            color: #f3f4f6;
+        }
+
         .log-entry {
             margin-bottom: 10px;
             padding: 8px;
@@ -71,6 +110,13 @@
             border-left: 3px solid #dc2626;
             padding-left: 12px;
         }
+
+        html.dark .log-entry {
+            background: #374151;
+            border-color: #f87171;
+            color: #e5e7eb;
+        }
+
         .info-box {
             background: #dbeafe;
             border: 1px solid #93c5fd;
@@ -80,15 +126,36 @@
             color: #1e40af;
             font-size: 13px;
         }
+
+        html.dark .info-box {
+            background: #1e3a8a;
+            border-color: #3b82f6;
+            color: #93c5fd;
+        }
+
         .info-box strong {
             display: block;
             margin-bottom: 5px;
         }
+
+        .info-box-danger {
+            background: #fef2f2;
+            border-color: #fecaca;
+            color: #991b1b;
+        }
+
+        html.dark .info-box-danger {
+            background: #7f1d1d;
+            border-color: #dc2626;
+            color: #fecaca;
+        }
+
         .actions {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
         }
+
         .btn {
             padding: 10px 20px;
             border: none;
@@ -98,39 +165,52 @@
             cursor: pointer;
             transition: all 0.3s;
         }
+
         .btn-primary {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
         }
+
         .btn-primary:hover {
             opacity: 0.9;
         }
+
         .btn-secondary {
             background: #e5e7eb;
             color: #111827;
         }
+
         .btn-secondary:hover {
             background: #d1d5db;
+        }
+
+        html.dark .btn-secondary {
+            background: #4b5563;
+            color: #f3f4f6;
+        }
+
+        html.dark .btn-secondary:hover {
+            background: #6b7280;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="error-code">500</div>
-        <div class="error-title">Erreur Serveur Interne</div>
+        <div class="error-title">{{ __('errors.500.title') }}</div>
         <div class="error-description">
-            Une erreur est survenue lors du traitement de votre requête. Veuillez réessayer ou contacter l'administrateur.
+            {{ __('errors.500.message') }}
         </div>
 
         @if(config('app.debug'))
             <div class="info-box">
-                <strong>⚠️ Mode Debug Activé</strong>
-                Les informations détaillées des erreurs s'affichent ci-dessous.
-                <br><small style="opacity: 0.8;">Désactivez ce mode en production en mettant APP_DEBUG=false dans .env</small>
+                <strong>⚠️ {{ __('errors.500.debug_enabled') }}</strong>
+                {{ __('errors.500.recent_logs') }}
+                <br><small style="opacity: 0.8;">{{ __('errors.500.full_log') }}</small>
             </div>
 
             <div class="log-section">
-                <h4>📋 Logs Récents (dernier en haut)</h4>
+                <h4>📋 {{ __('errors.500.recent_logs') }} ({{ __('errors.500.full_log') }})</h4>
                 @php
                     $logFile = storage_path('logs/laravel.log');
                     if (file_exists($logFile)) {
@@ -145,27 +225,61 @@
                             }
                         }
                     } else {
-                        echo '<p style="color: #9ca3af;">Aucun log trouvé</p>';
+                        echo '<p style="opacity: 0.7;">'. __('errors.500.no_logs') .'</p>';
                     }
                 @endphp
             </div>
 
-            <div class="info-box" style="background: #fef2f2; border-color: #fecaca; color: #991b1b;">
-                <strong>📁 Fichier Log Complet</strong>
+            <div class="info-box info-box-danger">
+                <strong>📁 {{ __('errors.500.full_log') }}</strong>
                 {{ $logFile ?? storage_path('logs/laravel.log') }}
-                <br><small style="opacity: 0.8;">Consultez ce fichier pour les informations complètes</small>
+                <br><small style="opacity: 0.8;">{{ __('errors.500.recent_logs') }}</small>
             </div>
         @else
             <div class="info-box">
-                <strong>💡 Activer le Mode Debug</strong>
-                Pour voir les détails des erreurs, mettez APP_DEBUG=true dans le fichier .env et redémarrez l'application.
+                <strong>💡 {{ __('errors.500.enable_debug') }}</strong>
+                {{ __('errors.500.debug_enabled') }}
             </div>
         @endif
 
         <div class="actions">
-            <a href="{{ url('/') }}" class="btn btn-primary">← Retour à l'accueil</a>
-            <a href="{{ url()->previous() }}" class="btn btn-secondary">← Page précédente</a>
+            <a href="{{ url('/') }}" class="btn btn-primary">← {{ __('errors.500.back') }}</a>
+            <a href="{{ url()->previous() }}" class="btn btn-secondary">← {{ __('errors.500.back') }}</a>
         </div>
     </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const html = document.documentElement;
+
+        function getInitialTheme() {
+            const saved = localStorage.getItem('theme');
+            if (saved) return saved;
+
+            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                return 'dark';
+            }
+            return 'light';
+        }
+
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                html.classList.add('dark');
+            } else {
+                html.classList.remove('dark');
+            }
+            localStorage.setItem('theme', theme);
+        }
+
+        const initialTheme = getInitialTheme();
+        applyTheme(initialTheme);
+
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (!localStorage.getItem('theme')) {
+                applyTheme(e.matches ? 'dark' : 'light');
+            }
+        });
+    });
+    </script>
 </body>
 </html>

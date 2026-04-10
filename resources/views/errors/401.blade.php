@@ -1,5 +1,5 @@
 @extends('errors.layout')
 
-@section('title', 'Non authentifié')
+@section('title', __('errors.401.title'))
 @section('code', '401')
-@section('message', 'Vous devez vous connecter pour accéder à cette page.')
+@section('message', __('errors.401.message'))

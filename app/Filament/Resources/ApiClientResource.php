@@ -2,8 +2,16 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\ApiClientResource\Pages\CreateApiClient;
+use App\Filament\Resources\ApiClientResource\Pages\EditApiClient;
+use App\Filament\Resources\ApiClientResource\Pages\ListApiClients;
+use App\Filament\Resources\ApiClientResource\RelationManagers\ApiKeysRelationManager;
 use App\Models\ApiClient;
 use BackedEnum;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
@@ -24,6 +32,13 @@ class ApiClientResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-square-3-stack-3d';
 
+    protected static ?string $navigationLabel = null;
+
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.nav.clients');
+    }
+
     protected static string|UnitEnum|null $navigationGroup = 'API Management';
 
     protected static ?int $navigationSort = 1;
@@ -32,92 +47,92 @@ class ApiClientResource extends Resource
     {
         return $schema
             ->components([
-                Section::make('Client Information')
-                    ->description('Basic details about this API client')
+                Section::make(__('filament.client.section_info'))
+                    ->description(__('filament.client.section_info_desc'))
                     ->schema([
                         TextInput::make('name')
-                            ->label('Client Name')
+                            ->label(__('filament.client.name'))
                             ->required()
                             ->maxLength(255)
-                            ->placeholder('e.g., Mobile App, Web Dashboard'),
+                            ->placeholder(__('filament.client.name_placeholder')),
 
                         Toggle::make('is_active')
-                            ->label('Active')
+                            ->label(__('filament.client.active'))
                             ->default(true),
 
                         Select::make('client_type')
-                            ->label('Client Type')
+                            ->label(__('filament.client.type'))
                             ->options([
-                                'MOBILE' => 'Mobile Application',
-                                'WEB' => 'Web Application',
-                                'PARTNER' => 'External Partner',
-                                'INTERNAL' => 'Internal Service',
+                                'MOBILE' => __('filament.client.type_mobile'),
+                                'WEB' => __('filament.client.type_web'),
+                                'PARTNER' => __('filament.client.type_partner'),
+                                'INTERNAL' => __('filament.client.type_internal'),
                             ])
                             ->nullable(),
 
                         DatePicker::make('activated_at')
-                            ->label('Activated At')
+                            ->label(__('filament.client.activated_at'))
                             ->nullable(),
                     ])->columns(2),
 
-                Section::make('Contact Details')
-                    ->description('Who is responsible for this client')
+                Section::make(__('filament.client.section_contact'))
+                    ->description(__('filament.client.section_contact_desc'))
                     ->schema([
                         TextInput::make('contact_name')
-                            ->label('Contact Name')
+                            ->label(__('filament.client.contact_name'))
                             ->maxLength(255),
 
                         TextInput::make('contact_email')
-                            ->label('Contact Email')
+                            ->label(__('filament.client.contact_email'))
                             ->email()
                             ->maxLength(255),
 
                         TextInput::make('website')
-                            ->label('Website URL')
+                            ->label(__('filament.client.website'))
                             ->url()
                             ->maxLength(255),
                     ])->columns(3),
 
-                Section::make('Technical Configuration')
-                    ->description('Rate limiting and origin control')
+                Section::make(__('filament.client.section_technical'))
+                    ->description(__('filament.client.section_technical_desc'))
                     ->schema([
                         TextInput::make('rate_limit_per_minute')
-                            ->label('Rate Limit (min)')
+                            ->label(__('filament.client.rate_limit'))
                             ->numeric()
                             ->minValue(1)
                             ->default(60)
-                            ->suffix('req/min'),
+                            ->suffix(__('filament.client.rate_limit_suffix')),
 
                         TextInput::make('monthly_quota')
-                            ->label('Monthly Quota')
+                            ->label(__('filament.client.monthly_quota'))
                             ->numeric()
                             ->minValue(0)
-                            ->placeholder('Unlimited'),
+                            ->placeholder(__('filament.client.monthly_quota_placeholder')),
 
                         TextInput::make('webhook_url')
-                            ->label('Webhook URL')
+                            ->label(__('filament.client.webhook_url'))
                             ->url()
                             ->maxLength(255)
                             ->columnSpanFull(),
 
                         TagsInput::make('allowed_origins')
-                            ->label('Allowed Origins')
-                            ->placeholder('Add domains (e.g., https://example.com)')
-                            ->helperText('Leave empty to allow all origins')
+                            ->label(__('filament.client.allowed_origins'))
+                            ->placeholder(__('filament.client.allowed_origins_placeholder'))
+                            ->helperText(__('filament.client.allowed_origins_help'))
                             ->separator(',')
                             ->columnSpanFull(),
                     ])->columns(2),
 
-                Section::make('About')
+                Section::make(__('filament.client.section_about'))
                     ->schema([
                         Textarea::make('description')
-                            ->label('Client Description')
-                            ->placeholder('What is this client for?')
+                            ->label(__('filament.client.description'))
+                            ->placeholder(__('filament.client.description_placeholder'))
                             ->rows(3),
 
                         Textarea::make('notes')
-                            ->label('Internal Notes')
-                            ->placeholder('Internal notes about this client...')
+                            ->label(__('filament.client.notes'))
+                            ->placeholder(__('filament.client.notes_placeholder'))
                             ->rows(3),
                     ]),
             ]);
@@ -128,58 +143,58 @@ class ApiClientResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label('Client Name')
+                    ->label(__('filament.client.name'))
                     ->searchable()
                     ->sortable(),
 
                 TextColumn::make('is_active')
-                    ->label('Status')
+                    ->label(__('filament.client.status'))
                     ->badge()
                     ->color(fn (bool $state): string => $state ? 'success' : 'danger')
-                    ->formatStateUsing(fn (bool $state): string => $state ? 'Active' : 'Disabled')
+                    ->formatStateUsing(fn (bool $state): string => $state ? __('filament.common.active') : __('filament.common.disabled'))
                     ->sortable(),
 
                 TextColumn::make('client_type')
-                    ->label('Type')
+                    ->label(__('filament.client.type'))
                     ->badge()
                     ->sortable(),
 
                 TextColumn::make('contact_email')
-                    ->label('Contact')
+                    ->label(__('filament.client.contact'))
                     ->searchable()
                     ->toggleable(),
 
                 TextColumn::make('rate_limit_per_minute')
-                    ->label('Rate Limit')
+                    ->label(__('filament.client.rate_limit'))
                     ->suffix(' req/min')
                     ->sortable(),
 
                 TextColumn::make('apiKeys_count')
-                    ->label('API Keys')
+                    ->label(__('filament.key.plural'))
                     ->counts('apiKeys')
                     ->sortable(),
 
                 TextColumn::make('requestLogs_count')
-                    ->label('Requests')
+                    ->label(__('filament.log.requests'))
                     ->counts('requestLogs')
                     ->sortable(),
 
                 TextColumn::make('created_at')
-                    ->label('Created')
+                    ->label(__('filament.common.created'))
                     ->dateTime('M d, Y H:i')
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_active')
-                    ->label('Active'),
+                    ->label(__('filament.client.active')),
             ])
             ->actions([
-                \Filament\Actions\EditAction::make(),
-                \Filament\Actions\DeleteAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
             ])
             ->bulkActions([
-                \Filament\Actions\BulkActionGroup::make([
-                    \Filament\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -187,16 +202,16 @@ class ApiClientResource extends Resource
     public static function getRelations(): array
     {
         return [
-            \App\Filament\Resources\ApiClientResource\RelationManagers\ApiKeysRelationManager::class,
+            ApiKeysRelationManager::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Resources\ApiClientResource\Pages\ListApiClients::route('/'),
-            'create' => \App\Filament\Resources\ApiClientResource\Pages\CreateApiClient::route('/create'),
-            'edit' => \App\Filament\Resources\ApiClientResource\Pages\EditApiClient::route('/{record}/edit'),
+            'index' => ListApiClients::route('/'),
+            'create' => CreateApiClient::route('/create'),
+            'edit' => EditApiClient::route('/{record}/edit'),
         ];
     }
 }

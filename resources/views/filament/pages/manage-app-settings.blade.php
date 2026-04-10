@@ -19,17 +19,30 @@
 </style>
 
 <x-filament-panels::page>
-    <!-- Home Page Settings -->
+    <!-- Settings Form -->
     <div style="margin-bottom: 2rem;">
-        {{ $this->form }}
+        <form wire:submit.prevent="save">
+            {{ $this->form }}
+            <div style="margin-top: 1.5rem;">
+                <button
+                    type="submit"
+                    class="fi-color fi-color-success fi-bg-color-600 hover:fi-bg-color-500 dark:fi-bg-color-600 dark:hover:fi-bg-color-500 fi-text-color-0 hover:fi-text-color-0 dark:fi-text-color-0 dark:hover:fi-text-color-0 fi-btn fi-size-md fi-ac-btn-action"
+                >
+                    <svg class="fi-icon fi-size-md" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"></path>
+                    </svg>
+                    {{ __('filament.actions.save') }}
+                </button>
+            </div>
+        </form>
     </div>
 
     <!-- Documentation Table -->
     <div style="background: var(--mas-bg); border: 1px solid var(--mas-border); border-radius: 0.5rem; overflow: hidden; margin-bottom: 2rem;">
         <!-- Table Header -->
         <div style="background: var(--mas-bg-header); padding: 1rem; border-bottom: 1px solid var(--mas-border-light);">
-            <h3 style="font-size: 1.125rem; font-weight: 600; color: var(--mas-text-dark); margin: 0 0 0.25rem 0;">Gestion de la Documentation</h3>
-            <p style="font-size: 0.875rem; color: var(--mas-text-muted); margin: 0;">Gérez vos fichiers de documentation .md</p>
+            <h3 style="font-size: 1.125rem; font-weight: 600; color: var(--mas-text-dark); margin: 0 0 0.25rem 0;">{{ __('filament.manage_app.manage_docs_title') }}</h3>
+            <p style="font-size: 0.875rem; color: var(--mas-text-muted); margin: 0;">{{ __('filament.manage_app.manage_docs_desc') }}</p>
         </div>
 
         @php
@@ -40,12 +53,12 @@
             <!-- Empty State -->
             <div style="padding: 4rem 2rem; text-align: center;">
                 <div style="font-size: 3rem; margin-bottom: 1rem;">📚</div>
-                <h4 style="font-size: 1.125rem; font-weight: 600; color: var(--mas-text-dark); margin: 0 0 0.5rem 0;">Aucune Documentation Trouvée</h4>
+                <h4 style="font-size: 1.125rem; font-weight: 600; color: var(--mas-text-dark); margin: 0 0 0.5rem 0;">{{ __('filament.manage_app.empty_state_title') }}</h4>
                 <p style="font-size: 0.875rem; color: var(--mas-text-muted); margin: 0 0 1.5rem 0;">
-                    Cliquez sur le bouton "Scan Documentation" pour découvrir les fichiers .md dans votre projet.
+                    {{ __('filament.manage_app.empty_state_desc') }}
                 </p>
                 <p style="font-size: 0.75rem; color: var(--mas-text-muted); margin: 0;">
-                    📍 Emplacements scannés : <code style="background: var(--mas-bg-header); padding: 0.25rem 0.5rem; border-radius: 0.25rem;">README.md</code>,
+                    📍 {{ __('filament.manage_app.scan_locations') }} <code style="background: var(--mas-bg-header); padding: 0.25rem 0.5rem; border-radius: 0.25rem;">README.md</code>,
                     <code style="background: var(--mas-bg-header); padding: 0.25rem 0.5rem; border-radius: 0.25rem;">DEPLOYMENT.md</code>,
                     <code style="background: var(--mas-bg-header); padding: 0.25rem 0.5rem; border-radius: 0.25rem;">/docs/**/*.md</code>
                 </p>
@@ -56,11 +69,11 @@
                 <table style="width: 100%; border-collapse: collapse;">
                     <thead>
                         <tr style="border-bottom: 1px solid var(--mas-border-light); background: var(--mas-bg-header);">
-                            <th style="text-align: left; padding: 1rem; font-weight: 600; color: var(--mas-text-dark); font-size: 0.875rem;">Documentation</th>
-                            <th style="text-align: center; padding: 1rem; font-weight: 600; color: var(--mas-text-dark); font-size: 0.875rem;">Icône</th>
-                            <th style="text-align: left; padding: 1rem; font-weight: 600; color: var(--mas-text-dark); font-size: 0.875rem;">Chemin du fichier</th>
-                            <th style="text-align: center; padding: 1rem; font-weight: 600; color: var(--mas-text-dark); font-size: 0.875rem;">Statut</th>
-                            <th style="text-align: center; padding: 1rem; font-weight: 600; color: var(--mas-text-dark); font-size: 0.875rem;">Visible</th>
+                            <th style="text-align: left; padding: 1rem; font-weight: 600; color: var(--mas-text-dark); font-size: 0.875rem;">{{ __('filament.manage_app.table_header_docs') }}</th>
+                            <th style="text-align: center; padding: 1rem; font-weight: 600; color: var(--mas-text-dark); font-size: 0.875rem;">{{ __('filament.manage_app.table_header_icon') }}</th>
+                            <th style="text-align: left; padding: 1rem; font-weight: 600; color: var(--mas-text-dark); font-size: 0.875rem;">{{ __('filament.manage_app.table_header_path') }}</th>
+                            <th style="text-align: center; padding: 1rem; font-weight: 600; color: var(--mas-text-dark); font-size: 0.875rem;">{{ __('filament.manage_app.table_header_status') }}</th>
+                            <th style="text-align: center; padding: 1rem; font-weight: 600; color: var(--mas-text-dark); font-size: 0.875rem;">{{ __('filament.manage_app.table_header_visible') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -115,11 +128,11 @@
                                 <td style="padding: 1rem; vertical-align: middle; text-align: center;">
                                     @if ($fileExists)
                                         <span style="display: inline-block; font-size: 0.75rem; color: #16a34a; background: #f0fdf4; padding: 0.35rem 0.65rem; border-radius: 0.25rem; white-space: nowrap; border: 1px solid #dcfce7;">
-                                            ✓ Existe
+                                            {{ __('filament.manage_app.file_exists') }}
                                         </span>
                                     @else
                                         <span style="display: inline-block; font-size: 0.75rem; color: #dc2626; background: #fef2f2; padding: 0.35rem 0.65rem; border-radius: 0.25rem; white-space: nowrap; border: 1px solid #fee2e2;">
-                                            ✗ Manquant
+                                            {{ __('filament.manage_app.file_missing') }}
                                         </span>
                                     @endif
                                 </td>
@@ -157,7 +170,7 @@
             <svg class="fi-icon fi-size-md" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
             </svg>
-            Scanner la Documentation
+            {{ __('filament.manage_app.scan_button') }}
         </button>
 
         <button
@@ -169,21 +182,21 @@
             <svg class="fi-icon fi-size-md" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
             </svg>
-            Nettoyer les Fichiers Manquants
+            {{ __('filament.manage_app.cleanup_button') }}
         </button>
 
         @if(!app()->environment('production') || config('installation.wizard.security.allow_production_reset', false))
             <div style="margin-left: auto;">
                 <button
                     id="reset-btn"
-                    onclick="if(confirm('ATTENTION: Cette action est DESTRUCTIVE. Elle effacera la base de données (si SQLite), supprimera le verrouillage de l\'installation et vous redirigera vers l\'installateur. Êtes-vous sûr?')) { @this.call('resetApplication') }"
+                    onclick="if(confirm('{{ __('filament.manage_app.reset_confirm_message') }}')) { @this.call('resetApplication') }"
                     type="button"
                     class="fi-color fi-color-danger fi-bg-color-600 hover:fi-bg-color-500 dark:fi-bg-color-600 dark:hover:fi-bg-color-500 fi-text-color-0 hover:fi-text-color-0 dark:fi-text-color-0 dark:hover:fi-text-color-0 fi-btn fi-size-md fi-ac-btn-action"
                 >
                     <svg class="fi-icon fi-size-md" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                         <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"></path>
                     </svg>
-                    Réinitialiser l'application
+                    {{ __('filament.manage_app.reset_button') }}
                 </button>
             </div>
         @endif

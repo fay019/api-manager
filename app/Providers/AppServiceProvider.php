@@ -10,7 +10,13 @@ use App\Observers\PromoObserver;
 use App\Services\Installation\EnvManager;
 use App\Services\Installation\InstallationCheck;
 use App\Services\Installation\RequirementsChecker;
+use App\Services\Installation\SetupSession;
+use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Livewire\Features\SupportFileUploads\FilePreviewController;
+use Livewire\Features\SupportFileUploads\FileUploadController;
 use Livewire\Livewire;
 
 class AppServiceProvider extends ServiceProvider
@@ -26,8 +32,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(InstallationCheckInterface::class, InstallationCheck::class);
 
         // Setup Session Singleton
-        $this->app->singleton(\App\Services\Installation\SetupSession::class, function ($app) {
-            return new \App\Services\Installation\SetupSession;
+        $this->app->singleton(SetupSession::class, function ($app) {
+            return new SetupSession;
         });
     }
 
@@ -36,6 +42,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Register locale switcher in Filament topbar
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::TOPBAR_END,
+            fn () => view('components.filament-locale-switcher')
+        );
+
         Promo::observe(PromoObserver::class);
 
         // Force standard Livewire routes to avoid 404s
@@ -43,19 +55,19 @@ class AppServiceProvider extends ServiceProvider
         // which can mismatch with Filament expectations.
         if (class_exists(Livewire::class)) {
             Livewire::setUpdateRoute(function ($handle) {
-                return \Illuminate\Support\Facades\Route::post('/livewire/update', $handle)->middleware('web');
+                return Route::post('/livewire/update', $handle)->middleware('web');
             });
 
             Livewire::setScriptRoute(function ($handle) {
-                return \Illuminate\Support\Facades\Route::get('/livewire/livewire.js', $handle);
+                return Route::get('/livewire/livewire.js', $handle);
             });
 
             // Also register common asset routes to avoid 404s if Filament/Livewire tries to use standard paths
-            \Illuminate\Support\Facades\Route::post('/livewire/upload-file', [\Livewire\Features\SupportFileUploads\FileUploadController::class, 'handle'])
+            Route::post('/livewire/upload-file', [FileUploadController::class, 'handle'])
                 ->middleware('web')
                 ->name('livewire.upload-file.custom');
 
-            \Illuminate\Support\Facades\Route::get('/livewire/preview-file/{filename}', [\Livewire\Features\SupportFileUploads\FilePreviewController::class, 'handle'])
+            Route::get('/livewire/preview-file/{filename}', [FilePreviewController::class, 'handle'])
                 ->middleware('web')
                 ->name('livewire.preview-file.custom');
         }

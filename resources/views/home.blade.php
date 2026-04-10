@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Home')
+@section('title', __('app.home.title'))
 
 @section('styles')
     <style>
@@ -329,103 +329,103 @@
 @section('content')
     <div class="container">
         <div class="header">
-            <h1>🚀 API Manager</h1>
-            <p>Production-Ready API Hub</p>
-            <div class="version">Laravel 13 • Filament v5 • Shared Hosting Ready</div>
+            <h1>{{ __('app.home.header_title') }}</h1>
+            <p>{{ __('app.home.header_subtitle') }}</p>
+            <div class="version">{{ __('app.home.header_version') }}</div>
         </div>
 
         <div class="content">
             <!-- Quick Navigation -->
             <section class="section">
-                <h2>Quick Navigation</h2>
+                <h2>{{ __('app.home.quick_nav_title') }}</h2>
                 <div class="quick-nav">
                     @if(auth()->check() && auth()->user()->is_admin)
                         <a href="/admin" class="nav-card">
                             <div class="icon">📊</div>
-                            <h3>Admin Panel</h3>
-                            <p>Manage clients, keys, and content</p>
+                            <h3>{{ __('app.home.admin_panel') }}</h3>
+                            <p>{{ __('app.home.admin_panel_desc') }}</p>
                         </a>
                     @endif
 
                     <a href="{{ route('docs.index') }}" class="nav-card">
                         <div class="icon" style="font-size: 3em;">📚</div>
-                        <h3 style="color: #764ba2; font-weight: 700;">All Documentation</h3>
-                        <p style="font-weight: 600;">Browse all guides, API docs & schema</p>
+                        <h3 style="color: #764ba2; font-weight: 700;">{{ __('app.home.all_docs') }}</h3>
+                        <p style="font-weight: 600;">{{ __('app.home.all_docs_desc') }}</p>
                     </a>
 
                     <a href="/api/v1/promo/banner.json" class="nav-card">
                         <div class="icon">📡</div>
-                        <h3>API Test</h3>
-                        <p>View live promo banner</p>
+                        <h3>{{ __('app.home.api_test') }}</h3>
+                        <p>{{ __('app.home.api_test_desc') }}</p>
                     </a>
                 </div>
             </section>
 
             <!-- Getting Started -->
             <section class="section">
-                <h2>Getting Started</h2>
+                <h2>{{ __('app.home.getting_started') }}</h2>
 
                 <div class="getting-started">
-                    <h3>Test the API</h3>
+                    <h3>{{ __('app.home.test_the_api') }}</h3>
                     <ol>
-                        <li>Check the health endpoint:</li>
+                        <li>{{ __('app.home.check_health') }}</li>
                     </ol>
                     <div class="endpoints-list">
                         <code class="endpoint-code">curl http://api-manager.test/api/v1/health</code>
                     </div>
-                    <p class="endpoint-note">See <strong><a href="{{ route('docs.api') }}">API Docs</a></strong> for authentication and examples</p>
+                    <p class="endpoint-note">{{ __('app.home.api_docs_link') }}</p>
                 </div>
             </section>
 
             <!-- API Endpoints -->
             <section class="section">
-                <h2>Available Endpoints</h2>
+                <h2>{{ __('app.home.available_endpoints') }}</h2>
                 <div class="endpoints-list">
                     <div class="endpoint">
                         <span class="method get">GET</span>
                         <span class="path">/api/v1/health</span>
-                        <br><small style="color: #999;">Check API status</small>
+                        <br><small style="color: #999;">{{ __('app.home.health_endpoint') }}</small>
                     </div>
                     <div class="endpoint">
                         <span class="method get">GET</span>
                         <span class="path">/api/v1/promo/banner.json</span>
-                        <br><small style="color: #999;">Get active promo banner</small>
+                        <br><small style="color: #999;">{{ __('app.home.promo_banner') }}</small>
                     </div>
                     <div class="endpoint">
                         <span class="method post">POST</span>
                         <span class="path">/api/v1/promo/event</span>
-                        <br><small style="color: #999;">Track promo events</small>
+                        <br><small style="color: #999;">{{ __('app.home.promo_event') }}</small>
                     </div>
                 </div>
             </section>
 
             <!-- Core Features -->
             <section class="section">
-                <h2>Core Features</h2>
+                <h2>{{ __('app.home.core_features') }}</h2>
                 <div class="features-grid">
                     <div class="feature">
-                        <h4>Modular Architecture</h4>
-                        <p>Organized API structure with versioning</p>
+                        <h4>{{ __('app.home.feature_modular') }}</h4>
+                        <p>{{ __('app.home.feature_modular_desc') }}</p>
                     </div>
                     <div class="feature">
-                        <h4>Secure API Keys</h4>
-                        <p>Bcrypt hashed authentication</p>
+                        <h4>{{ __('app.home.feature_keys') }}</h4>
+                        <p>{{ __('app.home.feature_keys_desc') }}</p>
                     </div>
                     <div class="feature">
-                        <h4>CORS Control</h4>
-                        <p>Per-client CORS configuration</p>
+                        <h4>{{ __('app.home.feature_cors') }}</h4>
+                        <p>{{ __('app.home.feature_cors_desc') }}</p>
                     </div>
                     <div class="feature">
-                        <h4>Rate Limiting</h4>
-                        <p>60 requests/minute by default</p>
+                        <h4>{{ __('app.home.feature_rate') }}</h4>
+                        <p>{{ __('app.home.feature_rate_desc') }}</p>
                     </div>
                     <div class="feature">
-                        <h4>Request Logging</h4>
-                        <p>Track all API requests</p>
+                        <h4>{{ __('app.home.feature_logs') }}</h4>
+                        <p>{{ __('app.home.feature_logs_desc') }}</p>
                     </div>
                     <div class="feature">
-                        <h4>Event Tracking</h4>
-                        <p>Monitor promo interactions</p>
+                        <h4>{{ __('app.home.feature_events') }}</h4>
+                        <p>{{ __('app.home.feature_events_desc') }}</p>
                     </div>
                 </div>
             </section>

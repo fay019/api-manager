@@ -1,0 +1,109 @@
+<?php
+
+return [
+    // Home page
+    'home' => [
+        'title' => 'Accueil',
+        'header_title' => '🚀 API Manager',
+        'header_subtitle' => 'Hub API Prêt pour la Production',
+        'header_version' => 'Laravel 13 • Filament v5 • Prêt pour Hébergement Partagé',
+        'quick_nav_title' => 'Navigation Rapide',
+        'admin_panel' => 'Panneau Admin',
+        'admin_panel_desc' => 'Gérer les clients, les clés et le contenu',
+        'all_docs' => 'Toute la Documentation',
+        'all_docs_desc' => 'Parcourir tous les guides, docs API et schéma',
+        'api_test' => 'Test API',
+        'api_test_desc' => 'Voir la bannière promo en direct',
+        'getting_started' => 'Commencer',
+        'test_the_api' => 'Tester l\'API',
+        'check_health' => 'Vérifier le point de terminaison de santé :',
+        'api_docs_link' => 'Voir les Documents API pour l\'authentification et les exemples',
+        'available_endpoints' => 'Points de Terminaison Disponibles',
+        'health_endpoint' => 'Vérifier l\'état de l\'API',
+        'promo_banner' => 'Obtenir la bannière promo active',
+        'promo_event' => 'Suivi des événements promo',
+        'core_features' => 'Fonctionnalités Principales',
+        'feature_modular' => 'Architecture Modulaire',
+        'feature_modular_desc' => 'Structure d\'API organisée avec versioning',
+        'feature_keys' => 'Clés API Sécurisées',
+        'feature_keys_desc' => 'Authentification hachée Bcrypt',
+        'feature_cors' => 'Contrôle CORS',
+        'feature_cors_desc' => 'Configuration CORS par client',
+        'feature_rate' => 'Limitation de Débit',
+        'feature_rate_desc' => '60 requêtes/minute par défaut',
+        'feature_logs' => 'Journalisation des Requêtes',
+        'feature_logs_desc' => 'Suivre toutes les requêtes API',
+        'feature_events' => 'Suivi des Événements',
+        'feature_events_desc' => 'Surveiller les interactions promo',
+    ],
+
+    // Navigation
+    'nav' => [
+        'back_home' => '← Retour à l\'accueil',
+        'admin' => '🔐 Admin',
+        'docs' => '📚 Documentation',
+        'all_docs' => '📚 Tous les Docs',
+        'contact' => '💬 Contact',
+        'database' => '🗄️ Schéma de Base de Données',
+        'deployment' => '🚢 Guide de Déploiement',
+        'api_manager' => 'API Manager',
+        'theme' => 'Thème',
+    ],
+
+    // Footer
+    'footer' => [
+        'copyright' => '© :year API Manager. Tous droits réservés.',
+        'production' => 'Hub API Prêt pour la Production pour Laravel',
+        'environment' => 'Environnement :',
+        'debug_off' => '• Debug : ARRÊT ✓',
+        'debug_on' => '• Debug : ACTIVÉ (Développement)',
+        'docs' => '📚 Documentation',
+        'database' => '🗄️ Schéma de Base de Données',
+        'deployment' => '🚢 Guide de Déploiement',
+        'admin' => '🔐 Connexion Admin',
+        'admin_panel' => '⚙️ Panneau Admin',
+        'logout' => '🚪 Déconnexion',
+        'projects' => '🎯 Mes Projets',
+        'contact' => '💬 Contact',
+        'contact_me' => '💬 Contactez-moi',
+    ],
+
+    // Documentation pages
+    'docs' => [
+        'title' => 'Documentation',
+        'page_title' => 'Documentation',
+        'subtitle' => 'Guides complets pour le système Hub API',
+        'coming_soon' => 'Documentation Bientôt ! 🎉',
+        'preparing' => 'Nous préparons une documentation complète...',
+        'good_things' => 'De bonnes choses arrivent !',
+        'check_health' => 'En attendant, consultez l\'état de santé de l\'API',
+        'explore_admin' => 'ou explorez le panneau d\'administration',
+        'api_health' => '🏥 Santé de l\'API',
+        'admin_panel' => '⚙️ Panneau Admin',
+        'admin_note' => 'Administrateur ? Activez la documentation dans les Paramètres de Documentation',
+        'key_resources' => 'Ressources Clés',
+        'resource_admin' => 'Panneau Admin :',
+        'resource_health' => 'Santé de l\'API :',
+        'resource_banner' => 'Bannière Promo :',
+        'resource_code' => 'Code Source :',
+        'last_updated' => 'Dernière Mise à Jour :',
+        'documentation_for' => 'Documentation pour :',
+        'back_to_docs' => '← Retour à la Documentation',
+    ],
+
+    // Theme toggle
+    'theme' => [
+        'switch_dark' => 'Passer au Mode Sombre',
+        'switch_light' => 'Passer au Mode Clair',
+        'toggle_aria' => 'Basculer le thème',
+        'toggle_label' => 'Changer de Thème',
+    ],
+
+    // Language switcher
+    'locale' => [
+        'label' => 'Langue',
+        'english' => 'English',
+        'french' => 'Français',
+        'german' => 'Deutsch',
+    ],
+];

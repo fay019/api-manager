@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Http\Controllers\Api\HealthController;
 use App\Models\HealthCheckSetting;
 use BackedEnum;
 use Filament\Notifications\Notification;
@@ -20,12 +21,12 @@ class HealthCheckSettings extends Page
 
     public static function getNavigationLabel(): string
     {
-        return 'Health Check API';
+        return __('filament.health.nav_label') ?? 'Health Check API';
     }
 
     public function getTitle(): string
     {
-        return 'Health Check Configuration';
+        return __('filament.health.title') ?? 'Health Check Configuration';
     }
 
     public function toggleCheck(string $check): void
@@ -39,8 +40,8 @@ class HealthCheckSettings extends Page
 
             Notification::make()
                 ->success()
-                ->title('Updated')
-                ->body(ucfirst(str_replace('_', ' ', $check)).' check '.($settings->{$attribute} ? 'enabled' : 'disabled').'.')
+                ->title(__('filament.health.updated'))
+                ->body(ucfirst(str_replace('_', ' ', $check)).' check '.($settings->{$attribute} ? __('filament.health.check_enabled') : __('filament.health.check_disabled')).'.')
                 ->send();
         }
     }
@@ -48,7 +49,7 @@ class HealthCheckSettings extends Page
     public function testHealthCheck(): void
     {
         try {
-            $controller = new \App\Http\Controllers\Api\HealthController;
+            $controller = new HealthController;
             $response = $controller->index();
             $content = json_decode($response->getContent(), true);
 
@@ -56,14 +57,14 @@ class HealthCheckSettings extends Page
 
             Notification::make()
                 ->success()
-                ->title('Health Check Executed')
-                ->body('Scroll down to see the results.')
+                ->title(__('filament.health.executed_title'))
+                ->body(__('filament.health.executed_body'))
                 ->send();
         } catch (\Exception $e) {
             Notification::make()
                 ->danger()
-                ->title('Health Check Failed')
-                ->body('Error: '.$e->getMessage())
+                ->title(__('filament.health.failed_title'))
+                ->body(__('filament.health.failed_body').' '.$e->getMessage())
                 ->send();
         }
     }

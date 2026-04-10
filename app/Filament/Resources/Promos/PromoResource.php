@@ -23,9 +23,15 @@ class PromoResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Marketing';
 
-    protected static ?string $modelLabel = 'Promotion';
+    public static function getModelLabel(): string
+    {
+        return __('filament.promos.singular');
+    }
 
-    protected static ?string $pluralModelLabel = 'Promotions';
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament.promos.plural');
+    }
 
     protected static ?string $recordTitleAttribute = 'title';
 

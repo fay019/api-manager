@@ -1,0 +1,109 @@
+<?php
+
+return [
+    // Home page
+    'home' => [
+        'title' => 'Startseite',
+        'header_title' => '🚀 API Manager',
+        'header_subtitle' => 'Produktionsreife API-Hub',
+        'header_version' => 'Laravel 13 • Filament v5 • Shared Hosting Ready',
+        'quick_nav_title' => 'Schnellnavigation',
+        'admin_panel' => 'Admin-Panel',
+        'admin_panel_desc' => 'Verwalten Sie Clients, Schlüssel und Inhalte',
+        'all_docs' => 'Gesamte Dokumentation',
+        'all_docs_desc' => 'Durchsuchen Sie alle Leitfäden, API-Dokumente und Schema',
+        'api_test' => 'API-Test',
+        'api_test_desc' => 'Live-Promo-Banner anzeigen',
+        'getting_started' => 'Erste Schritte',
+        'test_the_api' => 'Testen Sie die API',
+        'check_health' => 'Überprüfen Sie den Health-Check-Endpunkt:',
+        'api_docs_link' => 'Weitere Informationen finden Sie in der API-Dokumentation zu Authentifizierung und Beispielen',
+        'available_endpoints' => 'Verfügbare Endpunkte',
+        'health_endpoint' => 'API-Status überprüfen',
+        'promo_banner' => 'Aktives Promo-Banner abrufen',
+        'promo_event' => 'Promo-Ereignisse verfolgen',
+        'core_features' => 'Kernfunktionen',
+        'feature_modular' => 'Modulare Architektur',
+        'feature_modular_desc' => 'Organisierte API-Struktur mit Versionierung',
+        'feature_keys' => 'Sichere API-Schlüssel',
+        'feature_keys_desc' => 'Bcrypt-gehashte Authentifizierung',
+        'feature_cors' => 'CORS-Kontrolle',
+        'feature_cors_desc' => 'CORS-Konfiguration pro Client',
+        'feature_rate' => 'Drosselung',
+        'feature_rate_desc' => '60 Anfragen/Minute standardmäßig',
+        'feature_logs' => 'Anfrage-Protokollierung',
+        'feature_logs_desc' => 'Verfolgen Sie alle API-Anfragen',
+        'feature_events' => 'Event-Tracking',
+        'feature_events_desc' => 'Überwachen Sie Promo-Interaktionen',
+    ],
+
+    // Navigation
+    'nav' => [
+        'back_home' => '← Zurück zur Startseite',
+        'admin' => '🔐 Admin',
+        'docs' => '📚 Dokumentation',
+        'all_docs' => '📚 Alle Dokumente',
+        'contact' => '💬 Kontakt',
+        'database' => '🗄️ Datenbankschema',
+        'deployment' => '🚢 Bereitstellungsleitfaden',
+        'api_manager' => 'API Manager',
+        'theme' => 'Thema',
+    ],
+
+    // Footer
+    'footer' => [
+        'copyright' => '© :year API Manager. Alle Rechte vorbehalten.',
+        'production' => 'Produktionsreife API-Hub für Laravel',
+        'environment' => 'Umgebung:',
+        'debug_off' => '• Debug: AUS ✓',
+        'debug_on' => '• Debug: AN (Entwicklung)',
+        'docs' => '📚 Dokumentation',
+        'database' => '🗄️ Datenbankschema',
+        'deployment' => '🚢 Bereitstellungsleitfaden',
+        'admin' => '🔐 Admin-Anmeldung',
+        'admin_panel' => '⚙️ Admin-Panel',
+        'logout' => '🚪 Abmelden',
+        'projects' => '🎯 Meine Projekte',
+        'contact' => '💬 Kontakt',
+        'contact_me' => '💬 Kontaktieren Sie mich',
+    ],
+
+    // Documentation pages
+    'docs' => [
+        'title' => 'Dokumentation',
+        'page_title' => 'Dokumentation',
+        'subtitle' => 'Komplette Anleitungen für das API-Hub-System',
+        'coming_soon' => 'Dokumentation Kommt Bald! 🎉',
+        'preparing' => 'Wir bereiten eine umfassende Dokumentation vor...',
+        'good_things' => 'Gutes steht bevor!',
+        'check_health' => 'Überprüfen Sie in der Zwischenzeit den API-Gesundheitsstatus',
+        'explore_admin' => 'oder erkunden Sie das Admin-Panel',
+        'api_health' => '🏥 API-Gesundheit',
+        'admin_panel' => '⚙️ Admin-Panel',
+        'admin_note' => 'Administrator? Aktivieren Sie die Dokumentation in den Dokumentationseinstellungen',
+        'key_resources' => 'Wichtige Ressourcen',
+        'resource_admin' => 'Admin-Panel:',
+        'resource_health' => 'API-Gesundheit:',
+        'resource_banner' => 'Promo-Banner:',
+        'resource_code' => 'Quellcode:',
+        'last_updated' => 'Zuletzt aktualisiert:',
+        'documentation_for' => 'Dokumentation für:',
+        'back_to_docs' => '← Zurück zur Dokumentation',
+    ],
+
+    // Theme toggle
+    'theme' => [
+        'switch_dark' => 'Zum dunklen Modus wechseln',
+        'switch_light' => 'Zum hellen Modus wechseln',
+        'toggle_aria' => 'Thema umschalten',
+        'toggle_label' => 'Thema wechseln',
+    ],
+
+    // Language switcher
+    'locale' => [
+        'label' => 'Sprache',
+        'english' => 'English',
+        'french' => 'Français',
+        'german' => 'Deutsch',
+    ],
+];

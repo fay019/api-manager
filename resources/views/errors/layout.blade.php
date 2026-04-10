@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -114,8 +114,8 @@
         <div class="error-title">@yield('title')</div>
         <div class="error-description">@yield('message')</div>
         <div class="actions">
-            <a href="{{ url('/') }}" class="btn btn-primary">← Retour à l'accueil</a>
-            <a href="{{ url()->previous() }}" class="btn btn-secondary">← Page précédente</a>
+            <a href="{{ url('/') }}" class="btn btn-primary">{{ __('errors.' . ($exception->getStatusCode() ?? '500') . '.back') }}</a>
+            <a href="{{ url()->previous() }}" class="btn btn-secondary">{{ __('errors.' . ($exception->getStatusCode() ?? '500') . '.back') }}</a>
         </div>
     </div>
 

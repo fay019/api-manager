@@ -2,10 +2,20 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\ApiKeyResource\Pages\CreateApiKey;
+use App\Filament\Resources\ApiKeyResource\Pages\EditApiKey;
+use App\Filament\Resources\ApiKeyResource\Pages\ListApiKeys;
+use App\Filament\Resources\ApiKeyResource\Pages\ViewApiKey;
 use App\Models\ApiKey;
 use App\Services\ApiKeyService;
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Actions\Action as FormAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -30,50 +40,55 @@ class ApiKeyResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.nav.keys');
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
-                Section::make('Key Information')
-                    ->description('Basic details about this API key')
+                Section::make(__('filament.key.section_info'))
+                    ->description(__('filament.key.section_info_desc') ?? 'Basic details about this API key')
                     ->schema([
                         Select::make('api_client_id')
-                            ->label('API Client')
+                            ->label(__('filament.key.client'))
                             ->relationship('apiClient', 'name')
                             ->required()
                             ->searchable()
                             ->preload(),
 
                         TextInput::make('name')
-                            ->label('Key Name')
+                            ->label(__('filament.key.name'))
                             ->required()
                             ->maxLength(255)
                             ->placeholder('e.g., Mobile App Key, Integration #1'),
                     ])->columns(2),
 
-                Section::make('Validity & Status')
-                    ->description('Control when this key is active')
+                Section::make(__('filament.key.section_validity'))
+                    ->description(__('filament.key.section_validity_desc') ?? 'Control when this key is active')
                     ->schema([
                         DateTimePicker::make('starts_at')
-                            ->label('Starts At')
+                            ->label(__('filament.key.starts_at'))
                             ->default(now())
-                            ->helperText('When this key becomes active'),
+                            ->helperText(__('filament.key.starts_at_help') ?? 'When this key becomes active'),
 
                         DateTimePicker::make('expires_at')
-                            ->label('Expires At')
-                            ->helperText('Leave empty for no expiration'),
+                            ->label(__('filament.key.expires_at'))
+                            ->helperText(__('filament.key.expires_at_help') ?? 'Leave empty for no expiration'),
 
                         Toggle::make('is_active')
-                            ->label('Is Active')
+                            ->label(__('filament.key.is_active'))
                             ->default(true)
-                            ->helperText('Manually enable or disable this key'),
+                            ->helperText(__('filament.key.is_active_help') ?? 'Manually enable or disable this key'),
                     ])->columns(3),
 
-                Section::make('Key Metadata')
-                    ->description('Technical details about the key')
+                Section::make(__('filament.key.section_metadata'))
+                    ->description(__('filament.key.section_metadata_desc') ?? 'Technical details about the key')
                     ->schema([
                         TextInput::make('full_key')
-                            ->label('Clé API complète')
+                            ->label(__('filament.key.full_key'))
                             ->formatStateUsing(function ($record) {
                                 if (! $record?->key_encrypted) {
                                     return null;
@@ -82,7 +97,7 @@ class ApiKeyResource extends Resource
                                 try {
                                     return Crypt::decryptString($record->key_encrypted);
                                 } catch (\Exception $e) {
-                                    return 'Error: Could not decrypt key';
+                                    return __('filament.key.decrypt_error') ?? 'Error: Could not decrypt key';
                                 }
                             })
                             ->disabled()
@@ -106,7 +121,7 @@ class ApiKeyResource extends Resource
                                             }
                                             if (navigator.clipboard && window.isSecureContext) {
                                                 navigator.clipboard.writeText(text).then(() => {
-                                                    alert('Clé copiée !');
+                                                    alert('".__('filament.key.copied')."');
                                                 });
                                             } else {
                                                 const textArea = document.createElement('textarea');
@@ -117,7 +132,7 @@ class ApiKeyResource extends Resource
                                                 textArea.select();
                                                 document.execCommand('copy');
                                                 document.body.removeChild(textArea);
-                                                alert('Clé copiée !');
+                                                alert('".__('filament.key.copied')."');
                                             }
                                             return false;
                                         ",
@@ -126,16 +141,16 @@ class ApiKeyResource extends Resource
                             ->columnSpanFull(),
 
                         TextInput::make('key_prefix')
-                            ->label('Key Prefix')
+                            ->label(__('filament.key.prefix'))
                             ->disabled()
                             ->dehydrated(false)
-                            ->placeholder('Generated after creation'),
+                            ->placeholder(__('filament.key.prefix_placeholder') ?? 'Generated after creation'),
 
                         DateTimePicker::make('last_used_at')
-                            ->label('Last Used At')
+                            ->label(__('filament.key.last_used'))
                             ->disabled()
                             ->dehydrated(false)
-                            ->placeholder('Never'),
+                            ->placeholder(__('filament.key.never') ?? 'Never'),
                     ])->columns(2)
                     ->visible(fn ($record) => $record !== null),
             ]);
@@ -146,33 +161,33 @@ class ApiKeyResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('apiClient.name')
-                    ->label('Client')
+                    ->label(__('filament.key.client'))
                     ->searchable()
                     ->sortable(),
 
                 TextColumn::make('name')
-                    ->label('Key Name')
+                    ->label(__('filament.key.name'))
                     ->searchable()
                     ->sortable(),
 
                 TextColumn::make('starts_at')
-                    ->label('Starts')
+                    ->label(__('filament.key.starts_at'))
                     ->dateTime('M d, Y')
                     ->sortable()
                     ->toggleable(),
 
                 TextColumn::make('expires_at')
-                    ->label('Expires')
+                    ->label(__('filament.key.expires_at'))
                     ->dateTime('M d, Y')
-                    ->placeholder('Never')
+                    ->placeholder(__('filament.key.never') ?? 'Never')
                     ->sortable(),
 
                 TextColumn::make('key_prefix')
-                    ->label('Key Prefix')
+                    ->label(__('filament.key.prefix'))
                     ->formatStateUsing(fn ($state) => $state.'****'),
 
                 TextColumn::make('is_active')
-                    ->label('Status')
+                    ->label(__('filament.key.status_active'))
                     ->badge()
                     ->getStateUsing(fn (ApiKey $record): string => match (true) {
                         ! $record->is_active => 'revoked',
@@ -187,23 +202,24 @@ class ApiKeyResource extends Resource
                         'scheduled' => 'info',
                         default => 'gray',
                     })
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'revoked' => __('filament.key.status_revoked'),
+                        'scheduled' => __('filament.key.status_scheduled'),
+                        'expired' => __('filament.key.status_expired'),
+                        'active' => __('filament.key.status_active'),
+                        default => $state,
+                    })
                     ->sortable(),
 
                 TextColumn::make('last_used_at')
-                    ->label('Last Used')
+                    ->label(__('filament.key.last_used'))
                     ->dateTime('M d, Y H:i')
-                    ->placeholder('Never')
+                    ->placeholder(__('filament.key.never') ?? 'Never')
                     ->sortable()
                     ->toggleable(),
 
-                TextColumn::make('expires_at')
-                    ->label('Expires')
-                    ->dateTime('M d, Y')
-                    ->placeholder('Never')
-                    ->sortable(),
-
                 TextColumn::make('created_at')
-                    ->label('Created')
+                    ->label(__('filament.common.created'))
                     ->dateTime('M d, Y')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -211,26 +227,26 @@ class ApiKeyResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('is_active')
                     ->options([
-                        1 => 'Active',
-                        0 => 'Revoked',
+                        1 => __('filament.key.filter_active'),
+                        0 => __('filament.key.filter_revoked'),
                     ])
-                    ->label('Status'),
+                    ->label(__('filament.key.status_active')),
 
                 Tables\Filters\SelectFilter::make('api_client_id')
                     ->relationship('apiClient', 'name')
-                    ->label('Client'),
+                    ->label(__('filament.key.filter_client')),
             ])
             ->actions([
-                \Filament\Actions\ViewAction::make(),
-                \Filament\Actions\EditAction::make(),
-                \Filament\Actions\Action::make('regenerate')
-                    ->label('Régénérer')
+                ViewAction::make(),
+                EditAction::make(),
+                Action::make('regenerate')
+                    ->label(__('filament.key.regenerate'))
                     ->icon('heroicon-m-arrow-path')
                     ->color('warning')
                     ->requiresConfirmation()
-                    ->modalHeading('Régénérer la clé API')
-                    ->modalDescription('Êtes-vous sûr de vouloir régénérer cette clé ? L\'ancienne clé cessera immédiatement de fonctionner.')
-                    ->modalSubmitActionLabel('Régénérer')
+                    ->modalHeading(__('filament.key.regenerate_action'))
+                    ->modalDescription(__('filament.key.regenerate_confirm'))
+                    ->modalSubmitActionLabel(__('filament.key.regenerate'))
                     ->action(function (ApiKey $record) {
                         $generatedKey = (new ApiKeyService)->generateKey();
 
@@ -242,12 +258,12 @@ class ApiKeyResource extends Resource
 
                         Notification::make()
                             ->success()
-                            ->title('Clé API régénérée')
-                            ->body("Voici votre nouvelle clé API :  \n`{$generatedKey['raw']}`  \n\n**Note :** Conservez-la précieusement.")
+                            ->title(__('filament.key.regenerate_success'))
+                            ->body(__('filament.key.regenerate_message')." \n`{$generatedKey['raw']}`")
                             ->persistent()
                             ->actions([
-                                \Filament\Actions\Action::make('copy')
-                                    ->label('Copier la clé')
+                                Action::make('copy')
+                                    ->label(__('filament.key.copy_key'))
                                     ->color('gray')
                                     ->url('#')
                                     ->extraAttributes([
@@ -255,9 +271,9 @@ class ApiKeyResource extends Resource
                                             const text = '{$generatedKey['raw']}';
                                             if (navigator.clipboard && window.isSecureContext) {
                                                 navigator.clipboard.writeText(text).then(() => {
-                                                    alert('Clé copiée !');
+                                                    alert('".__('filament.key.copied')."');
                                                 }).catch(err => {
-                                                    console.error('Erreur lors de la copie : ', err);
+                                                    console.error('Error copying: ', err);
                                                 });
                                             } else {
                                                 const textArea = document.createElement('textarea');
@@ -270,9 +286,9 @@ class ApiKeyResource extends Resource
                                                 textArea.select();
                                                 try {
                                                     document.execCommand('copy');
-                                                    alert('Clé copiée !');
+                                                    alert('".__('filament.key.copied')."');
                                                 } catch (err) {
-                                                    console.error('Erreur lors de la copie (fallback) : ', err);
+                                                    console.error('Error copying (fallback): ', err);
                                                 }
                                                 document.body.removeChild(textArea);
                                             }
@@ -283,8 +299,8 @@ class ApiKeyResource extends Resource
                             ->send();
                     }),
 
-                \Filament\Actions\Action::make('revoke')
-                    ->label('Revoke')
+                Action::make('revoke')
+                    ->label(__('filament.key.revoke'))
                     ->icon('heroicon-m-x-mark')
                     ->color('danger')
                     ->visible(fn (ApiKey $record) => $record->is_active)
@@ -292,18 +308,18 @@ class ApiKeyResource extends Resource
                         $record->update(['is_active' => false]);
                         Notification::make()
                             ->success()
-                            ->title('Key Revoked')
-                            ->body('API key has been revoked.')
+                            ->title(__('filament.key.revoked'))
+                            ->body(__('filament.key.revoke_success') ?? 'API key has been revoked.')
                             ->send();
                     })
                     ->requiresConfirmation(),
 
-                \Filament\Actions\DeleteAction::make()
+                DeleteAction::make()
                     ->visible(fn (ApiKey $record) => ! $record->is_active),
             ])
             ->bulkActions([
-                \Filament\Actions\BulkActionGroup::make([
-                    \Filament\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -318,10 +334,10 @@ class ApiKeyResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\Resources\ApiKeyResource\Pages\ListApiKeys::route('/'),
-            'create' => \App\Filament\Resources\ApiKeyResource\Pages\CreateApiKey::route('/create'),
-            'view' => \App\Filament\Resources\ApiKeyResource\Pages\ViewApiKey::route('/{record}'),
-            'edit' => \App\Filament\Resources\ApiKeyResource\Pages\EditApiKey::route('/{record}/edit'),
+            'index' => ListApiKeys::route('/'),
+            'create' => CreateApiKey::route('/create'),
+            'view' => ViewApiKey::route('/{record}'),
+            'edit' => EditApiKey::route('/{record}/edit'),
         ];
     }
 }

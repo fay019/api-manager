@@ -45,7 +45,7 @@
 
         <div class="ads-button-group">
             <x-filament::button type="submit" wire:loading.attr="disabled">
-                Save Settings
+                {{ __('filament.actions.save') }}
             </x-filament::button>
         </div>
     </form>

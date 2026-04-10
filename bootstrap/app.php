@@ -1,5 +1,11 @@
 <?php
 
+use App\Http\Middleware\ApiKeyAuthentication;
+use App\Http\Middleware\CorsPerClient;
+use App\Http\Middleware\EnsureDatabaseExists;
+use App\Http\Middleware\LogApiRequest;
+use App\Http\Middleware\SetLocale;
+use App\Http\Middleware\ThrottleApiClient;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -12,27 +18,32 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->encryptCookies(except: [
             'api_manager_setup_token',
+            'locale',
         ]);
 
         // Trust proxies for correct HTTPS detection
         $middleware->trustProxies(at: '*');
 
         $middleware->web(prepend: [
-            \App\Http\Middleware\EnsureDatabaseExists::class,
+            EnsureDatabaseExists::class,
+        ]);
+
+        $middleware->web(append: [
+            SetLocale::class,
         ]);
 
         $middleware->alias([
-            'api.key' => \App\Http\Middleware\ApiKeyAuthentication::class,
-            'cors.client' => \App\Http\Middleware\CorsPerClient::class,
-            'throttle.api.client' => \App\Http\Middleware\ThrottleApiClient::class,
-            'log.api' => \App\Http\Middleware\LogApiRequest::class,
+            'api.key' => ApiKeyAuthentication::class,
+            'cors.client' => CorsPerClient::class,
+            'throttle.api.client' => ThrottleApiClient::class,
+            'log.api' => LogApiRequest::class,
         ]);
 
         $middleware->api(prepend: [
-            \App\Http\Middleware\ApiKeyAuthentication::class,
-            \App\Http\Middleware\CorsPerClient::class,
-            \App\Http\Middleware\ThrottleApiClient::class,
-            \App\Http\Middleware\LogApiRequest::class,
+            ApiKeyAuthentication::class,
+            CorsPerClient::class,
+            ThrottleApiClient::class,
+            LogApiRequest::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

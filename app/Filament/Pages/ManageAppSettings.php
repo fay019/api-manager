@@ -6,7 +6,8 @@ use App\Models\DocumentationSetting;
 use App\Services\AppSettingService;
 use App\Services\DocumentationScanner;
 use BackedEnum;
-use Filament\Actions\Action;
+use App\Models\Setting;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -25,7 +26,12 @@ class ManageAppSettings extends Page implements HasForms
 
     protected static ?int $navigationSort = 99;
 
-    protected static ?string $title = 'Documentation Settings';
+    protected static ?string $title = null;
+
+    public function getTitle(): string
+    {
+        return __('filament.manage_app.title');
+    }
 
     protected string $view = 'filament.pages.manage-app-settings';
 
@@ -34,6 +40,31 @@ class ManageAppSettings extends Page implements HasForms
     public function mount(): void
     {
         $this->form->fill($this->getInitialFormData());
+    }
+
+    public function save(): void
+    {
+        try {
+            $state = $this->form->getState();
+
+            Setting::set(
+                'contact_email',
+                $state['contact_email'],
+                'string',
+                'Email address for contact form'
+            );
+
+            Notification::make()
+                ->success()
+                ->title(__('filament.manage_app.saved_title'))
+                ->send();
+        } catch (\Exception $e) {
+            Notification::make()
+                ->danger()
+                ->title(__('filament.common.error'))
+                ->body($e->getMessage())
+                ->send();
+        }
     }
 
     public function form(Schema $schema): Schema
@@ -50,7 +81,9 @@ class ManageAppSettings extends Page implements HasForms
 
     protected function getInitialFormData(): array
     {
-        $formData = [];
+        $formData = [
+            'contact_email' => Setting::get('contact_email'),
+        ];
 
         DocumentationSetting::all()->each(function (DocumentationSetting $doc) use (&$formData) {
             $formData['doc_'.$doc->doc_name.'_visible'] = $doc->is_visible;
@@ -68,15 +101,15 @@ class ManageAppSettings extends Page implements HasForms
 
             Notification::make()
                 ->success()
-                ->title('Documentation scannée')
-                ->body('Trouvé '.count($scanResults).' fichier(s) de documentation. Les nouveaux documents sont masqués par défaut.')
+                ->title(__('filament.manage_app.documentation_scanned'))
+                ->body(str_replace('{count}', count($scanResults), __('filament.manage_app.documentation_scan_body')))
                 ->send();
 
             $this->redirect(request()->header('Referer') ?? url()->current());
         } catch (\Exception $e) {
             Notification::make()
                 ->danger()
-                ->title('Error scanning documentation')
+                ->title(__('filament.manage_app.error_scanning'))
                 ->body($e->getMessage())
                 ->send();
         }
@@ -98,14 +131,14 @@ class ManageAppSettings extends Page implements HasForms
             if (empty($deleted)) {
                 Notification::make()
                     ->info()
-                    ->title('Aucun fichier manquant')
-                    ->body('Tous les fichiers de documentation existent.')
+                    ->title(__('filament.manage_app.no_missing_files'))
+                    ->body(__('filament.manage_app.no_missing_files_body'))
                     ->send();
             } else {
                 Notification::make()
                     ->success()
-                    ->title('Nettoyage terminé')
-                    ->body('Supprimé '.count($deleted).' enregistrement(s) manquant(s) : '.implode(', ', $deleted))
+                    ->title(__('filament.manage_app.cleanup_done'))
+                    ->body(str_replace('{count}', count($deleted), __('filament.manage_app.cleanup_done_body')).' '.implode(', ', $deleted))
                     ->send();
 
                 $this->redirect(request()->header('Referer') ?? url()->current());
@@ -113,7 +146,7 @@ class ManageAppSettings extends Page implements HasForms
         } catch (\Exception $e) {
             Notification::make()
                 ->danger()
-                ->title('Erreur lors du nettoyage')
+                ->title(__('filament.manage_app.cleanup_error_title'))
                 ->body($e->getMessage())
                 ->send();
         }
@@ -136,15 +169,15 @@ class ManageAppSettings extends Page implements HasForms
 
                 Notification::make()
                     ->success()
-                    ->title('Saved')
-                    ->body($doc->doc_name.' visibility updated.')
+                    ->title(__('filament.manage_app.saved_title'))
+                    ->body($doc->doc_name.' '.__('filament.manage_app.saved_body'))
                     ->send();
             }
         } catch (\Exception $e) {
             Notification::make()
                 ->danger()
-                ->title('Error')
-                ->body('Failed to update: '.$e->getMessage())
+                ->title(__('filament.common.error'))
+                ->body(__('filament.manage_app.error_update').' '.$e->getMessage())
                 ->send();
         }
     }
@@ -159,15 +192,15 @@ class ManageAppSettings extends Page implements HasForms
 
                 Notification::make()
                     ->success()
-                    ->title('Icon updated')
-                    ->body('Icon for '.$doc->doc_name.' has been updated.')
+                    ->title(__('filament.manage_app.icon_updated'))
+                    ->body(str_replace('{docName}', $doc->doc_name, __('filament.manage_app.icon_updated_body')))
                     ->send();
             }
         } catch (\Exception $e) {
             Notification::make()
                 ->danger()
-                ->title('Error')
-                ->body('Failed to update icon: '.$e->getMessage())
+                ->title(__('filament.common.error'))
+                ->body(__('filament.manage_app.error_update_icon').' '.$e->getMessage())
                 ->send();
         }
     }
@@ -177,8 +210,8 @@ class ManageAppSettings extends Page implements HasForms
         if (app()->environment('production') && ! config('installation.wizard.security.allow_production_reset', false)) {
             Notification::make()
                 ->danger()
-                ->title('Action interdite')
-                ->body('La réinitialisation est interdite en production.')
+                ->title(__('filament.manage_app.production_forbidden'))
+                ->body(__('filament.manage_app.production_forbidden_body'))
                 ->send();
 
             return;
@@ -189,8 +222,8 @@ class ManageAppSettings extends Page implements HasForms
             if ($service->resetApplication()) {
                 Notification::make()
                     ->success()
-                    ->title('Application réinitialisée')
-                    ->body('L\'application a été remise à son état initial.')
+                    ->title(__('filament.manage_app.app_reset'))
+                    ->body(__('filament.manage_app.app_reset_body'))
                     ->send();
 
                 $this->redirect('/setup/welcome', navigate: true);
@@ -200,13 +233,13 @@ class ManageAppSettings extends Page implements HasForms
 
             Notification::make()
                 ->danger()
-                ->title('Échec de la réinitialisation')
-                ->body('Une erreur est survenue lors de la réinitialisation.')
+                ->title(__('filament.manage_app.reset_failed'))
+                ->body(__('filament.manage_app.reset_failed_body'))
                 ->send();
         } catch (\Exception $e) {
             Notification::make()
                 ->danger()
-                ->title('Erreur')
+                ->title(__('filament.common.error'))
                 ->body($e->getMessage())
                 ->send();
         }
@@ -215,25 +248,25 @@ class ManageAppSettings extends Page implements HasForms
     public function resetAction(): Action
     {
         return Action::make('reset')
-            ->label('Réinitialiser l\'application')
+            ->label(__('filament.manage_app.reset_action_label'))
             ->color('danger')
             ->icon('heroicon-m-exclamation-triangle')
             ->requiresConfirmation()
-            ->modalHeading('Réinitialisation Complète')
-            ->modalDescription('ATTENTION: Cette action est DESTRUCTIVE. Elle effacera la base de données (si SQLite), supprimera le verrouillage de l\'installation et vous redirigera vers l\'installateur.')
+            ->modalHeading(__('filament.manage_app.reset_modal_heading'))
+            ->modalDescription(__('filament.manage_app.reset_modal_description'))
             ->form([
                 TextInput::make('confirm')
-                    ->label('Saisissez "Confirmer"')
-                    ->placeholder('Confirmer')
+                    ->label(__('filament.manage_app.reset_confirm_label'))
+                    ->placeholder('Confirm')
                     ->required()
-                    ->rules(['in:Confirmer']),
+                    ->rules(['in:Confirm']),
             ])
             ->action(function (AppSettingService $service) {
                 if (app()->environment('production') && ! config('installation.wizard.security.allow_production_reset', false)) {
                     Notification::make()
                         ->danger()
-                        ->title('Action interdite')
-                        ->body('La réinitialisation est interdite en production.')
+                        ->title(__('filament.manage_app.production_forbidden'))
+                        ->body(__('filament.manage_app.production_forbidden_body'))
                         ->send();
 
                     return;
@@ -242,8 +275,8 @@ class ManageAppSettings extends Page implements HasForms
                 if ($service->resetApplication()) {
                     Notification::make()
                         ->success()
-                        ->title('Application réinitialisée')
-                        ->body('L\'application a été remise à son état initial.')
+                        ->title(__('filament.manage_app.app_reset'))
+                        ->body(__('filament.manage_app.app_reset_body'))
                         ->send();
 
                     return redirect()->to('/setup/welcome');
@@ -251,8 +284,8 @@ class ManageAppSettings extends Page implements HasForms
 
                 Notification::make()
                     ->danger()
-                    ->title('Échec de la réinitialisation')
-                    ->body('Une erreur est survenue lors de la réinitialisation.')
+                    ->title(__('filament.manage_app.reset_failed'))
+                    ->body(__('filament.manage_app.reset_failed_body'))
                     ->send();
             });
     }
