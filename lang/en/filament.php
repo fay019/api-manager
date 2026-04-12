@@ -207,7 +207,14 @@ return [
     'ads' => [
         'title' => 'Ads Settings',
         'section' => 'Google AdSense Configuration',
+        'section_desc' => 'Enable or disable Google AdSense throughout the application.',
+        'helper' => 'Check to enable automatic ad display.',
         'saved' => 'Settings saved',
+        'config_section' => 'Google AdSense Configuration',
+        'config_description' => 'Enter your Google AdSense Publisher ID for automatic ads',
+        'client_id_label' => 'Google AdSense Client ID',
+        'client_id_placeholder' => 'ca-pub-xxxxxxxxxxxxxxxx',
+        'client_id_help' => 'Your Google AdSense Publisher ID (ca-pub-...)',
     ],
 
     'docs' => [

@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Models\Setting;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -41,6 +42,7 @@ class ManageAdsSettings extends Page implements HasForms
     {
         $this->form->fill([
             'ads_enabled' => Setting::get('ads_enabled', app()->environment('production')),
+            'ads_client_id' => Setting::get('ads_client_id', ''),
         ]);
     }
 
@@ -53,8 +55,19 @@ class ManageAdsSettings extends Page implements HasForms
                     ->schema([
                         Toggle::make('ads_enabled')
                             ->label(fn (Get $get): string => $get('ads_enabled') ? __('filament.common.enabled') : __('filament.common.disabled'))
-                            ->helperText(__('filament.ads.helper') ?? 'Enable or disable Google AdSense across the application')
+                            ->helperText(__('filament.ads.helper'))
                             ->live(),
+                    ]),
+
+                Section::make(__('filament.ads.config_section'))
+                    ->visible(fn (Get $get): bool => $get('ads_enabled'))
+                    ->description(__('filament.ads.config_description'))
+                    ->schema([
+                        TextInput::make('ads_client_id')
+                            ->label(__('filament.ads.client_id_label'))
+                            ->placeholder(__('filament.ads.client_id_placeholder'))
+                            ->helperText(__('filament.ads.client_id_help'))
+                            ->required(fn (Get $get): bool => $get('ads_enabled')),
                     ]),
 
                 Actions::make([
@@ -77,6 +90,13 @@ class ManageAdsSettings extends Page implements HasForms
                 (bool) ($state['ads_enabled'] ?? false),
                 'boolean',
                 'Enable or disable Google AdSense'
+            );
+
+            Setting::set(
+                'ads_client_id',
+                (string) ($state['ads_client_id'] ?? ''),
+                'string',
+                'Google AdSense Client ID'
             );
 
             Notification::make()

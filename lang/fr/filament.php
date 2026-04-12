@@ -208,8 +208,13 @@ return [
         'title' => 'Paramètres des Annonces',
         'section' => 'Configuration Google AdSense',
         'section_desc' => 'Activez ou désactivez Google AdSense sur l\'ensemble de l\'application.',
-        'helper' => 'Cochez pour activer l\'affichage des publicités.',
+        'helper' => 'Cochez pour activer l\'affichage des publicités automatiques.',
         'saved' => 'Paramètres enregistrés',
+        'config_section' => 'Configuration Google AdSense',
+        'config_description' => 'Entrez votre identifiant éditeur Google AdSense pour les publicités automatiques',
+        'client_id_label' => 'Identifiant Client Google AdSense',
+        'client_id_placeholder' => 'ca-pub-xxxxxxxxxxxxxxxx',
+        'client_id_help' => 'Votre identifiant d\'éditeur Google AdSense (ca-pub-...)',
     ],
 
     'docs' => [

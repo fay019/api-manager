@@ -18,8 +18,12 @@
     @livewireStyles
 
     <!-- Google AdSense -->
-    @if(\App\Models\Setting::get('ads_enabled', app()->environment('production')))
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8411028629670447"
+    @php
+        $adsEnabled = \App\Models\Setting::get('ads_enabled', app()->environment('production'));
+        $clientId = \App\Models\Setting::get('ads_client_id', 'ca-pub-8411028629670447');
+    @endphp
+    @if($adsEnabled && $clientId)
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ $clientId }}"
             crossorigin="anonymous"></script>
     @endif
 
@@ -60,6 +64,20 @@
             margin: 0;
             padding: 0;
             min-height: calc(100vh - 7rem - 400px); /* Adjust min-height for padding-top/bottom */
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Google AdSense fix: Prevent ads from overlapping content */
+        ins.adsbygoogle {
+            display: block !important;
+            margin: 1rem auto !important;
+            text-align: center !important;
+        }
+
+        /* Prevent injected fixed position ads from overlapping */
+        [style*="position: fixed"] {
+            z-index: 10 !important;
         }
     </style>
 
@@ -68,6 +86,7 @@
 <body>
     @include('layouts.partials.navbar')
 
+    <!-- Main Content -->
     <div class="main-content">
         @yield('content')
     </div>
@@ -76,5 +95,14 @@
 
     @yield('scripts')
     @livewireScripts
+
+    <!-- Push ads script to reload after page load -->
+    <script>
+        if (typeof window.adsbygoogle !== 'undefined') {
+            window.addEventListener('load', function() {
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            });
+        }
+    </script>
 </body>
 </html>

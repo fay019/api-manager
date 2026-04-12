@@ -207,7 +207,14 @@ return [
     'ads' => [
         'title' => 'Anzeigeneinstellungen',
         'section' => 'Google AdSense-Konfiguration',
+        'section_desc' => 'Aktivieren oder deaktivieren Sie Google AdSense in der gesamten Anwendung.',
+        'helper' => 'Aktivieren Sie diese Option, um automatische Anzeigen anzuzeigen.',
         'saved' => 'Einstellungen gespeichert',
+        'config_section' => 'Google AdSense-Konfiguration',
+        'config_description' => 'Geben Sie Ihre Google AdSense-Verleger-ID für automatische Anzeigen ein',
+        'client_id_label' => 'Google AdSense-Kunden-ID',
+        'client_id_placeholder' => 'ca-pub-xxxxxxxxxxxxxxxx',
+        'client_id_help' => 'Ihre Google AdSense-Verleger-ID (ca-pub-...)',
     ],
 
     'docs' => [

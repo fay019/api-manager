@@ -46,3 +46,45 @@
         color: #f3f4f6;
     }
 }
+
+@layer components {
+    /* Fix Google AdSense Auto Ads to prevent overlapping content */
+    ins.adsbygoogle {
+        @apply block !important;
+        display: block !important;
+        clear: both !important;
+    }
+
+    /* Ensure main content has proper layout and sits above ads */
+    .main-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Container spacing to prevent overlap with injected ads */
+    .navbar-spacing {
+        margin-top: 0;
+    }
+
+    /* Prevent auto-ads from using position: fixed that could overlap */
+    body > div[style*="position: fixed"],
+    body > aside[style*="position: fixed"],
+    body > [style*="position: fixed"] {
+        z-index: 5 !important;
+        max-width: 100% !important;
+    }
+
+    /* Ensure ads don't overflow container */
+    ins.adsbygoogle[style*="display: block"] {
+        margin: 1rem auto !important;
+        max-width: 100% !important;
+    }
+
+    /* Mobile responsiveness for auto ads */
+    @media (max-width: 640px) {
+        ins.adsbygoogle {
+            @apply w-full;
+            margin: 0.5rem auto !important;
+        }
+    }
+}
