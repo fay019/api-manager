@@ -50,41 +50,60 @@
 @layer components {
     /* Fix Google AdSense Auto Ads to prevent overlapping content */
     ins.adsbygoogle {
-        @apply block !important;
         display: block !important;
         clear: both !important;
+        margin: 1.5rem auto !important;
     }
 
     /* Ensure main content has proper layout and sits above ads */
     .main-content {
         position: relative;
         z-index: 1;
+        clear: both;
     }
 
-    /* Container spacing to prevent overlap with injected ads */
-    .navbar-spacing {
-        margin-top: 0;
+    /* Force ads to not overlap with critical z-index reduction */
+    #mys-wrapper,
+    #abgc,
+    [id*="ad"],
+    [class*="ad"],
+    [class*="ads"],
+    [role="region"][aria-label*="advertisement"] {
+        z-index: 1 !important;
+        position: static !important;
     }
 
-    /* Prevent auto-ads from using position: fixed that could overlap */
-    body > div[style*="position: fixed"],
-    body > aside[style*="position: fixed"],
-    body > [style*="position: fixed"] {
-        z-index: 5 !important;
-        max-width: 100% !important;
+    /* Hero section padding to accommodate ads */
+    section:first-of-type {
+        @apply mb-4;
+        position: relative;
+        z-index: 0;
     }
 
-    /* Ensure ads don't overflow container */
-    ins.adsbygoogle[style*="display: block"] {
-        margin: 1rem auto !important;
-        max-width: 100% !important;
+    /* Add spacing after hero section for ad clearance */
+    section:first-of-type + .flex-1 {
+        @apply mt-4;
+        clear: both;
+    }
+
+    /* Prevent Google Ad container from overlapping */
+    body > div[style*="width"],
+    body > div[id*="mys"],
+    body > div[class*="ad"] {
+        max-width: 100vw !important;
+        overflow-x: hidden !important;
     }
 
     /* Mobile responsiveness for auto ads */
     @media (max-width: 640px) {
         ins.adsbygoogle {
-            @apply w-full;
-            margin: 0.5rem auto !important;
+            width: 100% !important;
+            margin: 1rem auto !important;
+        }
+
+        #mys-wrapper {
+            max-width: 100% !important;
+            overflow: hidden !important;
         }
     }
 }
