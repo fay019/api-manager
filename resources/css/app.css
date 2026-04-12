@@ -48,11 +48,12 @@
 }
 
 @layer components {
-    /* Fix Google AdSense Auto Ads to prevent overlapping content */
+    /* Google AdSense Auto Ads - allow proper positioning */
     ins.adsbygoogle {
         display: block !important;
-        clear: both !important;
-        margin: 1.5rem auto !important;
+        width: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 
     /* Ensure main content has proper layout and sits above ads */
@@ -60,11 +61,6 @@
         position: relative;
         z-index: 1;
         clear: both;
-    }
-
-    /* Allow Google Auto Ads to position themselves properly */
-    ins.adsbygoogle {
-        position: unset !important;
     }
 
     /* Force other ad containers to not overlap with critical z-index reduction */
