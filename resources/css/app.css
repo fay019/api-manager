@@ -62,15 +62,16 @@
         clear: both;
     }
 
-    /* Force ads to not overlap with critical z-index reduction */
+    /* Allow Google Auto Ads to position themselves properly */
+    ins.adsbygoogle {
+        position: unset !important;
+    }
+
+    /* Force other ad containers to not overlap with critical z-index reduction */
     #mys-wrapper,
     #abgc,
-    [id*="ad"],
-    [class*="ad"],
-    [class*="ads"],
     [role="region"][aria-label*="advertisement"] {
         z-index: 1 !important;
-        position: static !important;
     }
 
     /* Hero section padding to accommodate ads */
