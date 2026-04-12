@@ -208,6 +208,11 @@
                         'logs' => ['label' => __('filament.health.logs_check'), 'description' => __('filament.health.logs_check_desc')],
                         'disk_space' => ['label' => __('filament.health.disk_space_check'), 'description' => __('filament.health.disk_space_check_desc')],
                         'storage' => ['label' => __('filament.health.storage_check'), 'description' => __('filament.health.storage_check_desc')],
+                        'mail' => ['label' => __('filament.health.mail_check'), 'description' => __('filament.health.mail_check_desc')],
+                        'database' => ['label' => __('filament.health.database_check'), 'description' => __('filament.health.database_check_desc')],
+                        'php_extensions' => ['label' => __('filament.health.php_extensions_check'), 'description' => __('filament.health.php_extensions_check_desc')],
+                        'api_response_time' => ['label' => __('filament.health.api_response_time_check'), 'description' => __('filament.health.api_response_time_check_desc')],
+                        'environment_variables' => ['label' => __('filament.health.environment_variables_check'), 'description' => __('filament.health.environment_variables_check_desc')],
                     ];
                 @endphp
 
@@ -234,101 +239,18 @@
                         </div>
                     @endforeach
                 </div>
-            </div>
-        </div>
 
-        <!-- Action Buttons -->
-        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin: 2rem 0;">
-            <x-filament::button
-                wire:click="testHealthCheck"
-                color="info"
-                icon="heroicon-m-play"
-            >
-                {{ __('filament.health.test_button') }}
-            </x-filament::button>
-        </div>
-
-        <!-- Health Check Result Preview -->
-        @if(session('health_check_result'))
-            <div class="hc-card">
-                <!-- Header -->
-                <div class="hc-header">
-                    <h3>{{ __('filament.health.result_header') }}</h3>
-                    <p>{{ __('filament.health.result_executed') }} {{ now()->format('H:i:s') }}</p>
-                </div>
-
-                <!-- Content -->
-                <div class="hc-content">
-                    <!-- Status Indicator -->
-                    @php
-                        $status = session('health_check_result')['data']['status'] ?? 'unknown';
-                        $statusClass = $status === 'ok' ? 'hc-status-ok' : 'hc-status-error';
-                    @endphp
-                    <div class="hc-status-box {{ $statusClass }}">
-                        <p style="font-weight: 600; margin: 0;">
-                            {{ __('filament.health.overall_status') }} <span style="text-transform: uppercase;">{{ $status }}</span>
-                        </p>
-                    </div>
-
-                    <!-- Checks Status -->
-                    @if(isset(session('health_check_result')['data']['checks']))
-                        <div style="margin-bottom: 1.5rem;">
-                            <h4 style="font-size: 0.875rem; font-weight: 600; color: var(--hc-text-dark); margin-bottom: 1rem;">{{ __('filament.health.individual_checks') }}</h4>
-                            <div style="display: grid; gap: 1rem;">
-                                @foreach(session('health_check_result')['data']['checks'] as $checkName => $checkResult)
-                                    @php
-                                        $checkStatus = $checkResult['status'] ?? 'unknown';
-                                        $checkClass = match($checkStatus) {
-                                            'ok' => 'hc-status-ok',
-                                            'warning' => 'hc-status-warning',
-                                            default => 'hc-status-error',
-                                        };
-                                        $checkIcon = match($checkStatus) {
-                                            'ok' => '✓',
-                                            'warning' => '⚠',
-                                            default => '✕',
-                                        };
-                                    @endphp
-                                    <div class="hc-check-item {{ $checkClass }}">
-                                        <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
-                                            <span style="font-weight: bold; font-size: 1.25rem;">{{ $checkIcon }}</span>
-                                            <div style="flex: 1;">
-                                                <p style="font-weight: 600; margin: 0; text-transform: capitalize;">
-                                                    {{ str_replace('_', ' ', $checkName) }}
-                                                </p>
-                                                <p style="font-size: 0.875rem; margin: 0.25rem 0 0 0;">
-                                                    {{ $checkResult['message'] ?? 'No message' }}
-                                                </p>
-                                                @if(isset($checkResult['details']))
-                                                    <div style="font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.8;">
-                                                        @foreach($checkResult['details'] as $key => $value)
-                                                            <div>{{ $key }}: <strong>{{ $value }}</strong></div>
-                                                        @endforeach
-                                                    </div>
-                                                @endif
-                                                @if(isset($checkResult['free_gb']))
-                                                    <div style="font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.8;">
-                                                        <div>Free: <strong>{{ $checkResult['free_gb'] }} GB</strong></div>
-                                                        <div>Total: <strong>{{ $checkResult['total_gb'] }} GB</strong></div>
-                                                        <div>Used: <strong>{{ $checkResult['percent_used'] }}%</strong></div>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    @endif
-
-                    <!-- JSON Preview -->
-                    <div>
-                        <h4 style="font-size: 0.875rem; font-weight: 600; color: var(--hc-text-dark); margin-bottom: 0.75rem;">{{ __('filament.health.raw_json') }}</h4>
-                        <pre class="hc-json-pre"><code>{{ json_encode(session('health_check_result'), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) }}</code></pre>
-                    </div>
+                <!-- Test Button -->
+                <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--hc-border-light);">
+                    <button
+                        id="test-health-check-btn"
+                        style="padding: 0.5rem 1rem; background-color: #3b82f6; color: white; border: none; border-radius: 0.375rem; font-weight: 500; cursor: pointer;"
+                    >
+                        {{ __('filament.health.test_button') }}
+                    </button>
                 </div>
             </div>
-        @endif
+        </div>
 
         <!-- API Endpoint Info -->
         <div class="hc-info-box">
@@ -344,4 +266,106 @@
             </p>
         </div>
     </div>
+
+    <x-filament-actions::modals />
 </x-filament-panels::page>
+
+<script>
+    document.getElementById('test-health-check-btn').addEventListener('click', async function(e) {
+        e.preventDefault();
+        const btn = this;
+        const originalText = btn.textContent;
+
+        try {
+            btn.disabled = true;
+            btn.textContent = '{{ __("filament.health.test_button") }}...';
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+            const response = await fetch('{{ route("admin.health-check.test") }}', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-Token': csrfToken,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error(`HTTP error ${response.status}:`, errorText);
+                throw new Error(`HTTP error ${response.status}`);
+            }
+            const data = await response.json();
+
+            // Create or update the results section
+            let resultsSection = document.getElementById('health-check-results');
+            if (!resultsSection) {
+                resultsSection = document.createElement('div');
+                resultsSection.id = 'health-check-results';
+                btn.parentElement.parentElement.parentElement.appendChild(resultsSection);
+            }
+
+            // Build HTML for results
+            const status = data.data.status || 'unknown';
+            const statusClass = status === 'ok' ? 'hc-status-ok' : 'hc-status-error';
+
+            let checksHTML = '';
+            if (data.data.checks) {
+                for (const [checkName, checkResult] of Object.entries(data.data.checks)) {
+                    const checkStatus = checkResult.status || 'unknown';
+                    const checkClass = checkStatus === 'ok' ? 'hc-status-ok' : (checkStatus === 'warning' ? 'hc-status-warning' : 'hc-status-error');
+                    const checkIcon = checkStatus === 'ok' ? '✓' : (checkStatus === 'warning' ? '⚠' : '✕');
+
+                    checksHTML += `
+                        <div class="hc-check-item ${checkClass}">
+                            <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+                                <span style="font-weight: bold; font-size: 1.25rem;">${checkIcon}</span>
+                                <div style="flex: 1;">
+                                    <p style="font-weight: 600; margin: 0; text-transform: capitalize;">
+                                        ${checkName.replace(/_/g, ' ')}
+                                    </p>
+                                    <p style="font-size: 0.875rem; margin: 0.25rem 0 0 0;">
+                                        ${checkResult.message || 'No message'}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            resultsSection.innerHTML = `
+                <div class="hc-card" style="margin-top: 2rem;">
+                    <div class="hc-header">
+                        <h3>{{ __('filament.health.result_header') }}</h3>
+                        <p>{{ __('filament.health.result_executed') }} ${new Date().toLocaleTimeString()}</p>
+                    </div>
+                    <div class="hc-content">
+                        <div class="hc-status-box ${statusClass}">
+                            <p style="font-weight: 600; margin: 0;">
+                                {{ __('filament.health.overall_status') }} <span style="text-transform: uppercase;">${status}</span>
+                            </p>
+                        </div>
+                        <div style="margin-bottom: 1.5rem;">
+                            <h4 style="font-size: 0.875rem; font-weight: 600; color: var(--hc-text-dark); margin-bottom: 1rem;">{{ __('filament.health.individual_checks') }}</h4>
+                            <div style="display: grid; gap: 1rem;">
+                                ${checksHTML}
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 0.875rem; font-weight: 600; color: var(--hc-text-dark); margin-bottom: 0.75rem;">{{ __('filament.health.raw_json') }}</h4>
+                            <pre class="hc-json-pre"><code>${JSON.stringify(data, null, 2)}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+        } catch (error) {
+            console.error('Health check error:', error);
+            alert('{{ __("filament.health.failed_title") }}');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = originalText;
+        }
+    });
+</script>

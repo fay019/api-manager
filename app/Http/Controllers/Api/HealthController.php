@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Responses\ApiResponse;
+use App\Models\HealthCheckSetting;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class HealthController extends Controller
 {
@@ -24,7 +27,7 @@ class HealthController extends Controller
      */
     private function performHealthChecks(): array
     {
-        $settings = \App\Models\HealthCheckSetting::getInstance();
+        $settings = HealthCheckSetting::getInstance();
         $checks = [];
 
         // Check 1: Cache functionality
@@ -47,6 +50,31 @@ class HealthController extends Controller
             $checks['storage'] = $this->checkStorage();
         }
 
+        // Check 5: Mail configuration
+        if ($settings->mail_enabled) {
+            $checks['mail'] = $this->checkMailConfiguration();
+        }
+
+        // Check 6: Database connection
+        if ($settings->database_enabled) {
+            $checks['database'] = $this->checkDatabaseConnection();
+        }
+
+        // Check 7: PHP extensions
+        if ($settings->php_extensions_enabled) {
+            $checks['php_extensions'] = $this->checkPhpExtensions();
+        }
+
+        // Check 8: API response time
+        if ($settings->api_response_time_enabled) {
+            $checks['api_response_time'] = $this->checkApiResponseTime();
+        }
+
+        // Check 9: Environment variables
+        if ($settings->environment_variables_enabled) {
+            $checks['environment_variables'] = $this->checkEnvironmentVariables();
+        }
+
         return $checks;
     }
 
@@ -63,12 +91,12 @@ class HealthController extends Controller
 
             return [
                 'status' => $value === 'ok' ? 'ok' : 'error',
-                'message' => $value === 'ok' ? 'Cache is working' : 'Cache write/read failed',
+                'message' => $value === 'ok' ? __('filament.health.cache_working') : __('filament.health.cache_failed'),
             ];
         } catch (\Exception $e) {
             return [
                 'status' => 'error',
-                'message' => 'Cache error: '.$e->getMessage(),
+                'message' => __('filament.health.cache_error').' '.$e->getMessage(),
             ];
         }
     }
@@ -84,14 +112,14 @@ class HealthController extends Controller
             if (! is_dir($logsPath)) {
                 return [
                     'status' => 'error',
-                    'message' => 'Logs directory not found',
+                    'message' => __('filament.health.logs_not_found'),
                 ];
             }
 
             if (! is_writable($logsPath)) {
                 return [
                     'status' => 'error',
-                    'message' => 'Logs directory not writable',
+                    'message' => __('filament.health.logs_not_writable'),
                 ];
             }
 
@@ -99,18 +127,18 @@ class HealthController extends Controller
             if (file_exists($logFile) && ! is_writable($logFile)) {
                 return [
                     'status' => 'error',
-                    'message' => 'Log file not writable',
+                    'message' => __('filament.health.logs_file_not_writable'),
                 ];
             }
 
             return [
                 'status' => 'ok',
-                'message' => 'Logs directory is writable',
+                'message' => __('filament.health.logs_writable'),
             ];
         } catch (\Exception $e) {
             return [
                 'status' => 'error',
-                'message' => 'Logs check error: '.$e->getMessage(),
+                'message' => __('filament.health.logs_error').' '.$e->getMessage(),
             ];
         }
     }
@@ -127,7 +155,7 @@ class HealthController extends Controller
             if ($diskFree === false || $diskTotal === false) {
                 return [
                     'status' => 'warning',
-                    'message' => 'Unable to determine disk space',
+                    'message' => __('filament.health.disk_space_unable'),
                 ];
             }
 
@@ -139,7 +167,7 @@ class HealthController extends Controller
             if ($percentUsed > 90) {
                 return [
                     'status' => 'warning',
-                    'message' => 'Low disk space: '.$percentUsed.'% used',
+                    'message' => __('filament.health.disk_space_low').$percentUsed.'% used',
                     'free_gb' => $freeGB,
                     'total_gb' => $totalGB,
                     'percent_used' => $percentUsed,
@@ -148,7 +176,7 @@ class HealthController extends Controller
 
             return [
                 'status' => 'ok',
-                'message' => 'Disk space is healthy',
+                'message' => __('filament.health.disk_space_healthy'),
                 'free_gb' => $freeGB,
                 'total_gb' => $totalGB,
                 'percent_used' => $percentUsed,
@@ -156,7 +184,7 @@ class HealthController extends Controller
         } catch (\Exception $e) {
             return [
                 'status' => 'warning',
-                'message' => 'Disk space check error: '.$e->getMessage(),
+                'message' => __('filament.health.disk_space_error').' '.$e->getMessage(),
             ];
         }
     }
@@ -190,20 +218,166 @@ class HealthController extends Controller
             if (! empty($issues)) {
                 return [
                     'status' => 'error',
-                    'message' => 'Storage issues: '.implode(', ', $issues),
+                    'message' => __('filament.health.storage_issues').implode(', ', $issues),
                     'issues' => $issues,
                 ];
             }
 
             return [
                 'status' => 'ok',
-                'message' => 'All storage directories are writable',
+                'message' => __('filament.health.storage_all_writable'),
             ];
         } catch (\Exception $e) {
             return [
                 'status' => 'error',
-                'message' => 'Storage check error: '.$e->getMessage(),
+                'message' => __('filament.health.storage_error').' '.$e->getMessage(),
             ];
         }
+    }
+
+    /**
+     * Check mail configuration
+     */
+    private function checkMailConfiguration(): array
+    {
+        try {
+            $mailer = config('mail.default');
+            $host = config('mail.mailers.'.$mailer.'.host');
+
+            if (! $mailer || ! $host) {
+                return [
+                    'status' => 'warning',
+                    'message' => __('filament.health.mail_incomplete'),
+                ];
+            }
+
+            return [
+                'status' => 'ok',
+                'message' => __('filament.health.mail_configured').' ('.$mailer.')',
+            ];
+        } catch (\Exception $e) {
+            return [
+                'status' => 'error',
+                'message' => __('filament.health.mail_error').' '.$e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * Check database connection
+     */
+    private function checkDatabaseConnection(): array
+    {
+        try {
+            DB::connection()->getPdo();
+
+            return [
+                'status' => 'ok',
+                'message' => __('filament.health.database_working'),
+            ];
+        } catch (\Exception $e) {
+            return [
+                'status' => 'error',
+                'message' => __('filament.health.database_failed').' '.$e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * Check required PHP extensions
+     */
+    private function checkPhpExtensions(): array
+    {
+        $requiredExtensions = [
+            'pdo',
+            'json',
+            'openssl',
+            'mbstring',
+            'tokenizer',
+            'xml',
+            'ctype',
+        ];
+
+        $missing = [];
+        foreach ($requiredExtensions as $ext) {
+            if (! extension_loaded($ext)) {
+                $missing[] = $ext;
+            }
+        }
+
+        if (! empty($missing)) {
+            return [
+                'status' => 'error',
+                'message' => __('filament.health.php_extensions_missing').implode(', ', $missing),
+                'missing' => $missing,
+            ];
+        }
+
+        return [
+            'status' => 'ok',
+            'message' => __('filament.health.php_extensions_loaded'),
+        ];
+    }
+
+    /**
+     * Check API response time
+     */
+    private function checkApiResponseTime(): array
+    {
+        try {
+            $start = microtime(true);
+
+            // Simple DB query to measure response time
+            DB::connection()->select('SELECT 1');
+
+            $duration = round((microtime(true) - $start) * 1000, 2);
+
+            $status = $duration < 100 ? 'ok' : ($duration < 500 ? 'warning' : 'error');
+            $message = __('filament.health.api_response_time')."{$duration}ms";
+
+            return [
+                'status' => $status,
+                'message' => $message,
+                'response_time_ms' => $duration,
+            ];
+        } catch (\Exception $e) {
+            return [
+                'status' => 'error',
+                'message' => __('filament.health.api_response_error').' '.$e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * Check critical configuration values
+     */
+    private function checkEnvironmentVariables(): array
+    {
+        $checks = [
+            'APP_KEY' => config('app.key'),
+            'DB_HOST' => config('database.connections.'.config('database.default').'.host'),
+            'DB_DATABASE' => config('database.connections.'.config('database.default').'.database'),
+            'DB_USERNAME' => config('database.connections.'.config('database.default').'.username'),
+        ];
+
+        $missing = [];
+        foreach ($checks as $name => $value) {
+            if (! $value) {
+                $missing[] = $name;
+            }
+        }
+
+        if (! empty($missing)) {
+            return [
+                'status' => 'error',
+                'message' => __('filament.health.config_missing').' '.implode(', ', $missing),
+                'missing' => $missing,
+            ];
+        }
+
+        return [
+            'status' => 'ok',
+            'message' => __('filament.health.config_all_set'),
+        ];
     }
 }

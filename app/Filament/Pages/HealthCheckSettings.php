@@ -2,15 +2,20 @@
 
 namespace App\Filament\Pages;
 
-use App\Http\Controllers\Api\HealthController;
 use App\Models\HealthCheckSetting;
 use BackedEnum;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use UnitEnum;
 
-class HealthCheckSettings extends Page
+class HealthCheckSettings extends Page implements HasForms
 {
+    use InteractsWithForms;
+
+    public ?array $healthCheckResult = null;
+
     protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-heart';
 
     protected string $view = 'filament.pages.health-check-settings';
@@ -42,29 +47,6 @@ class HealthCheckSettings extends Page
                 ->success()
                 ->title(__('filament.health.updated'))
                 ->body(ucfirst(str_replace('_', ' ', $check)).' check '.($settings->{$attribute} ? __('filament.health.check_enabled') : __('filament.health.check_disabled')).'.')
-                ->send();
-        }
-    }
-
-    public function testHealthCheck(): void
-    {
-        try {
-            $controller = new HealthController;
-            $response = $controller->index();
-            $content = json_decode($response->getContent(), true);
-
-            session()->flash('health_check_result', $content);
-
-            Notification::make()
-                ->success()
-                ->title(__('filament.health.executed_title'))
-                ->body(__('filament.health.executed_body'))
-                ->send();
-        } catch (\Exception $e) {
-            Notification::make()
-                ->danger()
-                ->title(__('filament.health.failed_title'))
-                ->body(__('filament.health.failed_body').' '.$e->getMessage())
                 ->send();
         }
     }

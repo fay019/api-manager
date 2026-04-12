@@ -239,6 +239,16 @@ return [
         'disk_space_check_desc' => 'Überwachen Sie den verfügbaren Speicherplatz und zeigen Sie eine Warnung an, wenn > 90% verwendet',
         'storage_check' => 'Speicher-Überprüfung',
         'storage_check_desc' => 'Überprüfen Sie, ob alle Speicherverzeichnisse (Protokolle, App, Cache, Sitzungen) beschreibbar sind',
+        'mail_check' => 'Mail-Konfiguration',
+        'mail_check_desc' => 'Überprüfen Sie, ob die Mail-Konfiguration eingerichtet ist',
+        'database_check' => 'Datenbankverbindung',
+        'database_check_desc' => 'Überprüfen Sie, ob die Datenbankverbindung funktioniert',
+        'php_extensions_check' => 'PHP-Erweiterungen',
+        'php_extensions_check_desc' => 'Überprüfen Sie, ob die erforderlichen PHP-Erweiterungen geladen sind',
+        'api_response_time_check' => 'API-Antwortzeit',
+        'api_response_time_check_desc' => 'Messen Sie die API-Antwortzeit',
+        'environment_variables_check' => 'Umgebungsvariablen',
+        'environment_variables_check_desc' => 'Überprüfen Sie, ob die erforderlichen Umgebungsvariablen gesetzt sind',
         'enabled' => '✓ Aktiviert',
         'disabled' => '○ Deaktiviert',
         'test_button' => 'Health-Check testen',
@@ -260,6 +270,40 @@ return [
         'executed_body' => 'Scrollen Sie nach unten, um die Ergebnisse zu sehen.',
         'failed_title' => 'Health-Check fehlgeschlagen',
         'failed_body' => 'Fehler:',
+        'config_all_set' => 'Alle erforderlichen Konfigurationen sind gesetzt',
+        'config_missing' => 'Fehlende Konfiguration:',
+        // Cache
+        'cache_working' => 'Cache funktioniert',
+        'cache_failed' => 'Cache-Schreib-/Lesefehler',
+        'cache_error' => 'Cache-Fehler:',
+        // Logs
+        'logs_not_found' => 'Protokollverzeichnis nicht gefunden',
+        'logs_not_writable' => 'Protokollverzeichnis nicht beschreibbar',
+        'logs_file_not_writable' => 'Protokolldatei nicht beschreibbar',
+        'logs_writable' => 'Protokollverzeichnis ist beschreibbar',
+        'logs_error' => 'Fehler bei der Protokollüberprüfung:',
+        // Disk Space
+        'disk_space_healthy' => 'Speicherplatz ist gesund',
+        'disk_space_low' => 'Niedriger Speicherplatz:',
+        'disk_space_unable' => 'Speicherplatz konnte nicht bestimmt werden',
+        'disk_space_error' => 'Fehler bei der Festplattenplatz-Überprüfung:',
+        // Storage
+        'storage_all_writable' => 'Alle Speicherverzeichnisse sind beschreibbar',
+        'storage_issues' => 'Speicherprobleme:',
+        'storage_error' => 'Fehler bei der Speicherüberprüfung:',
+        // Mail
+        'mail_configured' => 'Mail ist konfiguriert',
+        'mail_incomplete' => 'Mail-Konfiguration unvollständig',
+        'mail_error' => 'Fehler bei der Mail-Überprüfung:',
+        // Database
+        'database_working' => 'Datenbankverbindung funktioniert',
+        'database_failed' => 'Datenbankverbindung fehlgeschlagen:',
+        // PHP Extensions
+        'php_extensions_loaded' => 'Alle erforderlichen PHP-Erweiterungen sind geladen',
+        'php_extensions_missing' => 'Fehlende PHP-Erweiterungen:',
+        // API Response Time
+        'api_response_time' => 'API-Antwortzeit:',
+        'api_response_error' => 'Fehler bei der Antwortzeit-Überprüfung:',
     ],
 
     'manage_app' => [

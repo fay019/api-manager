@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\HealthController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DocsController;
 use App\Http\Controllers\HomeController;
@@ -76,6 +77,17 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     })->name('settings.save-contact-email');
+
+    Route::post('/health-check/test', function (Request $request) {
+        try {
+            $controller = new HealthController;
+            $response = $controller->index();
+
+            return response()->json(json_decode($response->getContent(), true));
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    })->name('health-check.test');
 });
 
 Route::prefix('docs')->name('docs.')->group(function () {

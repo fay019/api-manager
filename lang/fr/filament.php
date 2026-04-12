@@ -239,6 +239,16 @@ return [
         'disk_space_check_desc' => 'Surveillez l\'espace disque disponible et affichez un avertissement si > 90% utilisé',
         'storage_check' => 'Contrôle du Stockage',
         'storage_check_desc' => 'Vérifiez que tous les répertoires de stockage (journaux, app, cache, sessions) sont inscriptibles',
+        'mail_check' => 'Configuration du Courrier',
+        'mail_check_desc' => 'Vérifiez que la configuration du courrier est définie',
+        'database_check' => 'Connexion à la Base de Données',
+        'database_check_desc' => 'Vérifiez que la connexion à la base de données fonctionne',
+        'php_extensions_check' => 'Extensions PHP',
+        'php_extensions_check_desc' => 'Vérifiez que les extensions PHP requises sont chargées',
+        'api_response_time_check' => 'Temps de Réponse de l\'API',
+        'api_response_time_check_desc' => 'Mesurez le temps de réponse de l\'API',
+        'environment_variables_check' => 'Variables d\'Environnement',
+        'environment_variables_check_desc' => 'Vérifiez que les variables d\'environnement requises sont définies',
         'enabled' => '✓ Activé',
         'disabled' => '○ Désactivé',
         'test_button' => 'Tester le Contrôle de Santé',
@@ -260,6 +270,40 @@ return [
         'executed_body' => 'Faites défiler vers le bas pour voir les résultats.',
         'failed_title' => 'Contrôle de santé échoué',
         'failed_body' => 'Erreur :',
+        'config_all_set' => 'Toute la configuration requise est définie',
+        'config_missing' => 'Configuration manquante :',
+        // Cache
+        'cache_working' => 'Le cache fonctionne',
+        'cache_failed' => 'Échec de l\'écriture/lecture du cache',
+        'cache_error' => 'Erreur du cache :',
+        // Logs
+        'logs_not_found' => 'Répertoire des journaux introuvable',
+        'logs_not_writable' => 'Répertoire des journaux non inscriptible',
+        'logs_file_not_writable' => 'Fichier journal non inscriptible',
+        'logs_writable' => 'Le répertoire des journaux est inscriptible',
+        'logs_error' => 'Erreur de vérification des journaux :',
+        // Disk Space
+        'disk_space_healthy' => 'L\'espace disque est sain',
+        'disk_space_low' => 'Espace disque faible : ',
+        'disk_space_unable' => 'Impossible de déterminer l\'espace disque',
+        'disk_space_error' => 'Erreur de vérification de l\'espace disque :',
+        // Storage
+        'storage_all_writable' => 'Tous les répertoires de stockage sont inscriptibles',
+        'storage_issues' => 'Problèmes de stockage : ',
+        'storage_error' => 'Erreur de vérification du stockage :',
+        // Mail
+        'mail_configured' => 'Le courrier est configuré',
+        'mail_incomplete' => 'Configuration du courrier incomplète',
+        'mail_error' => 'Erreur de vérification du courrier :',
+        // Database
+        'database_working' => 'La connexion à la base de données fonctionne',
+        'database_failed' => 'Échec de la connexion à la base de données :',
+        // PHP Extensions
+        'php_extensions_loaded' => 'Toutes les extensions PHP requises sont chargées',
+        'php_extensions_missing' => 'Extensions PHP manquantes : ',
+        // API Response Time
+        'api_response_time' => 'Temps de réponse de l\'API :',
+        'api_response_error' => 'Erreur de vérification du temps de réponse :',
     ],
 
     'manage_app' => [

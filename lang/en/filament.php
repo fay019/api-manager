@@ -239,6 +239,16 @@ return [
         'disk_space_check_desc' => 'Monitor available disk space and show warning if > 90% used',
         'storage_check' => 'Storage Check',
         'storage_check_desc' => 'Verify all storage directories (logs, app, cache, sessions) are writable',
+        'mail_check' => 'Mail Configuration',
+        'mail_check_desc' => 'Verify that mail configuration is set up',
+        'database_check' => 'Database Connection',
+        'database_check_desc' => 'Verify that database connection works',
+        'php_extensions_check' => 'PHP Extensions',
+        'php_extensions_check_desc' => 'Verify that required PHP extensions are loaded',
+        'api_response_time_check' => 'API Response Time',
+        'api_response_time_check_desc' => 'Measure the API response time',
+        'environment_variables_check' => 'Environment Variables',
+        'environment_variables_check_desc' => 'Verify that required environment variables are set',
         'enabled' => '✓ Enabled',
         'disabled' => '○ Disabled',
         'test_button' => 'Test Health Check',
@@ -260,6 +270,40 @@ return [
         'executed_body' => 'Scroll down to see the results.',
         'failed_title' => 'Health Check Failed',
         'failed_body' => 'Error:',
+        'config_all_set' => 'All required configuration is set',
+        'config_missing' => 'Missing configuration:',
+        // Cache
+        'cache_working' => 'Cache is working',
+        'cache_failed' => 'Cache write/read failed',
+        'cache_error' => 'Cache error:',
+        // Logs
+        'logs_not_found' => 'Logs directory not found',
+        'logs_not_writable' => 'Logs directory not writable',
+        'logs_file_not_writable' => 'Log file not writable',
+        'logs_writable' => 'Logs directory is writable',
+        'logs_error' => 'Logs check error:',
+        // Disk Space
+        'disk_space_healthy' => 'Disk space is healthy',
+        'disk_space_low' => 'Low disk space:',
+        'disk_space_unable' => 'Unable to determine disk space',
+        'disk_space_error' => 'Disk space check error:',
+        // Storage
+        'storage_all_writable' => 'All storage directories are writable',
+        'storage_issues' => 'Storage issues:',
+        'storage_error' => 'Storage check error:',
+        // Mail
+        'mail_configured' => 'Mail is configured',
+        'mail_incomplete' => 'Mail configuration incomplete',
+        'mail_error' => 'Mail check error:',
+        // Database
+        'database_working' => 'Database connection is working',
+        'database_failed' => 'Database connection failed:',
+        // PHP Extensions
+        'php_extensions_loaded' => 'All required PHP extensions are loaded',
+        'php_extensions_missing' => 'Missing PHP extensions:',
+        // API Response Time
+        'api_response_time' => 'API response time:',
+        'api_response_error' => 'Response time check error:',
     ],
 
     'manage_app' => [
