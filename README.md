@@ -53,6 +53,7 @@ php artisan app:danger-reset
 | 📚 **Dynamic Documentation** | Markdown to HTML conversion with beautiful styling |
 | 🌐 **Multilingual Support** | Full i18n with FR, EN, DE translations for UI, admin, errors, and public pages |
 | 🌙 **Dark Mode** | Full CSS dark mode support across all pages (login, profile, error pages) |
+| 🏥 **Health Check API** | Comprehensive system health monitoring with configurable checks and full multilingual support |
 
 ---
 
@@ -384,7 +385,20 @@ See [MODULE_CREATION.md](./docs/MODULE_CREATION.md) for complete guide.
 GET /api/v1/health
 ```
 
-Returns: `{"success": true, "data": {"status": "ok", "timestamp": "..."}}`
+Returns comprehensive system health status including:
+- **Cache** - Write/read functionality
+- **Logs** - Directory writability
+- **Disk Space** - Usage and warnings
+- **Storage** - All directories writability
+- **Mail** - SMTP configuration
+- **Database** - Connection status
+- **PHP Extensions** - Required extensions loaded
+- **API Response Time** - Response latency measurement
+- **Configuration** - Critical environment variables
+
+Response: `{"success": true, "data": {"status": "ok", "timestamp": "...", "checks": {...}}}`
+
+**Full multilingual support (FR, EN, DE)** - All messages display in the user's language.
 
 ### Get Active Promo Banner
 ```bash
@@ -406,6 +420,54 @@ Body: {
 ```
 
 For complete API documentation, see **[API.md](./docs/API.md)**
+
+---
+
+## 🏥 Health Check Administration
+
+### Health Check Page
+
+Located at `/admin/health-check-settings`, the Health Check administration page allows you to:
+
+**1. Configure Health Checks**
+- Toggle individual checks on/off (9 available checks)
+- Each check has its own toggle button with description
+- Settings persist to the database
+
+**2. Run Tests**
+- Click "Test Health Check" button to run all enabled checks
+- Results display without page refresh (AJAX)
+- Shows individual check status (✓ ok, ⚠ warning, ✕ error)
+- View raw JSON response for detailed analysis
+
+**3. Supported Health Checks**
+
+| Check | Purpose | Languages |
+|-------|---------|-----------|
+| **Cache** | Verify cache write/read functionality | FR, EN, DE |
+| **Logs** | Check logs directory writability | FR, EN, DE |
+| **Disk Space** | Monitor disk usage (warns if > 90%) | FR, EN, DE |
+| **Storage** | Verify all storage directories writable | FR, EN, DE |
+| **Mail** | Validate SMTP configuration | FR, EN, DE |
+| **Database** | Test database connectivity | FR, EN, DE |
+| **PHP Extensions** | Check required extensions loaded | FR, EN, DE |
+| **API Response Time** | Measure API latency | FR, EN, DE |
+| **Configuration** | Validate critical environment variables | FR, EN, DE |
+
+### API Endpoint
+
+**Public endpoint** (no authentication required):
+```bash
+curl https://api.moussouni.dev/api/v1/health
+```
+
+**Admin test endpoint** (requires login):
+```bash
+POST /admin/health-check/test
+X-CSRF-Token: [token]
+```
+
+Both endpoints return identical multilingual health data.
 
 ---
 
@@ -970,16 +1032,30 @@ grep -i "exception" storage/logs/laravel.log
 
 ---
 
-**Last Updated:** 2026-04-10
+**Last Updated:** 2026-04-12
 **Installation System**: v1.1.0 (Modular, Idempotent, Auto-Discovery)
 **Authentication System**: v2.0.0 (Public + Admin, Full i18n, Dark Mode)
+**Health Check System**: v2.1.0 (9 Checks, Full i18n, AJAX Testing)
 **Status**: ✅ Production Ready
 
 ---
 
-## 📝 Recent Changes (v2.0.0)
+## 📝 Recent Changes (v2.1.0 - 2026-04-12)
 
 ### ✨ New Features
+
+- **Complete Health Check Translations** (v2.1.0)
+  - ✅ All 9 health check messages now translated (FR, EN, DE)
+  - ✅ Cache, logs, disk space, storage, mail, database, PHP extensions, API response time
+  - ✅ Configuration validation with dynamic environment variables
+  - ✅ AJAX test button (no page refresh) with real-time results display
+  - ✅ Full multilingual support in admin panel and public API
+
+- **Health Check API Improvements** (v2.1.0)
+  - ✅ Refactored `checkEnvironmentVariables()` to use `config()` instead of `env()`
+  - ✅ Better compatibility with `php artisan optimize` caching
+  - ✅ Database column migrations for 5 new health checks
+  - ✅ Configurable per-check toggles in admin panel
 
 - **Public Authentication System** (v1.0)
   - Public login page at `/login` (separate from Filament admin)

@@ -137,11 +137,16 @@ GET /health
 
 #### Overview
 
-The health check endpoint provides system diagnostics for monitoring application health. It performs configurable checks on:
-- Cache functionality (write/read test)
-- Logs directory writeability
-- Available disk space
-- Storage directories writeability
+The health check endpoint provides comprehensive system diagnostics for monitoring application health. It performs 9 configurable checks on:
+- **Cache** - Write/read functionality test
+- **Logs** - Directory writeability verification
+- **Disk Space** - Usage monitoring (warns if > 90% used)
+- **Storage** - All directories writeability check
+- **Mail** - SMTP configuration validation
+- **Database** - Connection and connectivity test
+- **PHP Extensions** - Required extensions verification
+- **API Response Time** - Latency measurement
+- **Configuration** - Critical environment variables validation
 
 #### Response Format
 
@@ -150,32 +155,55 @@ The health check endpoint provides system diagnostics for monitoring application
   "success": true,
   "data": {
     "status": "ok",
-    "timestamp": "2026-01-21T15:01:23Z",
+    "timestamp": "2026-04-12T23:30:42Z",
     "checks": {
       "cache": {
         "status": "ok",
-        "message": "Cache is working"
+        "message": "Le cache fonctionne"
       },
       "logs": {
         "status": "ok",
-        "message": "Logs directory is writable"
+        "message": "Le répertoire des journaux est inscriptible"
       },
       "disk_space": {
         "status": "ok",
-        "message": "Disk space is healthy",
+        "message": "L'espace disque est sain",
         "free_gb": 644.01,
         "total_gb": 651.93,
         "percent_used": 1.21
       },
       "storage": {
         "status": "ok",
-        "message": "All storage directories are writable"
+        "message": "Tous les répertoires de stockage sont inscriptibles"
+      },
+      "mail": {
+        "status": "ok",
+        "message": "Le courrier est configuré (smtp)"
+      },
+      "database": {
+        "status": "ok",
+        "message": "La connexion à la base de données fonctionne"
+      },
+      "php_extensions": {
+        "status": "ok",
+        "message": "Toutes les extensions PHP requises sont chargées"
+      },
+      "api_response_time": {
+        "status": "ok",
+        "message": "Temps de réponse de l'API : 0.35ms",
+        "response_time_ms": 0.35
+      },
+      "environment_variables": {
+        "status": "ok",
+        "message": "Toute la configuration requise est définie"
       }
     }
   },
   "meta": []
 }
 ```
+
+*Note: This example shows French translations. The API returns messages in the user's language (FR, EN, or DE).*
 
 #### Check Status Values
 
@@ -212,15 +240,63 @@ The health check endpoint provides system diagnostics for monitoring application
   - `storage/framework/sessions`
 - **Fails if:** Any directory is missing or not writable
 
+##### Mail Check
+- **What it checks:** Validates SMTP mail configuration
+- **Response includes:** Status and configured mailer name
+- **Fails if:** Mail driver or host not configured
+
+##### Database Check
+- **What it checks:** Tests database connection and accessibility
+- **Response includes:** Status and connection message
+- **Fails if:** Database connection fails or credentials invalid
+
+##### PHP Extensions Check
+- **What it checks:** Verifies all required PHP extensions are loaded
+- **Extensions checked:**
+  - `pdo` - Database abstraction
+  - `json` - JSON processing
+  - `openssl` - SSL/TLS encryption
+  - `mbstring` - Multi-byte string handling
+  - `tokenizer` - Code tokenization
+  - `xml` - XML processing
+  - `ctype` - Character type checking
+- **Fails if:** Any required extension is not loaded
+
+##### API Response Time Check
+- **What it checks:** Measures API response latency
+- **Response includes:** Response time in milliseconds
+- **Status levels:**
+  - **ok** - < 100ms
+  - **warning** - 100-500ms
+  - **error** - > 500ms
+
+##### Configuration Check
+- **What it checks:** Validates critical environment variables
+- **Variables checked:**
+  - `APP_KEY` - Application encryption key
+  - `DB_HOST` - Database host
+  - `DB_DATABASE` - Database name
+  - `DB_USERNAME` - Database user
+- **Fails if:** Any critical variable is not set
+
+#### Multilingual Support
+
+All health check messages are **fully translated** in:
+- 🇫🇷 **French** (FR)
+- 🇬🇧 **English** (EN)
+- 🇩🇪 **Deutsch** (DE)
+
+The API returns messages in the user's preferred language.
+
 #### Configuration
 
-The health checks are configurable from the admin panel at `/admin/health-check-api`. You can enable/disable individual checks as needed.
+The health checks are configurable from the admin panel at `/admin/health-check-settings`. You can enable/disable individual checks as needed.
 
 **To configure:**
-1. Login to admin panel
-2. Go to System → Health Check API
+1. Login to admin panel (`/admin`)
+2. Go to System → Health Check Settings
 3. Toggle each check on/off
-4. Click "Test Health Check" to verify configuration
+4. Click "Test Health Check" to run tests and view results in real-time
 
 #### Example Usage
 
