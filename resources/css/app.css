@@ -45,6 +45,21 @@
         background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
         color: #f3f4f6;
     }
+
+    /* Show correct theme icon on initial page load before Alpine.js initializes */
+    button svg[x-cloak] {
+        display: none !important;
+    }
+
+    /* Display sun icon in light mode */
+    html:not(.dark) button svg:nth-of-type(1)[x-cloak] {
+        display: inline !important;
+    }
+
+    /* Display moon icon in dark mode */
+    html.dark button svg:nth-of-type(2)[x-cloak] {
+        display: inline !important;
+    }
 }
 
 @layer components {
