@@ -18,8 +18,10 @@ return [
     'send_button' => 'Nachricht Senden',
 
     // Feedback
-    'message_sent' => '✅ Ihre Nachricht wurde erfolgreich gesendet! Wir melden uns bald bei Ihnen.',
-    'rate_limit_exceeded' => '⏱️ Bitte warten Sie 24 Stunden, bevor Sie eine weitere Nachricht senden.',
+    'message_sent' => 'Ihre Nachricht wurde erfolgreich gesendet! Wir melden uns bald bei Ihnen.',
+    'rate_limit_exceeded' => 'Bitte warten Sie 24 Stunden, bevor Sie eine weitere Nachricht senden.',
+    'success_title' => 'Erfolg',
+    'error_title' => 'Fehler',
     'or_email' => 'Oder kontaktieren Sie uns direkt per E-Mail:',
 
     // Email

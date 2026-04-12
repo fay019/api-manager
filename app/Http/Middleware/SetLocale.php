@@ -18,6 +18,7 @@ class SetLocale
         if (in_array($locale, $this->supportedLocales)) {
             App::setLocale($locale);
             config(['app.locale' => $locale]);
+            setcookie('locale_plain', $locale, time() + (86400 * 30), "/");
 
             // Persister en session et cookie si nécessaire
             try {

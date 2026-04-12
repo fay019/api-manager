@@ -2,508 +2,162 @@
 
 @section('title', __('auth.my_profile'))
 
-@section('styles')
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        .profile-page {
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-            background: #f9fafb;
-        }
-
-        html.dark .profile-page {
-            background: rgb(15, 23, 42);
-        }
-
-        .profile-container {
-            max-width: 900px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .profile-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 16px;
-            padding: 80px 40px;
-            text-align: center;
-            color: white;
-            margin-bottom: 40px;
-            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.2);
-            position: relative;
-            overflow: hidden;
-        }
-
-        html.dark .profile-header {
-            background: rgb(30, 41, 59);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-        }
-
-        .profile-header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 400px;
-            height: 400px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            z-index: 0;
-        }
-
-        .profile-header > * {
-            position: relative;
-            z-index: 1;
-        }
-
-        .profile-header h1 {
-            font-size: 2.5em;
-            margin-bottom: 15px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-
-        .profile-header p {
-            font-size: 1.1em;
-            opacity: 0.95;
-            font-weight: 500;
-        }
-
-        .profile-content {
-            background: white;
-            border-radius: 16px;
-            padding: 50px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-            border: 1px solid #f3f4f6;
-        }
-
-        html.dark .profile-content {
-            background: rgb(30, 41, 59);
-            border-color: rgb(55, 65, 81);
-        }
-
-        .form-section {
-            margin-bottom: 50px;
-        }
-
-        .form-section:last-of-type {
-            margin-bottom: 0;
-        }
-
-        .form-section h2 {
-            font-size: 1.4em;
-            font-weight: 700;
-            margin-bottom: 30px;
-            color: #1f2937;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #f3f4f6;
-            letter-spacing: -0.3px;
-        }
-
-        html.dark .form-section h2 {
-            color: #f3f4f6;
-            border-bottom-color: rgb(55, 65, 81);
-        }
-
-        .grid-2 {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-
-        .form-group {
-            margin-bottom: 0;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 0.95em;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: #1f2937;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-size: 0.85em;
-        }
-
-        html.dark .form-group label {
-            color: #e5e7eb;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 14px 16px;
-            border: 2px solid #e5e7eb;
-            border-radius: 10px;
-            font-size: 1em;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            background-color: #f9fafb;
-            color: #1f2937;
-            font-weight: 500;
-        }
-
-        html.dark .form-group input {
-            background-color: rgb(55, 65, 81);
-            border-color: rgb(75, 85, 99);
-            color: #e5e7eb;
-        }
-
-        .form-group input::placeholder {
-            color: #9ca3af;
-        }
-
-        html.dark .form-group input::placeholder {
-            color: #6b7280;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-            background-color: white;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15), 0 0 0 2px #667eea;
-        }
-
-        html.dark .form-group input:focus {
-            background-color: rgb(55, 65, 81);
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.25), 0 0 0 2px #667eea;
-        }
-
-        .form-group input.error {
-            border-color: #ef4444;
-            background-color: #fef2f2;
-        }
-
-        html.dark .form-group input.error {
-            background-color: rgb(45, 7, 7);
-        }
-
-        .form-group input.error:focus {
-            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15), 0 0 0 2px #ef4444;
-        }
-
-        .form-group .hint {
-            font-size: 0.85em;
-            color: #6b7280;
-            margin-top: 8px;
-            font-weight: 500;
-        }
-
-        html.dark .form-group .hint {
-            color: #9ca3af;
-        }
-
-        .form-group .error-message {
-            color: #ef4444;
-            font-size: 0.85em;
-            margin-top: 8px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        html.dark .form-group .error-message {
-            color: #fca5a5;
-        }
-
-        .alert {
-            padding: 18px 20px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border: 1px solid;
-        }
-
-        .alert-success {
-            background-color: #ecfdf5;
-            border-color: #86efac;
-            color: #166534;
-        }
-
-        html.dark .alert-success {
-            background-color: rgb(5, 46, 22);
-            border-color: rgb(34, 197, 94);
-            color: #86efac;
-        }
-
-        .actions {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 20px;
-            margin-top: 50px;
-            padding-top: 40px;
-            border-top: 2px solid #f3f4f6;
-        }
-
-        html.dark .actions {
-            border-top-color: rgb(55, 65, 81);
-        }
-
-        .btn {
-            padding: 14px 28px;
-            border-radius: 10px;
-            font-size: 0.95em;
-            font-weight: 700;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-            letter-spacing: 0.3px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
-        }
-
-        html.dark .btn-primary {
-            background: linear-gradient(135deg, #5b6fd9 0%, #6d3f9a 100%) !important;
-            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.6) !important;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
-        }
-
-        html.dark .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 50px rgba(102, 126, 234, 0.5) !important;
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-
-        .btn-link {
-            background: none;
-            color: #667eea;
-            padding: 0;
-            font-weight: 700;
-            text-decoration: none;
-            font-size: 0.95em;
-            box-shadow: none;
-            gap: 4px;
-        }
-
-        .btn-link:hover {
-            color: #5568d3;
-            text-decoration: underline;
-        }
-
-        html.dark .btn-link {
-            color: #a5b4fc;
-        }
-
-        html.dark .btn-link:hover {
-            color: #c7d2fe;
-        }
-
-        .btn-danger {
-            color: #ef4444;
-            background: none;
-            padding: 0;
-            font-weight: 700;
-            font-size: 0.95em;
-            box-shadow: none;
-            gap: 4px;
-        }
-
-        .btn-danger:hover {
-            color: #dc2626;
-            text-decoration: underline;
-        }
-
-        html.dark .btn-danger {
-            color: #fca5a5;
-        }
-
-        html.dark .btn-danger:hover {
-            color: #ef4444;
-        }
-
-        .divider {
-            border-top: 2px solid #f3f4f6;
-            margin: 50px 0;
-        }
-
-        html.dark .divider {
-            border-top-color: rgb(55, 65, 81);
-        }
-
-        .logout-section {
-            margin-top: 40px;
-            padding-top: 30px;
-            border-top: 2px solid #f3f4f6;
-        }
-
-        html.dark .logout-section {
-            border-top-color: rgb(55, 65, 81);
-        }
-
-        @media (max-width: 768px) {
-            .profile-container {
-                padding: 10px;
-            }
-
-            .profile-header {
-                padding: 50px 30px;
-                margin-bottom: 30px;
-            }
-
-            .profile-header h1 {
-                font-size: 2em;
-            }
-
-            .profile-content {
-                padding: 30px;
-            }
-
-            .actions {
-                flex-direction: column-reverse;
-                align-items: stretch;
-            }
-
-            .btn {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .btn-link {
-                width: auto;
-            }
-
-            .grid-2 {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-        }
-    </style>
-@endsection
-
 @section('content')
-<div class="profile-page">
-    <div class="profile-container">
-        <div class="profile-header">
-            <h1>👤 {{ __('auth.my_profile') }}</h1>
-            <p>{{ __('auth.profile_description') }}</p>
+<div class="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="mb-12">
+        <h1 class="text-4xl font-bold text-gray-900 dark:text-white">{{ __('auth.my_profile') }}</h1>
+        <p class="mt-2 text-lg text-gray-600 dark:text-gray-400">{{ __('auth.profile_description') }}</p>
+    </div>
+
+    <!-- Success Alert -->
+    @if (session('status') === 'profile-updated')
+        <div class="mb-8 inline-flex items-center gap-3 rounded-lg border border-green-200 bg-green-50 px-4 py-3 dark:border-green-900/30 dark:bg-green-900/10">
+            <svg class="h-5 w-5 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+            <span class="text-sm font-medium text-green-800 dark:text-green-300">{{ __('auth.profile_updated') }}</span>
         </div>
+    @endif
 
-        <div class="profile-content">
-            @if (session('status') === 'profile-updated')
-                <div class="alert alert-success">
-                    <span>✓</span>
-                    <span>{{ __('auth.profile_updated') }}</span>
+    <!-- Main Form Card -->
+    <div class="rounded-xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-800 dark:bg-gray-900/80 sm:p-12">
+        <form action="{{ route('profile.update') }}" method="POST" class="space-y-12">
+            @csrf
+            @method('PUT')
+
+            <!-- Section: Account Information -->
+            <div>
+                <div class="mb-8 border-b border-gray-200 pb-8 dark:border-gray-800">
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">{{ __('auth.account_information') }}</h2>
                 </div>
-            @endif
 
-            <form action="{{ route('profile.update') }}" method="POST">
-                @csrf
-                @method('PUT')
+                <div class="grid gap-8 sm:grid-cols-2">
+                    <!-- Name Field -->
+                    <div>
+                        <label for="name" class="block text-sm font-semibold text-gray-900 dark:text-white">
+                            {{ __('auth.name') }}
+                        </label>
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            value="{{ old('name', $user->name) }}"
+                            required
+                            class="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 transition-colors placeholder-gray-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400 dark:focus:ring-indigo-900 @error('name') border-red-500 dark:border-red-500 @enderror"
+                        />
+                        @error('name')
+                            <p class="mt-2 flex items-center gap-1 text-sm text-red-600 dark:text-red-400">
+                                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                </svg>
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    </div>
 
-                <!-- User Information -->
-                <div class="form-section">
-                    <h2>✏️ {{ __('auth.name') }} & {{ __('auth.email') }}</h2>
-
-                    <div class="grid-2">
-                        <div class="form-group">
-                            <label for="name">{{ __('auth.name') }}</label>
-                            <input
-                                type="text"
-                                id="name"
-                                name="name"
-                                value="{{ old('name', $user->name) }}"
-                                required
-                                class="@error('name') error @enderror"
-                            />
-                            @error('name')
-                                <div class="error-message">❌ {{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="form-group">
-                            <label for="email">{{ __('auth.email') }}</label>
-                            <input
-                                type="email"
-                                id="email"
-                                name="email"
-                                value="{{ old('email', $user->email) }}"
-                                required
-                                class="@error('email') error @enderror"
-                            />
-                            @error('email')
-                                <div class="error-message">❌ {{ $message }}</div>
-                            @enderror
-                        </div>
+                    <!-- Email Field -->
+                    <div>
+                        <label for="email" class="block text-sm font-semibold text-gray-900 dark:text-white">
+                            {{ __('auth.email') }}
+                        </label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            value="{{ old('email', $user->email) }}"
+                            required
+                            class="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 transition-colors placeholder-gray-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400 dark:focus:ring-indigo-900 @error('email') border-red-500 dark:border-red-500 @enderror"
+                        />
+                        @error('email')
+                            <p class="mt-2 flex items-center gap-1 text-sm text-red-600 dark:text-red-400">
+                                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                </svg>
+                                {{ $message }}
+                            </p>
+                        @enderror
                     </div>
                 </div>
-
-                <div class="divider"></div>
-
-                <!-- Password Change -->
-                <div class="form-section">
-                    <h2>🔐 {{ __('auth.change_password') }}</h2>
-                    <p style="color: #6b7280; margin-bottom: 25px; font-size: 0.95em; font-weight: 500;">
-                        💡 {{ __('auth.leave_empty') }}
-                    </p>
-
-                    <div class="grid-2">
-                        <div class="form-group">
-                            <label for="password">{{ __('auth.password') }}</label>
-                            <input
-                                type="password"
-                                id="password"
-                                name="password"
-                                class="@error('password') error @enderror"
-                            />
-                            <div class="hint">{{ __('auth.password_hint') }}</div>
-                            @error('password')
-                                <div class="error-message">❌ {{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="form-group">
-                            <label for="password_confirmation">{{ __('auth.password_confirmation') }}</label>
-                            <input
-                                type="password"
-                                id="password_confirmation"
-                                name="password_confirmation"
-                                class="@error('password_confirmation') error @enderror"
-                            />
-                            @error('password_confirmation')
-                                <div class="error-message">❌ {{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Actions -->
-                <div class="actions">
-                    <a href="{{ route('home') }}" class="btn btn-link">← {{ __('auth.back_home') }}</a>
-                    <button type="submit" class="btn btn-primary">💾 {{ __('auth.save_changes') }}</button>
-                </div>
-            </form>
-
-            <!-- Logout -->
-            <div class="logout-section">
-                <form action="{{ route('logout') }}" method="POST" class="inline">
-                    @csrf
-                    <button type="submit" class="btn btn-danger">
-                        ↪️ {{ __('auth.logout') }}
-                    </button>
-                </form>
             </div>
+
+            <!-- Section: Change Password -->
+            <div>
+                <div class="mb-8 border-b border-gray-200 pb-8 dark:border-gray-800">
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">{{ __('auth.change_password') }}</h2>
+                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">{{ __('auth.leave_empty') }}</p>
+                </div>
+
+                <div class="grid gap-8 sm:grid-cols-2">
+                    <!-- Password Field -->
+                    <div>
+                        <label for="password" class="block text-sm font-semibold text-gray-900 dark:text-white">
+                            {{ __('auth.password') }}
+                        </label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 transition-colors placeholder-gray-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400 dark:focus:ring-indigo-900 @error('password') border-red-500 dark:border-red-500 @enderror"
+                        />
+                        <p class="mt-2 text-xs text-gray-600 dark:text-gray-400">{{ __('auth.password_hint') }}</p>
+                        @error('password')
+                            <p class="mt-2 flex items-center gap-1 text-sm text-red-600 dark:text-red-400">
+                                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                </svg>
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    </div>
+
+                    <!-- Password Confirmation Field -->
+                    <div>
+                        <label for="password_confirmation" class="block text-sm font-semibold text-gray-900 dark:text-white">
+                            {{ __('auth.password_confirmation') }}
+                        </label>
+                        <input
+                            type="password"
+                            id="password_confirmation"
+                            name="password_confirmation"
+                            class="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 transition-colors placeholder-gray-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400 dark:focus:ring-indigo-900 @error('password_confirmation') border-red-500 dark:border-red-500 @enderror"
+                        />
+                        @error('password_confirmation')
+                            <p class="mt-2 flex items-center gap-1 text-sm text-red-600 dark:text-red-400">
+                                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                </svg>
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex flex-col-reverse items-center justify-between gap-4 border-t border-gray-200 pt-8 sm:flex-row dark:border-gray-800">
+                <a href="{{ route('home') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 transition-colors hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    {{ __('auth.back_home') }}
+                </a>
+                <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 font-semibold text-white transition-all hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-600">
+                    {{ __('auth.save_changes') }}
+                </button>
+            </div>
+        </form>
+
+        <!-- Logout Section -->
+        <div class="mt-12 border-t border-gray-200 pt-12 dark:border-gray-800">
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">{{ __('auth.logout_section_title') }}</h3>
+            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">{{ __('auth.logout_description') }}</p>
+            <form action="{{ route('logout') }}" method="POST" class="mt-4">
+                @csrf
+                <button type="submit" class="inline-flex items-center gap-2 text-sm font-semibold text-red-600 transition-colors hover:text-red-700 dark:text-red-400 dark:hover:text-red-300">
+                    {{ __('auth.logout') }}
+                </button>
+            </form>
         </div>
     </div>
 </div>

@@ -3,29 +3,49 @@
 @section('title', __('contact.page_title'))
 
 @section('content')
-<div class="contact-container">
-    <div class="contact-header">
-        <h1>{{ __('contact.page_title') }}</h1>
-        <p class="contact-subtitle">{{ __('contact.subtitle') }}</p>
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <!-- Header -->
+    <div class="mb-12 text-center">
+        <h1 class="text-5xl sm:text-6xl font-bold text-gray-900 dark:text-white mb-4">
+            {{ __('contact.page_title') }}
+        </h1>
+        <p class="text-lg text-gray-600 dark:text-gray-400 max-w-xl mx-auto">
+            {{ __('contact.subtitle') }}
+        </p>
     </div>
 
+    <!-- Error Alert -->
     @if ($errors->has('error'))
-        <div class="alert alert-error">
-            {{ $errors->first('error') }}
+        <div class="mb-6 p-4 rounded-lg animate-slidedown border-l-4 border-red-500 dark:border-red-400 bg-red-50 dark:bg-red-950/30">
+            <div class="flex items-start gap-3">
+                <span class="text-2xl flex-shrink-0">❌</span>
+                <div>
+                    <h3 class="font-semibold text-red-900 dark:text-red-200 mb-1">{{ __('contact.error_title') }}</h3>
+                    <p class="text-red-800 dark:text-red-300 text-sm">{{ $errors->first('error') }}</p>
+                </div>
+            </div>
         </div>
     @endif
 
+    <!-- Success Alert -->
     @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
+        <div class="mb-6 p-4 rounded-lg animate-slidedown border-l-4 border-green-500 dark:border-green-400 bg-green-50 dark:bg-green-950/30">
+            <div class="flex items-start gap-3">
+                <span class="text-2xl flex-shrink-0">✅</span>
+                <div>
+                    <h3 class="font-semibold text-green-900 dark:text-green-200 mb-1">{{ __('contact.success_title') }}</h3>
+                    <p class="text-green-800 dark:text-green-300 text-sm">{{ session('success') }}</p>
+                </div>
+            </div>
         </div>
     @endif
 
-    <form action="{{ route('contact.store') }}" method="POST" class="contact-form">
+    <!-- Contact Form -->
+    <form action="{{ route('contact.store') }}" method="POST" class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-8 sm:p-10 shadow-sm">
         @csrf
 
         <!-- Honeypot field (hidden from users) -->
-        <input type="text" name="website" style="display: none;" tabindex="-1" autocomplete="off">
+        <input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off">
 
         <!-- Timestamp field (hidden) -->
         <input type="hidden" name="form_timestamp" value="{{ time() }}">
@@ -34,13 +54,15 @@
         <input type="hidden" name="language" value="{{ app()->getLocale() }}">
 
         <!-- Name Field -->
-        <div class="form-group">
-            <label for="name">{{ __('contact.name') }} *</label>
+        <div class="mb-6">
+            <label for="name" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                {{ __('contact.name') }} <span class="text-red-500">*</span>
+            </label>
             <input
                 type="text"
                 id="name"
                 name="name"
-                class="form-input @error('name') is-invalid @enderror"
+                class="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg transition-all focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-900 placeholder-gray-500 dark:placeholder-gray-400 @error('name') border-red-500 dark:border-red-500 @enderror"
                 value="{{ old('name') }}"
                 required
                 minlength="3"
@@ -48,35 +70,39 @@
                 placeholder="{{ __('contact.name_placeholder') }}"
             >
             @error('name')
-                <span class="form-error">{{ $message }}</span>
+                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
             @enderror
         </div>
 
         <!-- Email Field -->
-        <div class="form-group">
-            <label for="email">{{ __('contact.email') }} *</label>
+        <div class="mb-6">
+            <label for="email" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                {{ __('contact.email') }} <span class="text-red-500">*</span>
+            </label>
             <input
                 type="email"
                 id="email"
                 name="email"
-                class="form-input @error('email') is-invalid @enderror"
+                class="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg transition-all focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-900 placeholder-gray-500 dark:placeholder-gray-400 @error('email') border-red-500 dark:border-red-500 @enderror"
                 value="{{ old('email') }}"
                 required
                 placeholder="{{ __('contact.email_placeholder') }}"
             >
             @error('email')
-                <span class="form-error">{{ $message }}</span>
+                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
             @enderror
         </div>
 
         <!-- Subject Field -->
-        <div class="form-group">
-            <label for="subject">{{ __('contact.subject') }} *</label>
+        <div class="mb-6">
+            <label for="subject" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                {{ __('contact.subject') }} <span class="text-red-500">*</span>
+            </label>
             <input
                 type="text"
                 id="subject"
                 name="subject"
-                class="form-input @error('subject') is-invalid @enderror"
+                class="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg transition-all focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-900 placeholder-gray-500 dark:placeholder-gray-400 @error('subject') border-red-500 dark:border-red-500 @enderror"
                 value="{{ old('subject') }}"
                 required
                 minlength="5"
@@ -84,265 +110,52 @@
                 placeholder="{{ __('contact.subject_placeholder') }}"
             >
             @error('subject')
-                <span class="form-error">{{ $message }}</span>
+                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
             @enderror
         </div>
 
         <!-- Message Field -->
-        <div class="form-group">
-            <label for="message">{{ __('contact.message') }} *</label>
+        <div class="mb-6">
+            <label for="message" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                {{ __('contact.message') }} <span class="text-red-500">*</span>
+            </label>
             <textarea
                 id="message"
                 name="message"
-                class="form-textarea @error('message') is-invalid @enderror"
+                class="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg transition-all focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-900 placeholder-gray-500 dark:placeholder-gray-400 @error('message') border-red-500 dark:border-red-500 @enderror"
                 required
                 minlength="10"
                 maxlength="2000"
                 rows="6"
                 placeholder="{{ __('contact.message_placeholder') }}"
             >{{ old('message') }}</textarea>
+            <p class="mt-2 text-xs text-gray-600 dark:text-gray-400">{{ __('contact.message_hint') }}</p>
             @error('message')
-                <span class="form-error">{{ $message }}</span>
+                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
             @enderror
-            <p class="form-hint">{{ __('contact.message_hint') }}</p>
         </div>
 
         <!-- Submit Button -->
-        <button type="submit" class="btn-submit">
+        <button type="submit" class="w-full px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-base rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5 cursor-pointer">
             {{ __('contact.send_button') }}
         </button>
     </form>
 
     <!-- Email Alternative -->
     @if($contactEmail = \App\Models\Setting::get('contact_email'))
-    <div class="email-alternative">
-        <p>{{ __('contact.or_email') }}</p>
-        <a href="mailto:{{ $contactEmail }}" class="email-link">{{ $contactEmail }}</a>
-    </div>
+        <div class="mt-12 text-center pt-8 border-t border-gray-200 dark:border-gray-700">
+            <p class="text-gray-600 dark:text-gray-400 mb-3">
+                {{ __('contact.or_email') }}
+            </p>
+            <a href="mailto:{{ $contactEmail }}" class="inline-flex items-center gap-2 px-6 py-3 border-2 border-indigo-600 dark:border-indigo-500 text-indigo-600 dark:text-indigo-400 font-semibold rounded-lg hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 dark:hover:text-white transition-all duration-200">
+                {{ $contactEmail }}
+            </a>
+        </div>
     @endif
 </div>
 
 <style>
-    .contact-container {
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 0 20px;
-    }
-
-    .contact-header {
-        text-align: center;
-        margin-bottom: 40px;
-    }
-
-    .contact-header h1 {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: #fff;
-        margin: 0 0 10px 0;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
-
-    .contact-subtitle {
-        font-size: 1.1rem;
-        color: rgba(255, 255, 255, 0.8);
-        margin: 0;
-    }
-
-    .contact-form {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 12px;
-        padding: 30px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    }
-
-    .form-group {
-        margin-bottom: 25px;
-    }
-
-    .form-group:last-of-type {
-        margin-bottom: 30px;
-    }
-
-    .form-group label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: 600;
-        color: #fff;
-        font-size: 0.95rem;
-    }
-
-    .form-input,
-    .form-textarea {
-        width: 100%;
-        padding: 12px 15px;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        border-radius: 6px;
-        background: rgba(255, 255, 255, 0.95);
-        color: #333;
-        font-family: inherit;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-    }
-
-    .form-input:focus,
-    .form-textarea:focus {
-        outline: none;
-        border-color: #667eea;
-        background: #fff;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
-
-    .form-input.is-invalid,
-    .form-textarea.is-invalid {
-        border-color: #dc2626;
-        background: #fef2f2;
-    }
-
-    .form-textarea {
-        resize: vertical;
-        font-family: 'Courier New', monospace;
-    }
-
-    .email-alternative {
-        text-align: center;
-        margin-top: 30px;
-        padding-top: 30px;
-        border-top: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .email-alternative p {
-        color: rgba(255, 255, 255, 0.7);
-        margin-bottom: 10px;
-        font-size: 0.95rem;
-    }
-
-    .email-link {
-        display: inline-block;
-        color: #667eea;
-        text-decoration: none;
-        font-weight: 600;
-        padding: 8px 16px;
-        border: 2px solid #667eea;
-        border-radius: 6px;
-        transition: all 0.3s ease;
-    }
-
-    .email-link:hover {
-        background: #667eea;
-        color: #fff;
-    }
-
-    html.dark .email-link {
-        color: #818cf8;
-        border-color: #818cf8;
-    }
-
-    html.dark .email-link:hover {
-        background: #818cf8;
-        color: #1f2937;
-    }
-
-    .form-error {
-        display: block;
-        color: #fca5a5;
-        font-size: 0.85rem;
-        margin-top: 6px;
-    }
-
-    .form-hint {
-        font-size: 0.85rem;
-        color: rgba(255, 255, 255, 0.7);
-        margin: 6px 0 0 0;
-    }
-
-    .btn-submit {
-        width: 100%;
-        padding: 14px 20px;
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        color: white;
-        border: none;
-        border-radius: 6px;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .btn-submit:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
-    }
-
-    .btn-submit:active {
-        transform: translateY(0);
-    }
-
-    .alert {
-        padding: 15px 20px;
-        border-radius: 6px;
-        margin-bottom: 25px;
-        font-weight: 500;
-    }
-
-    .alert-success {
-        background: rgba(34, 197, 94, 0.15);
-        border: 1px solid rgba(34, 197, 94, 0.3);
-        color: #86efac;
-    }
-
-    .alert-error {
-        background: rgba(220, 38, 38, 0.15);
-        border: 1px solid rgba(220, 38, 38, 0.3);
-        color: #fca5a5;
-    }
-
-    html.dark .form-input,
-    html.dark .form-textarea {
-        background: rgba(255, 255, 255, 0.08);
-        border-color: rgba(255, 255, 255, 0.2);
-        color: #f3f4f6;
-    }
-
-    html.dark .form-input:focus,
-    html.dark .form-textarea:focus {
-        background: rgba(255, 255, 255, 0.12);
-        border-color: #818cf8;
-        box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.1);
-    }
-
-    html.dark .form-input.is-invalid,
-    html.dark .form-textarea.is-invalid {
-        background: rgba(220, 38, 38, 0.1);
-        border-color: #dc2626;
-    }
-
-    @media (max-width: 640px) {
-        .contact-container {
-            margin: 30px auto;
-        }
-
-        .contact-header h1 {
-            font-size: 1.8rem;
-        }
-
-        .contact-form {
-            padding: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-    }
-
-    .alert {
-        animation: slideDown 0.3s ease;
-    }
-
-    @keyframes slideDown {
+    @keyframes slidedown {
         from {
             opacity: 0;
             transform: translateY(-10px);
@@ -353,35 +166,42 @@
         }
     }
 
-    .alert.fade-out {
-        animation: fadeOut 0.5s ease forwards;
-    }
-
-    @keyframes fadeOut {
-        from {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    @keyframes fadeout {
         to {
             opacity: 0;
             transform: translateY(-10px);
         }
+    }
+
+    .animate-slidedown {
+        animation: slidedown 0.3s ease;
+    }
+
+    .alert-fade-out {
+        animation: fadeout 0.3s ease forwards;
+    }
+
+    button[type="submit"] {
+        background-color: #4f46e5 !important;
+        color: white !important;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #4338ca !important;
+        box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3) !important;
     }
 </style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const alerts = document.querySelectorAll('.alert');
-
+        const alerts = document.querySelectorAll('[class*="border-l-4"]');
         alerts.forEach(alert => {
-            // Auto-hide alerts after 5 seconds
-            setTimeout(function() {
-                alert.classList.add('fade-out');
-                // Remove from DOM after animation completes
-                setTimeout(function() {
-                    alert.remove();
-                }, 500);
-            }, 5000);
+            if (alert.classList.contains('animate-slidedown')) {
+                setTimeout(() => {
+                    alert.classList.add('alert-fade-out');
+                    setTimeout(() => alert.remove(), 300);
+                }, 5000);
+            }
         });
     });
 </script>

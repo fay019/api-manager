@@ -17,4 +17,7 @@ return [
     'password_hint' => 'Minimum 8 caractères',
     'save_changes' => 'Enregistrer les modifications',
     'logout' => 'Se déconnecter',
+    'account_information' => 'Informations du Compte',
+    'logout_section_title' => 'Se Déconnecter',
+    'logout_description' => 'Vous déconnecter de votre compte',
 ];

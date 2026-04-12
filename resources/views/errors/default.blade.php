@@ -1,5 +1,11 @@
-@extends('errors.layout')
+@php
+    $statusCode = isset($exception) ? $exception->getStatusCode() : 500;
+    $isServerError = $statusCode >= 500;
+    $layout = $isServerError ? 'errors.server' : 'errors.client';
+@endphp
 
-@section('title', 'Erreur')
-@section('code', isset($exception) ? $exception->getStatusCode() : '500')
-@section('message', isset($exception) ? $exception->getMessage() : 'Une erreur est survenue.')
+@extends($layout)
+
+@section('title', __('errors.' . $statusCode . '.title', ['default' => 'Error']))
+@section('code', $statusCode)
+@section('message', __('errors.' . $statusCode . '.message', ['default' => isset($exception) ? $exception->getMessage() : 'An error occurred.']))

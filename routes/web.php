@@ -88,3 +88,25 @@ Route::prefix('docs')->name('docs.')->group(function () {
     // Dynamic route for any documentation (must come last)
     Route::get('/{docName}', [DocsController::class, 'show'])->name('show');
 });
+
+// Test error routes (remove after testing)
+if (config('app.debug')) {
+    Route::get('/test-error-401', function () {
+        abort(401);
+    });
+    Route::get('/test-error-403', function () {
+        abort(403);
+    });
+    Route::get('/test-error-404', function () {
+        abort(404);
+    });
+    Route::get('/test-error-419', function () {
+        abort(419);
+    });
+    Route::get('/test-error-500', function () {
+        abort(500);
+    });
+    Route::get('/test-error-503', function () {
+        abort(503);
+    });
+}

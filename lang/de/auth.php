@@ -17,4 +17,7 @@ return [
     'password_hint' => 'Mindestens 8 Zeichen',
     'save_changes' => 'Änderungen speichern',
     'logout' => 'Abmelden',
+    'account_information' => 'Kontoinformationen',
+    'logout_section_title' => 'Abmelden',
+    'logout_description' => 'Melden Sie sich von Ihrem Konto ab',
 ];

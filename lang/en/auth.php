@@ -17,4 +17,7 @@ return [
     'password_hint' => 'Minimum 8 characters',
     'save_changes' => 'Save Changes',
     'logout' => 'Logout',
+    'account_information' => 'Account Information',
+    'logout_section_title' => 'Logout',
+    'logout_description' => 'Sign out of your account',
 ];

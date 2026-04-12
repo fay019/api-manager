@@ -2,432 +2,197 @@
 
 @section('title', __('app.home.title'))
 
-@section('styles')
-    <style>
-        .home-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .header {
-            background: white;
-            border-radius: 12px 12px 0 0;
-            padding: 60px 40px;
-            text-align: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        html.dark .header {
-            background: rgb(30, 41, 59);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-        }
-
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-
-        .header p {
-            font-size: 1.1em;
-            opacity: 0.95;
-            margin-bottom: 5px;
-        }
-
-        .version {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            margin-top: 10px;
-        }
-
-        html.dark .version {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .content {
-            background: white;
-            padding: 40px;
-            min-height: 400px;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        html.dark .content {
-            background: #1f2937;
-            color: #f3f4f6;
-        }
-
-        .section {
-            margin-bottom: 50px;
-        }
-
-        .section h2 {
-            color: #667eea;
-            font-size: 1.8em;
-            margin-bottom: 25px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #667eea;
-        }
-
-        html.dark .section h2 {
-            color: #818cf8;
-            border-bottom-color: #818cf8;
-        }
-
-        .quick-nav {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .nav-card {
-            background: white;
-            border-radius: 8px;
-            padding: 25px;
-            text-align: center;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            color: inherit;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .nav-card:hover {
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
-            transform: translateY(-3px);
-        }
-
-        .nav-card .icon {
-            font-size: 2.5em;
-        }
-
-        .nav-card h3 {
-            color: #667eea;
-            font-size: 1.1em;
-            margin: 0;
-        }
-
-        .nav-card p {
-            color: #666;
-            font-size: 0.9em;
-            margin: 0;
-            line-height: 1.5;
-        }
-
-        html.dark .nav-card {
-            background: #374151;
-            color: #f3f4f6;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        }
-
-        html.dark .nav-card:hover {
-            box-shadow: 0 8px 20px rgba(129, 140, 248, 0.2);
-        }
-
-        html.dark .nav-card h3 {
-            color: #818cf8;
-        }
-
-        html.dark .nav-card p {
-            color: #d1d5db;
-        }
-
-        .getting-started {
-            background: #f9f9f9;
-            border-left: 4px solid #667eea;
-            padding: 25px;
-            border-radius: 6px;
-            margin-bottom: 30px;
-        }
-
-        .getting-started h3 {
-            color: #333;
-            margin-bottom: 15px;
-            font-size: 1.2em;
-        }
-
-        .getting-started ol {
-            margin-left: 20px;
-            color: #666;
-            line-height: 2;
-        }
-
-        .getting-started li {
-            margin-bottom: 10px;
-        }
-
-        html.dark .getting-started {
-            background: #374151;
-            border-left-color: #818cf8;
-        }
-
-        html.dark .getting-started h3 {
-            color: #f3f4f6;
-        }
-
-        html.dark .getting-started ol {
-            color: #d1d5db;
-        }
-
-        .endpoints-list {
-            background: #f5f5f5;
-            padding: 20px;
-            border-radius: 6px;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            font-size: 0.9em;
-            line-height: 2;
-            color: #333;
-            margin-bottom: 30px;
-        }
-
-        .endpoint {
-            margin-bottom: 10px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .endpoint:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .method {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 3px;
-            font-weight: 600;
-            margin-right: 10px;
-            font-size: 0.85em;
-        }
-
-        .method.get {
-            background: #e3f2fd;
-            color: #1976d2;
-        }
-
-        .method.post {
-            background: #f3e5f5;
-            color: #7b1fa2;
-        }
-
-        .path {
-            color: #667eea;
-            font-weight: 600;
-        }
-
-        html.dark .endpoints-list {
-            background: #374151;
-            color: #d1d5db;
-        }
-
-        html.dark .endpoint {
-            border-bottom-color: #4b5563;
-        }
-
-        html.dark .method.get {
-            background: rgba(129, 140, 248, 0.2);
-            color: #a5b4fc;
-        }
-
-        html.dark .method.post {
-            background: rgba(168, 85, 247, 0.2);
-            color: #d8b4fe;
-        }
-
-        html.dark .path {
-            color: #a5b4fc;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-        }
-
-        .feature {
-            background: white;
-            border: 1px solid #f0f0f0;
-            padding: 20px;
-            border-radius: 6px;
-            text-align: center;
-        }
-
-        .feature::before {
-            content: "✓";
-            display: block;
-            font-size: 1.8em;
-            color: #667eea;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-
-        .feature h4 {
-            color: #333;
-            margin-bottom: 8px;
-            font-size: 1em;
-        }
-
-        .feature p {
-            color: #666;
-            font-size: 0.9em;
-            line-height: 1.5;
-        }
-
-        html.dark .feature {
-            background: #374151;
-            border-color: #4b5563;
-        }
-
-        html.dark .feature::before {
-            color: #818cf8;
-        }
-
-        html.dark .feature h4 {
-            color: #f3f4f6;
-        }
-
-        html.dark .feature p {
-            color: #d1d5db;
-        }
-
-        .endpoint-code {
-            color: #333;
-        }
-
-        html.dark .endpoint-code {
-            color: #d1d5db;
-        }
-
-        .endpoint-note {
-            margin-left: 20px;
-            margin-top: 15px;
-            color: #666;
-        }
-
-        html.dark .endpoint-note {
-            color: #d1d5db;
-        }
-
-        @media (max-width: 768px) {
-            .quick-nav {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-@endsection
-
 @section('content')
-<div class="home-container">
-        <div class="header">
-            <h1>{{ __('app.home.header_title') }}</h1>
-            <p>{{ __('app.home.header_subtitle') }}</p>
-            <div class="version">{{ __('app.home.header_version') }}</div>
+<div class="flex flex-col min-h-screen">
+    <!-- Hero Section -->
+    <section class="relative overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900 pt-16 pb-20">
+        <!-- Decorative background elements -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute -top-40 -right-40 w-80 h-80 bg-indigo-200/20 rounded-full blur-3xl dark:bg-indigo-900/10"></div>
+            <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-200/20 rounded-full blur-3xl dark:bg-blue-900/10"></div>
         </div>
 
-        <div class="content">
-            <!-- Quick Navigation -->
-            <section class="section">
-                <h2>{{ __('app.home.quick_nav_title') }}</h2>
-                <div class="quick-nav">
-                    @if(auth()->check() && auth()->user()->is_admin)
-                        <a href="/admin" class="nav-card">
-                            <div class="icon">📊</div>
-                            <h3>{{ __('app.home.admin_panel') }}</h3>
-                            <p>{{ __('app.home.admin_panel_desc') }}</p>
-                        </a>
-                    @endif
-
-                    <a href="{{ route('docs.index') }}" class="nav-card">
-                        <div class="icon" style="font-size: 3em;">📚</div>
-                        <h3 style="color: #764ba2; font-weight: 700;">{{ __('app.home.all_docs') }}</h3>
-                        <p style="font-weight: 600;">{{ __('app.home.all_docs_desc') }}</p>
-                    </a>
-
-                    <a href="/api/v1/promo/banner.json" class="nav-card">
-                        <div class="icon">📡</div>
-                        <h3>{{ __('app.home.api_test') }}</h3>
-                        <p>{{ __('app.home.api_test_desc') }}</p>
-                    </a>
-                </div>
-            </section>
-
-            <!-- Getting Started -->
-            <section class="section">
-                <h2>{{ __('app.home.getting_started') }}</h2>
-
-                <div class="getting-started">
-                    <h3>{{ __('app.home.test_the_api') }}</h3>
-                    <ol>
-                        <li>{{ __('app.home.check_health') }}</li>
-                    </ol>
-                    <div class="endpoints-list">
-                        <code class="endpoint-code">curl http://api-manager.test/api/v1/health</code>
-                    </div>
-                    <p class="endpoint-note">{{ __('app.home.api_docs_link') }}</p>
-                </div>
-            </section>
-
-            <!-- API Endpoints -->
-            <section class="section">
-                <h2>{{ __('app.home.available_endpoints') }}</h2>
-                <div class="endpoints-list">
-                    <div class="endpoint">
-                        <span class="method get">GET</span>
-                        <span class="path">/api/v1/health</span>
-                        <br><small style="color: #999;">{{ __('app.home.health_endpoint') }}</small>
-                    </div>
-                    <div class="endpoint">
-                        <span class="method get">GET</span>
-                        <span class="path">/api/v1/promo/banner.json</span>
-                        <br><small style="color: #999;">{{ __('app.home.promo_banner') }}</small>
-                    </div>
-                    <div class="endpoint">
-                        <span class="method post">POST</span>
-                        <span class="path">/api/v1/promo/event</span>
-                        <br><small style="color: #999;">{{ __('app.home.promo_event') }}</small>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Core Features -->
-            <section class="section">
-                <h2>{{ __('app.home.core_features') }}</h2>
-                <div class="features-grid">
-                    <div class="feature">
-                        <h4>{{ __('app.home.feature_modular') }}</h4>
-                        <p>{{ __('app.home.feature_modular_desc') }}</p>
-                    </div>
-                    <div class="feature">
-                        <h4>{{ __('app.home.feature_keys') }}</h4>
-                        <p>{{ __('app.home.feature_keys_desc') }}</p>
-                    </div>
-                    <div class="feature">
-                        <h4>{{ __('app.home.feature_cors') }}</h4>
-                        <p>{{ __('app.home.feature_cors_desc') }}</p>
-                    </div>
-                    <div class="feature">
-                        <h4>{{ __('app.home.feature_rate') }}</h4>
-                        <p>{{ __('app.home.feature_rate_desc') }}</p>
-                    </div>
-                    <div class="feature">
-                        <h4>{{ __('app.home.feature_logs') }}</h4>
-                        <p>{{ __('app.home.feature_logs_desc') }}</p>
-                    </div>
-                    <div class="feature">
-                        <h4>{{ __('app.home.feature_events') }}</h4>
-                        <p>{{ __('app.home.feature_events_desc') }}</p>
-                    </div>
-                </div>
-            </section>
+        <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-gray-900 dark:text-white mb-6">
+                {{ __('app.home.header_title') }}
+            </h1>
+            <p class="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed">
+                {{ __('app.home.header_subtitle') }}
+            </p>
+            <div class="inline-block px-4 py-2 bg-indigo-100 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 rounded-full text-sm font-semibold">
+                {{ __('app.home.header_version') }}
+            </div>
         </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <!-- Quick Navigation Section -->
+        <section class="mb-20">
+            <div class="mb-12">
+                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2">
+                    {{ __('app.home.quick_nav_title') }}
+                </h2>
+                <p class="text-gray-600 dark:text-gray-400">
+                    {{ __('app.home.quick_nav_subtitle') }}
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                @if(auth()->check() && auth()->user()->is_admin)
+                    <a href="/admin" class="group relative bg-white dark:bg-gray-800 rounded-xl p-8 border border-gray-200 dark:border-gray-700 transition-all duration-300 hover:shadow-lg hover:border-indigo-400 dark:hover:border-indigo-500">
+                        <div class="absolute inset-0 rounded-xl bg-gradient-to-br from-indigo-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity dark:from-indigo-950 dark:to-transparent"></div>
+                        <div class="relative">
+                            <div class="text-4xl mb-4">📊</div>
+                            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">{{ __('app.home.admin_panel') }}</h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm">{{ __('app.home.admin_panel_desc') }}</p>
+                        </div>
+                    </a>
+                @endif
+
+                <a href="{{ route('docs.index') }}" class="group relative bg-white dark:bg-gray-800 rounded-xl p-8 border border-gray-200 dark:border-gray-700 transition-all duration-300 hover:shadow-lg hover:border-indigo-400 dark:hover:border-indigo-500">
+                    <div class="absolute inset-0 rounded-xl bg-gradient-to-br from-indigo-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity dark:from-indigo-950 dark:to-transparent"></div>
+                    <div class="relative">
+                        <div class="text-4xl mb-4">📚</div>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">{{ __('app.home.all_docs') }}</h3>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm">{{ __('app.home.all_docs_desc') }}</p>
+                    </div>
+                </a>
+
+                <a href="/api/v1/promo/banner.json" class="group relative bg-white dark:bg-gray-800 rounded-xl p-8 border border-gray-200 dark:border-gray-700 transition-all duration-300 hover:shadow-lg hover:border-indigo-400 dark:hover:border-indigo-500">
+                    <div class="absolute inset-0 rounded-xl bg-gradient-to-br from-indigo-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity dark:from-indigo-950 dark:to-transparent"></div>
+                    <div class="relative">
+                        <div class="text-4xl mb-4">📡</div>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">{{ __('app.home.api_test') }}</h3>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm">{{ __('app.home.api_test_desc') }}</p>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Getting Started Section -->
+        <section class="mb-20">
+            <div class="mb-12">
+                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2">
+                    {{ __('app.home.getting_started') }}
+                </h2>
+                <p class="text-gray-600 dark:text-gray-400">
+                    {{ __('app.home.getting_started_subtitle') }}
+                </p>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-8 sm:p-10">
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-6">{{ __('app.home.test_the_api') }}</h3>
+                <ol class="space-y-4 mb-8">
+                    <li class="flex gap-4">
+                        <span class="flex-shrink-0 w-8 h-8 bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 rounded-full flex items-center justify-center font-semibold">1</span>
+                        <span class="text-gray-700 dark:text-gray-300 pt-1">{{ __('app.home.check_health') }}</span>
+                    </li>
+                </ol>
+
+                <div class="bg-gray-900 dark:bg-black rounded-lg p-4 mb-6 overflow-x-auto">
+                    <code class="text-green-400 font-mono text-sm">curl http://api-manager.test/api/v1/health</code>
+                </div>
+
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    {{ __('app.home.api_docs_link') }}
+                </p>
+            </div>
+        </section>
+
+        <!-- API Endpoints Section -->
+        <section class="mb-20">
+            <div class="mb-12">
+                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2">
+                    {{ __('app.home.available_endpoints') }}
+                </h2>
+                <p class="text-gray-600 dark:text-gray-400">
+                    {{ __('app.home.endpoints_subtitle') }}
+                </p>
+            </div>
+
+            <div class="space-y-4">
+                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:shadow-md transition-shadow">
+                    <div class="flex items-start gap-4">
+                        <span class="inline-block px-3 py-1 bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 rounded font-semibold text-xs">GET</span>
+                        <div>
+                            <code class="text-indigo-600 dark:text-indigo-400 font-mono font-semibold">/api/v1/health</code>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ __('app.home.health_endpoint') }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:shadow-md transition-shadow">
+                    <div class="flex items-start gap-4">
+                        <span class="inline-block px-3 py-1 bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 rounded font-semibold text-xs">GET</span>
+                        <div>
+                            <code class="text-indigo-600 dark:text-indigo-400 font-mono font-semibold">/api/v1/promo/banner.json</code>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ __('app.home.promo_banner') }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:shadow-md transition-shadow">
+                    <div class="flex items-start gap-4">
+                        <span class="inline-block px-3 py-1 bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 rounded font-semibold text-xs">POST</span>
+                        <div>
+                            <code class="text-indigo-600 dark:text-indigo-400 font-mono font-semibold">/api/v1/promo/event</code>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ __('app.home.promo_event') }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Core Features Section -->
+        <section>
+            <div class="mb-12">
+                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2">
+                    {{ __('app.home.core_features') }}
+                </h2>
+                <p class="text-gray-600 dark:text-gray-400">
+                    {{ __('app.home.features_subtitle') }}
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:shadow-md transition-shadow">
+                    <div class="text-2xl mb-4">✓</div>
+                    <h4 class="text-lg font-bold text-gray-900 dark:text-white mb-2">{{ __('app.home.feature_modular') }}</h4>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">{{ __('app.home.feature_modular_desc') }}</p>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:shadow-md transition-shadow">
+                    <div class="text-2xl mb-4">✓</div>
+                    <h4 class="text-lg font-bold text-gray-900 dark:text-white mb-2">{{ __('app.home.feature_keys') }}</h4>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">{{ __('app.home.feature_keys_desc') }}</p>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:shadow-md transition-shadow">
+                    <div class="text-2xl mb-4">✓</div>
+                    <h4 class="text-lg font-bold text-gray-900 dark:text-white mb-2">{{ __('app.home.feature_cors') }}</h4>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">{{ __('app.home.feature_cors_desc') }}</p>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:shadow-md transition-shadow">
+                    <div class="text-2xl mb-4">✓</div>
+                    <h4 class="text-lg font-bold text-gray-900 dark:text-white mb-2">{{ __('app.home.feature_rate') }}</h4>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">{{ __('app.home.feature_rate_desc') }}</p>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:shadow-md transition-shadow">
+                    <div class="text-2xl mb-4">✓</div>
+                    <h4 class="text-lg font-bold text-gray-900 dark:text-white mb-2">{{ __('app.home.feature_logs') }}</h4>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">{{ __('app.home.feature_logs_desc') }}</p>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:shadow-md transition-shadow">
+                    <div class="text-2xl mb-4">✓</div>
+                    <h4 class="text-lg font-bold text-gray-900 dark:text-white mb-2">{{ __('app.home.feature_events') }}</h4>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">{{ __('app.home.feature_events_desc') }}</p>
+                </div>
+            </div>
+        </section>
     </div>
+</div>
 @endsection

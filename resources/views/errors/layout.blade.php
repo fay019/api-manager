@@ -1,121 +1,36 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Erreur - @yield('title')</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            transition: background-color 0.3s ease;
-        }
-
-        html.dark body {
-            background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-        }
-        .container {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 600px;
-            width: 100%;
-            padding: 40px;
-            text-align: center;
-        }
-        .error-code {
-            font-size: 72px;
-            font-weight: bold;
-            color: #dc2626;
-            margin-bottom: 10px;
-        }
-        .error-title {
-            font-size: 24px;
-            font-weight: 600;
-            color: #111827;
-            margin-bottom: 15px;
-        }
-        .error-description {
-            font-size: 14px;
-            color: #6b7280;
-            line-height: 1.6;
-            margin-bottom: 30px;
-        }
-        .actions {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            text-decoration: none;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-        }
-        .btn-primary:hover {
-            opacity: 0.9;
-        }
-        .btn-secondary {
-            background: #e5e7eb;
-            color: #111827;
-        }
-        .btn-secondary:hover {
-            background: #d1d5db;
-        }
-
-        html.dark .container {
-            background: #374151;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-        }
-
-        html.dark .error-code {
-            color: #f87171;
-        }
-
-        html.dark .error-title {
-            color: #f3f4f6;
-        }
-
-        html.dark .error-description {
-            color: #d1d5db;
-        }
-
-        html.dark .btn-secondary {
-            background: #4b5563;
-            color: #f3f4f6;
-        }
-
-        html.dark .btn-secondary:hover {
-            background: #6b7280;
-        }
-    </style>
+    <title>Error - @yield('title')</title>
+    @vite('resources/css/app.css')
 </head>
-<body>
-    <div class="container">
-        <div class="error-code">@yield('code')</div>
-        <div class="error-title">@yield('title')</div>
-        <div class="error-description">@yield('message')</div>
-        <div class="actions">
-            <a href="{{ url('/') }}" class="btn btn-primary">{{ __('errors.' . ($exception->getStatusCode() ?? '500') . '.back_home') }}</a>
-            <a href="{{ url()->previous() }}" class="btn btn-secondary">{{ __('errors.' . ($exception->getStatusCode() ?? '500') . '.back_previous') }}</a>
+<body class="bg-white dark:bg-gray-950">
+    <div class="flex min-h-screen items-center justify-center px-4 py-16 sm:px-6 lg:px-8">
+        <div class="w-full max-w-md space-y-8 text-center">
+            <!-- Error Code -->
+            <div class="space-y-4">
+                <div class="text-7xl font-black tracking-tight text-indigo-600 dark:text-indigo-500">
+                    @yield('code')
+                </div>
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+                    @yield('title')
+                </h1>
+                <p class="text-lg text-gray-600 dark:text-gray-400">
+                    @yield('message')
+                </p>
+            </div>
+
+            <!-- Actions -->
+            <div class="space-y-3 pt-8">
+                <a href="{{ url('/') }}" class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 font-semibold text-white transition-all hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-600">
+                    {{ __('errors.' . ($exception->getStatusCode() ?? '500') . '.back_home') }}
+                </a>
+                <a href="{{ url()->previous() }}" class="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 px-6 py-3 font-semibold text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-900">
+                    {{ __('errors.' . ($exception->getStatusCode() ?? '500') . '.back_previous') }}
+                </a>
+            </div>
         </div>
     </div>
 
