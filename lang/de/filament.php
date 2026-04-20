@@ -1,6 +1,18 @@
 <?php
 
 return [
+    // Configuration Widget
+    'configuration' => 'Konfiguration',
+    'config' => [
+        'laravel' => 'Laravel',
+        'php' => 'PHP',
+        'git' => 'Git',
+        'branch' => 'Zweig',
+        'commit' => 'Commit',
+        'copy_hash' => 'Hash kopieren',
+        'copied' => 'Kopiert!',
+    ],
+
     // Navigation
     'nav' => [
         'api_management' => 'API-Verwaltung',
