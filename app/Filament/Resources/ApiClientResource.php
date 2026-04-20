@@ -152,22 +152,26 @@ class ApiClientResource extends Resource
                     ->badge()
                     ->color(fn (bool $state): string => $state ? 'success' : 'danger')
                     ->formatStateUsing(fn (bool $state): string => $state ? __('filament.common.active') : __('filament.common.disabled'))
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
 
                 TextColumn::make('client_type')
                     ->label(__('filament.client.type'))
                     ->badge()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
 
                 TextColumn::make('contact_email')
                     ->label(__('filament.client.contact'))
                     ->searchable()
+                    ->toggleable()
                     ->toggleable(),
 
                 TextColumn::make('rate_limit_per_minute')
                     ->label(__('filament.client.rate_limit'))
                     ->suffix(' req/min')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
 
                 TextColumn::make('apiKeys')
                     ->label(__('filament.key.plural'))
@@ -180,7 +184,8 @@ class ApiClientResource extends Resource
                         '%d active, %d inactive',
                         $record->apiKeys()->where('is_active', true)->count(),
                         $record->apiKeys()->where('is_active', false)->count()
-                    )),
+                    ))
+                    ->toggleable(),
 
                 TextColumn::make('requestLogs')
                     ->label(__('filament.log.requests'))
@@ -193,20 +198,22 @@ class ApiClientResource extends Resource
                         '%d successful (2xx), %d failed (4xx/5xx)',
                         $record->requestLogs()->whereBetween('status_code', [200, 299])->count(),
                         $record->requestLogs()->whereBetween('status_code', [400, 599])->count()
-                    )),
+                    ))
+                    ->toggleable(),
 
                 TextColumn::make('created_at')
                     ->label(__('filament.common.created'))
                     ->dateTime('M d, Y H:i')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_active')
                     ->label(__('filament.client.active')),
             ])
             ->actions([
-                EditAction::make(),
-                DeleteAction::make(),
+                EditAction::make()->iconButton(),
+                DeleteAction::make()->iconButton(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([

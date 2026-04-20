@@ -237,12 +237,13 @@ class ApiKeyResource extends Resource
                     ->label(__('filament.key.filter_client')),
             ])
             ->actions([
-                ViewAction::make(),
-                EditAction::make(),
+                ViewAction::make()->iconButton(),
+                EditAction::make()->iconButton(),
                 Action::make('regenerate')
                     ->label(__('filament.key.regenerate'))
                     ->icon('heroicon-m-arrow-path')
                     ->color('warning')
+                    ->iconButton()
                     ->requiresConfirmation()
                     ->modalHeading(__('filament.key.regenerate_action'))
                     ->modalDescription(__('filament.key.regenerate_confirm'))
@@ -303,6 +304,7 @@ class ApiKeyResource extends Resource
                     ->label(__('filament.key.revoke'))
                     ->icon('heroicon-m-x-mark')
                     ->color('danger')
+                    ->iconButton()
                     ->visible(fn (ApiKey $record) => $record->is_active)
                     ->action(function (ApiKey $record) {
                         $record->update(['is_active' => false]);
@@ -314,7 +316,7 @@ class ApiKeyResource extends Resource
                     })
                     ->requiresConfirmation(),
 
-                DeleteAction::make()
+                DeleteAction::make()->iconButton()
                     ->visible(fn (ApiKey $record) => ! $record->is_active),
             ])
             ->bulkActions([

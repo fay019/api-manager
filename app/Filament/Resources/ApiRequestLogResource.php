@@ -244,7 +244,7 @@ class ApiRequestLogResource extends Resource
                     }),
             ])
             ->actions([
-                ViewAction::make(),
+                ViewAction::make()->iconButton(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([

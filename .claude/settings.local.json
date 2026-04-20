@@ -22,7 +22,9 @@
       "mcp__laravel-boost__search-docs",
       "mcp__laravel-boost__browser-logs",
       "mcp__laravel-boost__database-schema",
-      "mcp__laravel-boost__database-query"
+      "mcp__laravel-boost__database-query",
+      "Bash(git add *)",
+      "Bash(git commit -m 'style: convert table actions to icon-only buttons *)"
     ]
   },
   "enabledMcpjsonServers": [
