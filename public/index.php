@@ -62,7 +62,7 @@ function ensureAppKeyExists(): void
     $content = file_get_contents($envPath);
 
     // Check if APP_KEY is already set with a non-empty value
-    if (preg_match('/^APP_KEY=base64:/', $content)) {
+    if (preg_match('/^APP_KEY=base64:/m', $content)) {
         // APP_KEY already has a base64 value
         return;
     }

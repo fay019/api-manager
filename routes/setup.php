@@ -40,6 +40,7 @@ use App\Http\Controllers\Setup\MailController;
 use App\Http\Controllers\Setup\ReviewController;
 use App\Http\Controllers\Setup\SuccessController;
 use App\Http\Controllers\Setup\WelcomeController;
+use App\Http\Middleware\CheckInstallation;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -55,8 +56,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('setup')
     ->name('setup.')
     ->middleware([
-        // 'web', // Supprimé pour éviter l'erreur 419 et respecter le mode stateless
-        // RateLimitSetup sera ajouté après création du middleware
+        CheckInstallation::class,
     ])
     ->group(function () {
 

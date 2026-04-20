@@ -13,6 +13,14 @@ return [
         'copied' => 'Kopiert!',
     ],
 
+    // Dependencies Widget
+    'dependencies' => 'Abhängigkeiten',
+    'dependencies_not_found' => 'Keine Abhängigkeiten gefunden',
+
+    // NPM Dependencies Widget
+    'npm_dependencies' => 'NPM-Abhängigkeiten',
+    'npm_dependencies_not_found' => 'Keine NPM-Abhängigkeiten gefunden',
+
     // Navigation
     'nav' => [
         'api_management' => 'API-Verwaltung',

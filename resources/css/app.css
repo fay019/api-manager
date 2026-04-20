@@ -62,60 +62,58 @@
     }
 }
 
+/* Google AdSense Auto Ads - allow proper positioning */
+ins.adsbygoogle {
+    display: block !important;
+    width: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
 
-    /* Google AdSense Auto Ads - allow proper positioning */
+/* Ensure main content has proper layout and sits above ads */
+.main-content {
+    position: relative;
+    z-index: 1;
+    clear: both;
+}
+
+/* Force other ad containers to not overlap with critical z-index reduction */
+#mys-wrapper,
+#abgc,
+[role="region"][aria-label*="advertisement"] {
+    z-index: 1 !important;
+}
+
+/* Hero section padding to accommodate ads */
+section:first-of-type {
+    @apply mb-4;
+    position: relative;
+    z-index: 0;
+}
+
+/* Add spacing after hero section for ad clearance */
+section:first-of-type + .flex-1 {
+    @apply mt-4;
+    clear: both;
+}
+
+/* Prevent Google Ad container from overlapping */
+body > div[style*="width"],
+body > div[id*="mys"],
+body > div[class*="ad"] {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+}
+
+/* Mobile responsiveness for auto ads */
+@media (max-width: 640px) {
     ins.adsbygoogle {
-        display: block !important;
-        width: auto !important;
-        margin: 0 !important;
-        padding: 0 !important;
+        width: 100% !important;
+        margin: 1rem auto !important;
     }
 
-    /* Ensure main content has proper layout and sits above ads */
-    .main-content {
-        position: relative;
-        z-index: 1;
-        clear: both;
-    }
-
-    /* Force other ad containers to not overlap with critical z-index reduction */
-    #mys-wrapper,
-    #abgc,
-    [role="region"][aria-label*="advertisement"] {
-        z-index: 1 !important;
-    }
-
-    /* Hero section padding to accommodate ads */
-    section:first-of-type {
-        @apply mb-4;
-        position: relative;
-        z-index: 0;
-    }
-
-    /* Add spacing after hero section for ad clearance */
-    section:first-of-type + .flex-1 {
-        @apply mt-4;
-        clear: both;
-    }
-
-    /* Prevent Google Ad container from overlapping */
-    body > div[style*="width"],
-    body > div[id*="mys"],
-    body > div[class*="ad"] {
-        max-width: 100vw !important;
-        overflow-x: hidden !important;
-    }
-
-    /* Mobile responsiveness for auto ads */
-    @media (max-width: 640px) {
-        ins.adsbygoogle {
-            width: 100% !important;
-            margin: 1rem auto !important;
-        }
-
-        #mys-wrapper {
-            max-width: 100% !important;
-            overflow: hidden !important;
-        }
+    #mys-wrapper {
+        max-width: 100% !important;
+        overflow: hidden !important;
     }
 }

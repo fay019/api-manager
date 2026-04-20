@@ -26,12 +26,12 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            $user = Auth::user();
-            if ($user->is_admin) {
-                return redirect()->intended('/admin');
-            }
+            // Invalidate old cookies to fix stale CSRF/session tokens
+            $response = redirect()->intended(Auth::user()->is_admin ? '/admin' : route('profile.edit'));
+            $response->cookie(cookie()->forget('XSRF-TOKEN'));
+            $response->cookie(cookie()->forget(config('session.cookie')));
 
-            return redirect()->intended(route('profile.edit'));
+            return $response;
         }
 
         return back()->withErrors([

@@ -7,7 +7,6 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Setting;
-use App\Services\Installation\EnvManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -28,30 +27,21 @@ Route::middleware('auth')->group(function () {
 Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
-// Language switching
-Route::get('/locale/{locale}', function (string $locale) {
+// Language switching - session only, no .env modifications
+Route::post('/locale/{locale}', function (string $locale) {
     $locale = strtolower($locale);
     if (in_array($locale, ['fr', 'en', 'de'])) {
         session(['locale' => $locale]);
-        App::setLocale($locale);
+        app()->setLocale($locale);
 
-        // Update .env if the service is available
-        try {
-            $envManager = app(EnvManager::class);
-            $envManager->update(['APP_LOCALE' => $locale]);
-            $envManager->flushCache();
-        } catch (Exception $e) {
-            // Service not available or .env not writable, continue
-        }
-
-        // Permanent cookie for non-authenticated users, expires in 1 year
+        // Store in cookie as fallback
         $cookie = cookie('locale', $locale, 60 * 24 * 365, '/', null, false, false);
 
         return back()->withCookie($cookie);
     }
 
     return back();
-})->name('locale.switch')->where('locale', '[a-z]{2}');
+})->name('locale.switch')->where('locale', '[a-z]{2}')->middleware('web');
 
 // Logout
 Route::post('/logout', function () {

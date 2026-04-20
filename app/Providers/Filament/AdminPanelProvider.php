@@ -4,6 +4,8 @@ namespace App\Providers\Filament;
 
 use App\Filament\Widgets\ApiRequestStatsWidget;
 use App\Filament\Widgets\ConfigInfoWidget;
+use App\Filament\Widgets\DependenciesWidget;
+use App\Filament\Widgets\NpmDependenciesWidget;
 use App\Http\Middleware\FilamentAuth;
 use App\Http\Middleware\SetLocale;
 use Filament\Http\Middleware\Authenticate;
@@ -51,7 +53,9 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
                 ApiRequestStatsWidget::class,
+                NpmDependenciesWidget::class,
                 ConfigInfoWidget::class,
+                DependenciesWidget::class,
                 AccountWidget::class,
                 FilamentInfoWidget::class,
             ])
