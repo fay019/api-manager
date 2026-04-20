@@ -39,6 +39,11 @@ class ApiClientResource extends Resource
         return __('filament.nav.clients');
     }
 
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament.client.plural');
+    }
+
     protected static string|UnitEnum|null $navigationGroup = 'API Management';
 
     protected static ?int $navigationSort = 1;
@@ -124,6 +129,7 @@ class ApiClientResource extends Resource
                     ])->columns(2),
 
                 Section::make(__('filament.client.section_about'))
+                    ->description(__('filament.client.section_about_desc'))
                     ->schema([
                         Textarea::make('description')
                             ->label(__('filament.client.description'))

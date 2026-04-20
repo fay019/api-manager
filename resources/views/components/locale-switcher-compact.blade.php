@@ -1,20 +1,31 @@
 <div class="locale-switcher-compact">
-    <select class="locale-select" onchange="window.location.href = this.value">
-        @php
-            $locales = [
-                'en' => ['label' => '🇬🇧 English', 'flag' => '🇬🇧'],
-                'fr' => ['label' => '🇫🇷 Français', 'flag' => '🇫🇷'],
-                'de' => ['label' => '🇩🇪 Deutsch', 'flag' => '🇩🇪'],
-            ];
-            $currentLocale = app()->getLocale();
-        @endphp
+    <form id="locale-form-compact" method="POST" style="display: inline;">
+        @csrf
+        <select name="locale" class="locale-select" onchange="switchLocaleCompact(this.value)">
+            @php
+                $locales = [
+                    'en' => ['label' => '🇬🇧 English', 'flag' => '🇬🇧'],
+                    'fr' => ['label' => '🇫🇷 Français', 'flag' => '🇫🇷'],
+                    'de' => ['label' => '🇩🇪 Deutsch', 'flag' => '🇩🇪'],
+                ];
+                $currentLocale = app()->getLocale();
+            @endphp
 
-        @foreach($locales as $locale => $info)
-            <option value="{{ route('locale.switch', $locale) }}" {{ $currentLocale === $locale ? 'selected' : '' }}>
-                {{ $info['label'] }}
-            </option>
-        @endforeach
-    </select>
+            @foreach($locales as $locale => $info)
+                <option value="{{ $locale }}" {{ $currentLocale === $locale ? 'selected' : '' }}>
+                    {{ $info['label'] }}
+                </option>
+            @endforeach
+        </select>
+    </form>
+
+    <script>
+        function switchLocaleCompact(locale) {
+            const form = document.getElementById('locale-form-compact');
+            form.action = '/locale/' + locale;
+            form.submit();
+        }
+    </script>
 </div>
 
 <style>

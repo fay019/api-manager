@@ -73,6 +73,7 @@ return [
         'section_technical' => 'Configuration Technique',
         'section_technical_desc' => 'Limitation de débit et contrôle d\'origine',
         'section_about' => 'À Propos',
+        'section_about_desc' => 'Notes et description supplémentaires',
         'name' => 'Nom du Client',
         'name_placeholder' => 'ex: Application Mobile, Tableau de Bord Web',
         'type' => 'Type de Client',
@@ -144,6 +145,7 @@ return [
         'filter_active' => 'Active',
         'filter_revoked' => 'Révoquée',
         'filter_client' => 'Client',
+        'never' => 'Jamais',
     ],
 
     // API Request Log Resource

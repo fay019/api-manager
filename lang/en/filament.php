@@ -73,6 +73,7 @@ return [
         'section_technical' => 'Technical Configuration',
         'section_technical_desc' => 'Rate limiting and origin control',
         'section_about' => 'About',
+        'section_about_desc' => 'Additional notes and description',
         'name' => 'Client Name',
         'name_placeholder' => 'e.g., Mobile App, Web Dashboard',
         'type' => 'Client Type',
@@ -144,6 +145,7 @@ return [
         'filter_active' => 'Active',
         'filter_revoked' => 'Revoked',
         'filter_client' => 'Client',
+        'never' => 'Never',
     ],
 
     // API Request Log Resource

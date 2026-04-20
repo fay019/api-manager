@@ -8,18 +8,32 @@
 @endphp
 
 <div class="locale-switcher">
+    <form id="locale-form-text" method="POST" style="display: none;">
+        @csrf
+        <input type="hidden" name="locale" id="locale-input-text">
+    </form>
+
     @foreach($locales as $locale => $label)
         @if($locale === $currentLocale)
             <span class="locale-button active" title="{{ $label }}">
                 {{ strtoupper($locale) }}
             </span>
         @else
-            <a href="{{ route('locale.switch', $locale) }}" class="locale-button" title="{{ $label }}">
+            <button type="button" onclick="switchLocaleText('{{ $locale }}')" class="locale-button" title="{{ $label }}">
                 {{ strtoupper($locale) }}
-            </a>
+            </button>
         @endif
     @endforeach
 </div>
+
+<script>
+    function switchLocaleText(locale) {
+        document.getElementById('locale-input-text').value = locale;
+        const form = document.getElementById('locale-form-text');
+        form.action = '/locale/' + locale;
+        form.submit();
+    }
+</script>
 
 <style>
     .locale-switcher {

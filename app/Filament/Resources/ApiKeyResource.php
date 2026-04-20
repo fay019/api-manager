@@ -45,6 +45,11 @@ class ApiKeyResource extends Resource
         return __('filament.nav.keys');
     }
 
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament.key.plural');
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema

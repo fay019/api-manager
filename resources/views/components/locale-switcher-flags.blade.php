@@ -7,13 +7,24 @@
     $currentLocale = app()->getLocale();
 @endphp
 
-<select class="locale-select" onchange="if(this.value) window.location.href = this.value;">
-    @foreach($locales as $locale => $data)
-        <option value="{{ route('locale.switch', $locale) }}" {{ $currentLocale === $locale ? 'selected' : '' }}>
-            {{ $data['flag'] }} {{ $data['label'] }}
-        </option>
-    @endforeach
-</select>
+<form id="locale-form-flags" method="POST" style="display: inline;">
+    @csrf
+    <select name="locale" class="locale-select" onchange="switchLocaleFlags(this.value)">
+        @foreach($locales as $locale => $data)
+            <option value="{{ $locale }}" {{ $currentLocale === $locale ? 'selected' : '' }}>
+                {{ $data['flag'] }} {{ $data['label'] }}
+            </option>
+        @endforeach
+    </select>
+</form>
+
+<script>
+    function switchLocaleFlags(locale) {
+        const form = document.getElementById('locale-form-flags');
+        form.action = '/locale/' + locale;
+        form.submit();
+    }
+</script>
 
 <style>
     .locale-select {

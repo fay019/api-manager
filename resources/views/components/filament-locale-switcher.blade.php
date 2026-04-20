@@ -8,18 +8,32 @@
 @endphp
 
 <div class="filament-locale-switcher">
+    <form id="locale-form" method="POST" style="display: none;">
+        @csrf
+        <input type="hidden" name="locale" id="locale-input">
+    </form>
+
     @foreach($locales as $locale => $label)
         @if($locale === $currentLocale)
             <span class="filament-locale-button active" title="{{ $label }}">
                 {{ strtoupper($locale) }}
             </span>
         @else
-            <a href="{{ route('locale.switch', $locale) }}" class="filament-locale-button" title="{{ $label }}">
+            <button type="button" onclick="switchLocale('{{ $locale }}')" class="filament-locale-button" title="{{ $label }}">
                 {{ strtoupper($locale) }}
-            </a>
+            </button>
         @endif
     @endforeach
 </div>
+
+<script>
+    function switchLocale(locale) {
+        document.getElementById('locale-input').value = locale;
+        const form = document.getElementById('locale-form');
+        form.action = '/locale/' + locale;
+        form.submit();
+    }
+</script>
 
 <style>
     .filament-locale-switcher {

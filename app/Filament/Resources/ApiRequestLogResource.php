@@ -34,6 +34,11 @@ class ApiRequestLogResource extends Resource
         return __('filament.nav.logs');
     }
 
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament.log.plural');
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema
