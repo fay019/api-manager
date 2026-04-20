@@ -169,15 +169,31 @@ class ApiClientResource extends Resource
                     ->suffix(' req/min')
                     ->sortable(),
 
-                TextColumn::make('apiKeys_count')
+                TextColumn::make('apiKeys')
                     ->label(__('filament.key.plural'))
-                    ->counts('apiKeys')
-                    ->sortable(),
+                    ->state(fn (ApiClient $record): string => sprintf(
+                        '%d / %d',
+                        $record->apiKeys()->where('is_active', true)->count(),
+                        $record->apiKeys()->count()
+                    ))
+                    ->tooltip(fn (ApiClient $record): string => sprintf(
+                        '%d active, %d inactive',
+                        $record->apiKeys()->where('is_active', true)->count(),
+                        $record->apiKeys()->where('is_active', false)->count()
+                    )),
 
-                TextColumn::make('requestLogs_count')
+                TextColumn::make('requestLogs')
                     ->label(__('filament.log.requests'))
-                    ->counts('requestLogs')
-                    ->sortable(),
+                    ->state(fn (ApiClient $record): string => sprintf(
+                        '%d / %d',
+                        $record->requestLogs()->whereBetween('status_code', [200, 299])->count(),
+                        $record->requestLogs()->count()
+                    ))
+                    ->tooltip(fn (ApiClient $record): string => sprintf(
+                        '%d successful (2xx), %d failed (4xx/5xx)',
+                        $record->requestLogs()->whereBetween('status_code', [200, 299])->count(),
+                        $record->requestLogs()->whereBetween('status_code', [400, 599])->count()
+                    )),
 
                 TextColumn::make('created_at')
                     ->label(__('filament.common.created'))

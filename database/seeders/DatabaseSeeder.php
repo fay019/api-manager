@@ -16,6 +16,9 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             DocumentationSettingSeeder::class,
+            ApiClientSeeder::class,
+            ApiKeySeeder::class,
+            ApiRequestLogSeeder::class,
         ]);
     }
 }
