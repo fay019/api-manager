@@ -52,4 +52,17 @@ class Client extends Authenticatable
     {
         return $this->hasMany(ApiClient::class, 'client_id');
     }
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    public function scopeWithApiMetrics($query)
+    {
+        return $query->with([
+            'apiClients' => fn ($q) => $q->where('is_active', true),
+            'apiClients.apiKeys',
+        ]);
+    }
 }

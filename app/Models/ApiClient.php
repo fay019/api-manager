@@ -47,4 +47,18 @@ class ApiClient extends Model
     {
         return $this->hasMany(ApiRequestLog::class);
     }
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    public function scopeWithMetrics($query)
+    {
+        return $query->withCount([
+            'apiKeys as active_keys' => fn ($q) => $q->where('is_active', true),
+            'requestLogs as total_requests',
+            'requestLogs as success_requests' => fn ($q) => $q->whereBetween('status_code', [200, 299]),
+        ]);
+    }
 }

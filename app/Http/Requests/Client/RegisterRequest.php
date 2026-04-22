@@ -15,9 +15,13 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email:rfc', 'max:255', 'unique:clients,email'],
-            'password' => ['required', 'confirmed', Password::min(8)->mixedCase()->numbers()->symbols()],
+            'name' => ['required', 'string', 'min:2', 'max:255', 'not_regex:/^\d+$/'],
+            'email' => ['required', 'email:rfc,dns', 'max:255', 'unique:clients,email'],
+            'password' => [
+                'required',
+                'confirmed',
+                Password::min(8)->mixedCase()->numbers()->symbols()->uncompromised(),
+            ],
         ];
     }
 }

@@ -57,4 +57,16 @@ class ApiKey extends Model
             && (! $this->expires_at || $this->expires_at->isFuture())
             && $this->apiClient->is_active;
     }
+
+    public function scopeValid($query)
+    {
+        return $query->where('is_active', true)
+            ->where(fn ($q) => $q->whereNull('starts_at')->orWhere('starts_at', '<=', now()))
+            ->where(fn ($q) => $q->whereNull('expires_at')->orWhere('expires_at', '>', now()));
+    }
+
+    public function scopeExpired($query)
+    {
+        return $query->where('expires_at', '<', now())->where('is_active', true);
+    }
 }
