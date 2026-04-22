@@ -13,6 +13,9 @@ use App\Services\Installation\RequirementsChecker;
 use App\Services\Installation\SetupSession;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Features\SupportFileUploads\FilePreviewController;
@@ -50,6 +53,8 @@ class AppServiceProvider extends ServiceProvider
 
         Promo::observe(PromoObserver::class);
 
+        $this->registerClientRateLimiters();
+
         // Force standard Livewire routes to avoid 404s
         // This is necessary because Livewire v3 uses hashed routes by default
         // which can mismatch with Filament expectations.
@@ -71,5 +76,36 @@ class AppServiceProvider extends ServiceProvider
                 ->middleware('web')
                 ->name('livewire.preview-file.custom');
         }
+    }
+
+    private function registerClientRateLimiters(): void
+    {
+        RateLimiter::for('client-login', function (Request $request) {
+            return [
+                Limit::perMinute(5)->by('login-email:'.$request->input('email')),
+                Limit::perMinute(10)->by('login-ip:'.$request->ip()),
+                Limit::perMinute(20)->by('login-global:'.$request->ip()),
+            ];
+        });
+
+        RateLimiter::for('client-register', function (Request $request) {
+            return Limit::perMinute(5)->by('register:'.$request->ip());
+        });
+
+        RateLimiter::for('client-activate', function (Request $request) {
+            return Limit::perMinute(20)->by('activate:'.$request->ip());
+        });
+
+        RateLimiter::for('client-resend', function (Request $request) {
+            return Limit::perMinute(3)->by('resend:'.$request->ip());
+        });
+
+        RateLimiter::for('client-password-forgot', function (Request $request) {
+            return Limit::perMinute(3)->by('pwd-forgot:'.$request->ip());
+        });
+
+        RateLimiter::for('client-password-reset', function (Request $request) {
+            return Limit::perMinute(5)->by('pwd-reset:'.$request->ip());
+        });
     }
 }

@@ -4,7 +4,6 @@ namespace App\Filament\Resources\ApiClientResource\RelationManagers;
 
 use App\Filament\Resources\ApiKeyResource;
 use App\Models\ApiKey;
-use Illuminate\Database\Eloquent\Model;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -16,6 +15,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class ApiKeysRelationManager extends RelationManager
 {
@@ -23,7 +23,7 @@ class ApiKeysRelationManager extends RelationManager
 
     protected static ?string $title = null;
 
-    public static function getTitle(Model $ownerRecord = null, string $pageClass = ''): string
+    public static function getTitle(?Model $ownerRecord = null, string $pageClass = ''): string
     {
         return __('filament.key.plural');
     }

@@ -59,7 +59,26 @@
                 <x-locale-switcher-flags />
                 <x-theme-toggle />
 
-                @if(auth()->check())
+                @if(auth('client')->check())
+                    <a
+                        href="{{ route('client.dashboard') }}"
+                        class="px-4 py-2 rounded-lg text-sm font-medium bg-green-600 text-white hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600 transition-colors"
+                    >
+                        {{ __('client.client_auth.dashboard_title') }}
+                    </a>
+                    <form action="{{ route('client.logout') }}" method="POST" class="inline">
+                        @csrf
+                        <button
+                            type="submit"
+                            class="p-2 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors"
+                            title="{{ __('filament.logout') }}"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                            </svg>
+                        </button>
+                    </form>
+                @elseif(auth()->check() && auth()->user()->is_admin)
                     <a
                         href="{{ route('profile.edit') }}"
                         class="p-2 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors"
@@ -82,6 +101,12 @@
                         </button>
                     </form>
                 @else
+                    <a
+                        href="{{ route('client.login') }}"
+                        class="px-4 py-2 rounded-lg text-sm font-medium bg-green-600 text-white hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600 transition-colors"
+                    >
+                        {{ __('client.client_auth.login_title') }}
+                    </a>
                     <a
                         href="{{ route('login.show') }}"
                         class="px-4 py-2 rounded-lg text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-600 transition-colors"
@@ -151,7 +176,33 @@
                     </div>
                 </div>
 
-                @if(auth()->check())
+                @if(auth('client')->check())
+                    <div class="border-t border-gray-200 dark:border-gray-800 pt-4 mt-4 space-y-2">
+                        <a
+                            href="{{ route('client.dashboard') }}"
+                            @click="open = false"
+                            class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors"
+                        >
+                            {{ __('client.client_auth.dashboard_title') }}
+                        </a>
+                        <a
+                            href="{{ route('client.profile.edit') }}"
+                            @click="open = false"
+                            class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors"
+                        >
+                            {{ __('client.client_auth.profile_title') }}
+                        </a>
+                        <form action="{{ route('client.logout') }}" method="POST">
+                            @csrf
+                            <button
+                                type="submit"
+                                class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/30 transition-colors"
+                            >
+                                {{ __('filament.logout') }}
+                            </button>
+                        </form>
+                    </div>
+                @elseif(auth()->check() && auth()->user()->is_admin)
                     <div class="border-t border-gray-200 dark:border-gray-800 pt-4 mt-4 space-y-2">
                         <a
                             href="{{ route('profile.edit') }}"
@@ -171,7 +222,14 @@
                         </form>
                     </div>
                 @else
-                    <div class="border-t border-gray-200 dark:border-gray-800 pt-4 mt-4">
+                    <div class="border-t border-gray-200 dark:border-gray-800 pt-4 mt-4 space-y-2">
+                        <a
+                            href="{{ route('client.login') }}"
+                            @click="open = false"
+                            class="block w-full px-3 py-2 rounded-lg text-sm font-medium bg-green-600 text-white hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600 transition-colors text-center"
+                        >
+                            {{ __('client.client_auth.login_title') }}
+                        </a>
                         <a
                             href="{{ route('login.show') }}"
                             @click="open = false"

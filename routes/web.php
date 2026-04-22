@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\Api\HealthController;
+use App\Http\Controllers\Client\AuthController;
+use App\Http\Controllers\Client\DashboardController;
+use App\Http\Controllers\Client\ProfileController as ClientProfileController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DocsController;
 use App\Http\Controllers\HomeController;
@@ -49,6 +52,43 @@ Route::post('/logout', function () {
 
     return redirect('/');
 })->middleware('auth')->name('logout');
+
+// Client authentication (external)
+Route::prefix('client')->name('client.')->group(function () {
+    Route::middleware('guest:client')->group(function () {
+        Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+        Route::post('/register', [AuthController::class, 'register'])
+            ->middleware('throttle:client-register');
+
+        Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+        Route::post('/login', [AuthController::class, 'login'])
+            ->middleware('throttle:client-login');
+
+        Route::get('/password/forgot', [AuthController::class, 'showForgotPassword'])->name('password.forgot');
+        Route::post('/password/forgot', [AuthController::class, 'sendPasswordReset'])
+            ->middleware('throttle:client-password-forgot');
+
+        Route::get('/password/reset/{token}', [AuthController::class, 'showResetPassword'])->name('password.reset');
+        Route::post('/password/reset', [AuthController::class, 'resetPassword'])
+            ->middleware('throttle:client-password-reset');
+    });
+
+    Route::get('/activate/{token}', [AuthController::class, 'activate'])
+        ->name('activate')
+        ->middleware('throttle:client-activate');
+
+    Route::post('/activate/resend', [AuthController::class, 'resendActivation'])
+        ->name('activate.resend')
+        ->middleware('throttle:client-resend');
+
+    Route::middleware('auth:client')->group(function () {
+        Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/profile', [ClientProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('/profile', [ClientProfileController::class, 'update'])->name('profile.update');
+        Route::get('/api-keys/{id}/key', [ClientProfileController::class, 'getApiKey'])->name('api-keys.get-key');
+    });
+});
 
 // Admin routes
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
