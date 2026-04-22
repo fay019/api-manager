@@ -40,7 +40,7 @@ class ApiClientResource extends Resource
 
     public static function getPluralModelLabel(): string
     {
-        return __('filament.client.plural');
+        return __('filament.api_client.plural');
     }
 
     protected static string|UnitEnum|null $navigationGroup = 'API Management';
@@ -51,76 +51,76 @@ class ApiClientResource extends Resource
     {
         return $schema
             ->components([
-                Section::make(__('filament.client.section_info'))
-                    ->description(__('filament.client.section_info_desc'))
+                Section::make(__('filament.api_client.section_info'))
+                    ->description(__('filament.api_client.section_info_desc'))
                     ->schema([
                         Select::make('client_id')
-                            ->label(__('filament.client.singular'))
+                            ->label(__('filament.api_client.singular'))
                             ->relationship('client', 'name')
                             ->nullable()
                             ->searchable()
                             ->preload(),
 
                         TextInput::make('name')
-                            ->label(__('filament.client.name'))
+                            ->label(__('filament.api_client.name'))
                             ->required()
                             ->maxLength(255)
-                            ->placeholder(__('filament.client.name_placeholder')),
+                            ->placeholder(__('filament.api_client.name_placeholder')),
 
                         Toggle::make('is_active')
-                            ->label(__('filament.client.active'))
+                            ->label(__('filament.api_client.active'))
                             ->default(true),
 
                         Select::make('client_type')
-                            ->label(__('filament.client.type'))
+                            ->label(__('filament.api_client.type'))
                             ->options([
-                                'MOBILE' => __('filament.client.type_mobile'),
-                                'WEB' => __('filament.client.type_web'),
-                                'PARTNER' => __('filament.client.type_partner'),
-                                'INTERNAL' => __('filament.client.type_internal'),
+                                'MOBILE' => __('filament.api_client.type_mobile'),
+                                'WEB' => __('filament.api_client.type_web'),
+                                'PARTNER' => __('filament.api_client.type_partner'),
+                                'INTERNAL' => __('filament.api_client.type_internal'),
                             ])
                             ->nullable(),
 
                         DatePicker::make('activated_at')
-                            ->label(__('filament.client.activated_at'))
+                            ->label(__('filament.api_client.activated_at'))
                             ->nullable(),
                     ])->columns(2),
 
-                Section::make(__('filament.client.section_contact'))
-                    ->description(__('filament.client.section_contact_desc'))
+                Section::make(__('filament.api_client.section_contact'))
+                    ->description(__('filament.api_client.section_contact_desc'))
                     ->schema([
                         TextInput::make('website')
-                            ->label(__('filament.client.website'))
+                            ->label(__('filament.api_client.website'))
                             ->url()
                             ->maxLength(255),
                     ])->columns(1),
 
-                Section::make(__('filament.client.section_technical'))
-                    ->description(__('filament.client.section_technical_desc'))
+                Section::make(__('filament.api_client.section_technical'))
+                    ->description(__('filament.api_client.section_technical_desc'))
                     ->schema([
                         TextInput::make('rate_limit_per_minute')
-                            ->label(__('filament.client.rate_limit'))
+                            ->label(__('filament.api_client.rate_limit'))
                             ->numeric()
                             ->minValue(1)
                             ->default(60)
-                            ->suffix(__('filament.client.rate_limit_suffix')),
+                            ->suffix(__('filament.api_client.rate_limit_suffix')),
 
                         TextInput::make('monthly_quota')
-                            ->label(__('filament.client.monthly_quota'))
+                            ->label(__('filament.api_client.monthly_quota'))
                             ->numeric()
                             ->minValue(0)
-                            ->placeholder(__('filament.client.monthly_quota_placeholder')),
+                            ->placeholder(__('filament.api_client.monthly_quota_placeholder')),
 
                         TextInput::make('webhook_url')
-                            ->label(__('filament.client.webhook_url'))
+                            ->label(__('filament.api_client.webhook_url'))
                             ->url()
                             ->maxLength(255)
                             ->columnSpanFull(),
 
                         TagsInput::make('allowed_origins')
-                            ->label(__('filament.client.allowed_origins'))
-                            ->placeholder(__('filament.client.allowed_origins_placeholder'))
-                            ->helperText(__('filament.client.allowed_origins_help'))
+                            ->label(__('filament.api_client.allowed_origins'))
+                            ->placeholder(__('filament.api_client.allowed_origins_placeholder'))
+                            ->helperText(__('filament.api_client.allowed_origins_help'))
                             ->separator(',')
                             ->columnSpanFull(),
                     ])->columns(2),
@@ -133,19 +133,19 @@ class ApiClientResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('client.name')
-                    ->label(__('filament.client.singular'))
+                    ->label(__('filament.api_client.singular'))
                     ->searchable()
                     ->sortable()
                     ->toggleable()
                     ->placeholder('-'),
 
                 TextColumn::make('name')
-                    ->label(__('filament.client.name'))
+                    ->label(__('filament.api_client.name'))
                     ->searchable()
                     ->sortable(),
 
                 TextColumn::make('is_active')
-                    ->label(__('filament.client.status'))
+                    ->label(__('filament.api_client.status'))
                     ->badge()
                     ->color(fn (bool $state): string => $state ? 'success' : 'danger')
                     ->formatStateUsing(fn (bool $state): string => $state ? __('filament.common.active') : __('filament.common.disabled'))
@@ -153,18 +153,18 @@ class ApiClientResource extends Resource
                     ->toggleable(),
 
                 TextColumn::make('client_type')
-                    ->label(__('filament.client.type'))
+                    ->label(__('filament.api_client.type'))
                     ->badge()
                     ->sortable()
                     ->toggleable(),
 
                 TextColumn::make('client.contact_email')
-                    ->label(__('filament.client.contact'))
+                    ->label(__('filament.api_client.contact'))
                     ->searchable()
                     ->toggleable(),
 
                 TextColumn::make('rate_limit_per_minute')
-                    ->label(__('filament.client.rate_limit'))
+                    ->label(__('filament.api_client.rate_limit'))
                     ->suffix(' req/min')
                     ->sortable()
                     ->toggleable(),
@@ -205,7 +205,7 @@ class ApiClientResource extends Resource
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_active')
-                    ->label(__('filament.client.active')),
+                    ->label(__('filament.api_client.active')),
             ])
             ->actions([
                 EditAction::make()->iconButton(),
