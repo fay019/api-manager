@@ -6,7 +6,7 @@ use App\Models\ApiClient;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ApiClient>
+ * @extends Factory<ApiClient>
  */
 class ApiClientFactory extends Factory
 {
@@ -26,14 +26,10 @@ class ApiClientFactory extends Factory
     {
         return [
             'name' => $this->faker->company(),
-            'contact_email' => $this->faker->companyEmail(),
-            'contact_name' => $this->faker->name(),
             'website' => $this->faker->url(),
             'client_type' => $this->faker->randomElement(['MOBILE', 'WEB', 'PARTNER', 'INTERNAL']),
-            'description' => $this->faker->sentence(),
             'is_active' => $this->faker->boolean(80),
             'allowed_origins' => [$this->faker->url(), $this->faker->url()],
-            'notes' => $this->faker->paragraph(),
             'rate_limit_per_minute' => $this->faker->numberBetween(30, 120),
             'monthly_quota' => $this->faker->randomElement([null, 1000, 5000, 10000, 50000]),
             'webhook_url' => $this->faker->url(),

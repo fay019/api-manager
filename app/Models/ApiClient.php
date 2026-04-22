@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ApiClient extends Model
@@ -12,14 +13,11 @@ class ApiClient extends Model
 
     protected $fillable = [
         'name',
-        'contact_email',
-        'contact_name',
+        'client_id',
         'website',
         'client_type',
-        'description',
         'is_active',
         'allowed_origins',
-        'notes',
         'rate_limit_per_minute',
         'monthly_quota',
         'webhook_url',
@@ -33,6 +31,11 @@ class ApiClient extends Model
             'is_active' => 'boolean',
             'activated_at' => 'datetime',
         ];
+    }
+
+    public function client(): BelongsTo
+    {
+        return $this->belongsTo(Client::class);
     }
 
     public function apiKeys(): HasMany

@@ -15,7 +15,6 @@ use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
@@ -55,6 +54,13 @@ class ApiClientResource extends Resource
                 Section::make(__('filament.client.section_info'))
                     ->description(__('filament.client.section_info_desc'))
                     ->schema([
+                        Select::make('client_id')
+                            ->label(__('filament.client.singular'))
+                            ->relationship('client', 'name')
+                            ->nullable()
+                            ->searchable()
+                            ->preload(),
+
                         TextInput::make('name')
                             ->label(__('filament.client.name'))
                             ->required()
@@ -83,20 +89,11 @@ class ApiClientResource extends Resource
                 Section::make(__('filament.client.section_contact'))
                     ->description(__('filament.client.section_contact_desc'))
                     ->schema([
-                        TextInput::make('contact_name')
-                            ->label(__('filament.client.contact_name'))
-                            ->maxLength(255),
-
-                        TextInput::make('contact_email')
-                            ->label(__('filament.client.contact_email'))
-                            ->email()
-                            ->maxLength(255),
-
                         TextInput::make('website')
                             ->label(__('filament.client.website'))
                             ->url()
                             ->maxLength(255),
-                    ])->columns(3),
+                    ])->columns(1),
 
                 Section::make(__('filament.client.section_technical'))
                     ->description(__('filament.client.section_technical_desc'))
@@ -128,19 +125,6 @@ class ApiClientResource extends Resource
                             ->columnSpanFull(),
                     ])->columns(2),
 
-                Section::make(__('filament.client.section_about'))
-                    ->description(__('filament.client.section_about_desc'))
-                    ->schema([
-                        Textarea::make('description')
-                            ->label(__('filament.client.description'))
-                            ->placeholder(__('filament.client.description_placeholder'))
-                            ->rows(3),
-
-                        Textarea::make('notes')
-                            ->label(__('filament.client.notes'))
-                            ->placeholder(__('filament.client.notes_placeholder'))
-                            ->rows(3),
-                    ]),
             ]);
     }
 
@@ -148,6 +132,13 @@ class ApiClientResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('client.name')
+                    ->label(__('filament.client.singular'))
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable()
+                    ->placeholder('-'),
+
                 TextColumn::make('name')
                     ->label(__('filament.client.name'))
                     ->searchable()
@@ -167,10 +158,9 @@ class ApiClientResource extends Resource
                     ->sortable()
                     ->toggleable(),
 
-                TextColumn::make('contact_email')
+                TextColumn::make('client.contact_email')
                     ->label(__('filament.client.contact'))
                     ->searchable()
-                    ->toggleable()
                     ->toggleable(),
 
                 TextColumn::make('rate_limit_per_minute')
