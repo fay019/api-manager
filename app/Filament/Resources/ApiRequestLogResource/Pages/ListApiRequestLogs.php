@@ -3,10 +3,10 @@
 namespace App\Filament\Resources\ApiRequestLogResource\Pages;
 
 use App\Filament\Resources\ApiRequestLogResource;
+use App\Jobs\ArchiveApiRequestLogsJob;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
-use Illuminate\Support\Facades\Artisan;
 
 class ListApiRequestLogs extends ListRecords
 {
@@ -20,22 +20,13 @@ class ListApiRequestLogs extends ListRecords
                 ->color('warning')
                 ->icon('heroicon-o-archive-box')
                 ->action(function () {
-                    try {
-                        Artisan::call('api:archive-logs');
-                        $output = Artisan::output();
+                    ArchiveApiRequestLogsJob::dispatch();
 
-                        Notification::make()
-                            ->title('Success')
-                            ->body('Logs archived successfully: '.trim($output))
-                            ->success()
-                            ->send();
-                    } catch (\Exception $e) {
-                        Notification::make()
-                            ->title('Error')
-                            ->body($e->getMessage())
-                            ->danger()
-                            ->send();
-                    }
+                    Notification::make()
+                        ->title(__('filament.log.archive_queued_title') ?? 'Archiving Started')
+                        ->body(__('filament.log.archive_queued_message') ?? 'Log archival has been queued. This may take a few minutes to complete.')
+                        ->info()
+                        ->send();
                 }),
         ];
     }

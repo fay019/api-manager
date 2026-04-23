@@ -32,23 +32,33 @@ class ArchiveApiRequestLogs extends Command
 
     private function archiveLogs($cutoffDate): int
     {
-        $logsToArchive = DB::table('api_request_logs')
-            ->where('created_at', '<', $cutoffDate)
-            ->get();
+        $totalArchived = 0;
+        $batchSize = 5000;
 
-        if ($logsToArchive->isEmpty()) {
-            return 0;
+        while (true) {
+            $logsToArchive = DB::table('api_request_logs')
+                ->where('created_at', '<', $cutoffDate)
+                ->limit($batchSize)
+                ->get();
+
+            if ($logsToArchive->isEmpty()) {
+                break;
+            }
+
+            DB::table('api_request_logs_archive')->insert(
+                $logsToArchive->map(fn ($log) => (array) $log)->toArray()
+            );
+
+            DB::table('api_request_logs')
+                ->where('created_at', '<', $cutoffDate)
+                ->limit($batchSize)
+                ->delete();
+
+            $totalArchived += $logsToArchive->count();
+            $this->info("Archived {$logsToArchive->count()} logs... (Total: {$totalArchived})");
         }
 
-        DB::table('api_request_logs_archive')->insert(
-            $logsToArchive->map(fn ($log) => (array) $log)->toArray()
-        );
-
-        DB::table('api_request_logs')
-            ->where('created_at', '<', $cutoffDate)
-            ->delete();
-
-        return $logsToArchive->count();
+        return $totalArchived;
     }
 
     private function deleteOldArchives($cutoffDate): int
