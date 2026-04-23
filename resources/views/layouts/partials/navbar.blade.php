@@ -107,12 +107,6 @@
                     >
                         {{ __('client.client_auth.login_title') }}
                     </a>
-                    <a
-                        href="{{ route('login.show') }}"
-                        class="px-4 py-2 rounded-lg text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-600 transition-colors"
-                    >
-                        {{ __('auth.login') }}
-                    </a>
                 @endif
             </div>
 
@@ -230,16 +224,50 @@
                         >
                             {{ __('client.client_auth.login_title') }}
                         </a>
-                        <a
-                            href="{{ route('login.show') }}"
-                            @click="open = false"
-                            class="block w-full px-3 py-2 rounded-lg text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-600 transition-colors text-center"
-                        >
-                            {{ __('auth.login') }}
-                        </a>
                     </div>
                 @endif
             </div>
         </div>
     </nav>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Only activate easter egg if not authenticated
+            const isAuthenticated = {{ auth('client')->check() || auth()->check() ? 'true' : 'false' }};
+            if (isAuthenticated) {
+                return;
+            }
+
+            // Find all elements with API Manager logo (both link and span versions)
+            const logoElements = document.querySelectorAll('a[href="{{ route("home") }}"], .min-w-fit > span');
+
+            let clickCount = 0;
+            let clickTimer = null;
+
+            logoElements.forEach(element => {
+                element.style.cursor = 'pointer';
+                element.addEventListener('click', function(e) {
+                    // Don't count if it's the home link on the home page
+                    if (element.tagName === 'A' && window.location.pathname === '/') {
+                        return;
+                    }
+
+                    clickCount++;
+
+                    // Clear previous timer and set new one
+                    clearTimeout(clickTimer);
+                    clickTimer = setTimeout(() => {
+                        clickCount = 0;
+                    }, 2000); // Reset after 2 seconds
+
+                    // On 5th click, redirect to admin login
+                    if (clickCount === 5) {
+                        clickCount = 0;
+                        e.preventDefault();
+                        window.location.href = '{{ route("login.show") }}';
+                    }
+                });
+            });
+        });
+    </script>
 </header>
