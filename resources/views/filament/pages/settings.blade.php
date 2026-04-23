@@ -4,7 +4,7 @@
         <x-filament::section
             icon="heroicon-o-cog-6-tooth"
             heading="{{ __('filament.settings.general_section') }}"
-            description="{{ __('filament.settings.general_section_desc') }}"
+            description="{!! __('filament.settings.general_section_desc') !!}"
             collapsible
         >
             <style>
@@ -91,7 +91,7 @@
         <x-filament::section
             icon="heroicon-o-exclamation-triangle"
             heading="{{ __('filament.settings.danger_zone') }}"
-            description="{{ __('filament.settings.danger_zone_desc') }}"
+            description="{!! __('filament.settings.danger_zone_desc') !!}"
             color="danger"
             collapsible
         >
