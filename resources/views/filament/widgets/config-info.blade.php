@@ -17,6 +17,17 @@
         ];
     @endphp
 
+    <style>
+        .fi-config-icon svg {
+            fill: currentColor;
+            stroke: currentColor;
+        }
+        .fi-config-icon svg * {
+            fill: currentColor;
+            stroke: currentColor;
+        }
+    </style>
+
     <section class="fi-section">
         <div class="fi-section-header-ctn">
             <h3 class="fi-section-header-heading" style="display: flex; align-items: center; gap: 0.75rem; padding-left: 1rem; padding-top: 1rem;">
@@ -37,7 +48,7 @@
 
                             <!-- Icon & Label -->
                             <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-                                <div style="display: flex; align-items: center; justify-content: center; height: 2rem; width: 2rem; border-radius: 0.5rem; background-color: {{ $item['color'] }}15; color: {{ $item['color'] }};">
+                                <div class="fi-config-icon" style="display: flex; align-items: center; justify-content: center; height: 2rem; width: 2rem; border-radius: 0.5rem; background-color: {{ $item['color'] }}15; color: {{ $item['color'] }};">
                                     @svg($item['icon'], 'w-5 h-5')
                                 </div>
                                 <span style="font-size: 0.875rem; font-weight: 500; color: rgb(55, 65, 81);">{{ $item['name'] }}</span>
