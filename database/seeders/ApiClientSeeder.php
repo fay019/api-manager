@@ -12,6 +12,8 @@ class ApiClientSeeder extends Seeder
      */
     public function run(): void
     {
-        ApiClient::factory(15)->create();
+        ApiClient::factory(15)->create([
+            'client_id' => null,
+        ]);
     }
 }
