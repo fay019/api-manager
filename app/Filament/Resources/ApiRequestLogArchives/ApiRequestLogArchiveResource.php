@@ -7,7 +7,10 @@ use App\Models\ApiRequestLogArchive;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ViewAction;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -33,6 +36,88 @@ class ApiRequestLogArchiveResource extends Resource
     public static function getPluralModelLabel(): string
     {
         return __('filament.log.archive_plural') ?? 'Archived Logs';
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                TextInput::make('created_at')
+                    ->label(__('filament.log.timestamp'))
+                    ->disabled(),
+
+                TextInput::make('method')
+                    ->label(__('filament.log.method'))
+                    ->disabled(),
+
+                TextInput::make('path')
+                    ->label(__('filament.log.endpoint'))
+                    ->disabled(),
+
+                TextInput::make('status_code')
+                    ->label(__('filament.log.status'))
+                    ->disabled(),
+
+                TextInput::make('duration_ms')
+                    ->label(__('filament.log.duration'))
+                    ->disabled(),
+
+                TextInput::make('ip')
+                    ->label(__('filament.log.ip'))
+                    ->disabled(),
+
+                TextInput::make('hostname')
+                    ->label(__('filament.log.hostname'))
+                    ->disabled(),
+
+                TextInput::make('domain')
+                    ->label(__('filament.log.domain'))
+                    ->disabled(),
+
+                TextInput::make('site_name')
+                    ->label(__('filament.log.site_name'))
+                    ->disabled(),
+
+                TextInput::make('page_path')
+                    ->label(__('filament.log.page_path'))
+                    ->disabled(),
+
+                TextInput::make('full_url')
+                    ->label(__('filament.log.full_url'))
+                    ->disabled(),
+
+                TextInput::make('client_request_time')
+                    ->label(__('filament.log.client_time'))
+                    ->disabled(),
+
+                TextInput::make('client_user_agent')
+                    ->label(__('filament.log.browser'))
+                    ->disabled(),
+
+                TextInput::make('user_agent')
+                    ->label(__('filament.log.user_agent'))
+                    ->disabled(),
+
+                TextInput::make('origin')
+                    ->label(__('filament.log.origin'))
+                    ->disabled()
+                    ->placeholder(__('filament.log.not_provided') ?? 'Not provided'),
+
+                TextInput::make('referer')
+                    ->label(__('filament.log.referer'))
+                    ->disabled()
+                    ->placeholder(__('filament.log.not_provided') ?? 'Not provided'),
+
+                TextInput::make('apiClient.name')
+                    ->label(__('filament.log.api_client'))
+                    ->disabled()
+                    ->placeholder(__('filament.log.public_api') ?? 'Public API'),
+
+                TextInput::make('apiKey.name')
+                    ->label(__('filament.log.api_key'))
+                    ->disabled()
+                    ->placeholder(__('filament.log.not_used') ?? 'Not used'),
+            ]);
     }
 
     public static function table(Table $table): Table
@@ -125,6 +210,9 @@ class ApiRequestLogArchiveResource extends Resource
                 SelectFilter::make('api_client_id')
                     ->relationship('apiClient', 'name')
                     ->label(__('filament.log.filter_client')),
+            ])
+            ->actions([
+                ViewAction::make()->iconButton(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
