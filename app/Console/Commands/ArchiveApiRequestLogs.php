@@ -7,25 +7,27 @@ use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
-#[Signature('api:archive-logs')]
-#[Description('Archive logs older than 30 days and delete archives older than 6 months')]
+#[Signature('api:archive-logs {--archive-days=15} {--delete-days=90}')]
+#[Description('Archive logs older than N days and delete archives older than M days')]
 class ArchiveApiRequestLogs extends Command
 {
     public function handle(): int
     {
+        $archiveDays = (int) $this->option('archive-days');
+        $deleteDays = (int) $this->option('delete-days');
+
         $this->info('Starting API request logs archival process...');
+        $this->info("Archive threshold: {$archiveDays} days");
+        $this->info("Delete threshold: {$deleteDays} days");
 
-        $cutoffArchive = now()->subDays(30);
-        $cutoffDelete = now()->subMonths(6);
+        $cutoffArchive = now()->subDays($archiveDays);
+        $cutoffDelete = now()->subDays($deleteDays);
 
-        // Archive logs older than 30 days
         $archivedCount = $this->archiveLogs($cutoffArchive);
-
-        // Delete archived logs older than 6 months
         $deletedCount = $this->deleteOldArchives($cutoffDelete);
 
-        $this->info("Archived {$archivedCount} logs older than 30 days.");
-        $this->info("Deleted {$deletedCount} archived logs older than 6 months.");
+        $this->info("✓ Archived {$archivedCount} logs older than {$archiveDays} days.");
+        $this->info("✓ Deleted {$deletedCount} archived logs older than {$deleteDays} days.");
 
         return self::SUCCESS;
     }

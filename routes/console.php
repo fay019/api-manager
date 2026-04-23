@@ -9,7 +9,7 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Schedule::command('api:archive-logs')
+Schedule::command('api:archive-logs', ['--archive-days' => 15, '--delete-days' => 90])
     ->weekly()
     ->runInBackground()
     ->onFailure(function () {
