@@ -300,7 +300,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('login.store') }}" method="POST">
+            <form action="{{ route('login.store') }}" method="POST" id="login-form">
                 @csrf
 
                 <div class="form-group">
@@ -339,6 +339,23 @@
                     ✓ {{ __('auth.login') }}
                 </button>
             </form>
+
+            <script>
+                console.log('Login form loaded');
+                const form = document.getElementById('login-form');
+                if (form) {
+                    console.log('Form found:', form);
+                    form.addEventListener('submit', function(e) {
+                        console.log('Form submit event triggered');
+                        console.log('Email:', document.getElementById('email').value);
+                        console.log('Password:', document.getElementById('password').value);
+                        console.log('Form action:', form.action);
+                        console.log('Form method:', form.method);
+                    });
+                } else {
+                    console.error('Form not found!');
+                }
+            </script>
 
             <div class="divider">
                 <a href="{{ route('home') }}" class="btn-link">← {{ __('auth.back_home') }}</a>
