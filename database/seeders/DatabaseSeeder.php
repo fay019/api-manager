@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             ApiClientSeeder::class,
             ApiKeySeeder::class,
             ApiRequestLogSeeder::class,
+            ExternalIconSeeder::class,
         ]);
     }
 }

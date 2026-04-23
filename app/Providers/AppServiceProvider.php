@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use Livewire\Features\SupportFileUploads\FilePreviewController;
 use Livewire\Features\SupportFileUploads\FileUploadController;
 use Livewire\Livewire;
@@ -29,6 +30,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        require_once app_path('Helpers/SeoHelper.php');
+
         // Register Installation Services
         $this->app->bind(RequirementsCheckerInterface::class, RequirementsChecker::class);
         $this->app->bind(EnvManagerInterface::class, EnvManager::class);
@@ -50,6 +53,16 @@ class AppServiceProvider extends ServiceProvider
             PanelsRenderHook::TOPBAR_END,
             fn () => view('components.filament-locale-switcher')
         );
+
+        // Auto-inject SEO meta
+        view()->composer('*', function ($view) {
+            // Only inject if not in admin or docs
+            if (Str::startsWith(request()->path(), ['admin', 'docs'])) {
+                return;
+            }
+
+            $view->with('seo_meta', seo());
+        });
 
         Promo::observe(PromoObserver::class);
 
