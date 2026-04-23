@@ -34,6 +34,15 @@ class ContactMessagesTable
                     ->copyable()
                     ->toggleable(),
 
+                BadgeColumn::make('type')
+                    ->label(__('filament.contact.type'))
+                    ->colors([
+                        'info' => 'company',
+                        'success' => 'person',
+                    ])
+                    ->formatStateUsing(fn (?string $state): string => $state === 'company' ? __('filament.contact.type_company') : __('filament.contact.type_person'))
+                    ->toggleable(),
+
                 TextColumn::make('subject')
                     ->label(__('filament.contact.subject'))
                     ->searchable()
@@ -49,6 +58,11 @@ class ContactMessagesTable
                     ])
                     ->formatStateUsing(fn (string $state): string => __("filament.contact.status_$state"))
                     ->sortable(),
+
+                TextColumn::make('client_id')
+                    ->label(__('filament.contact.client_id'))
+                    ->badge()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 BadgeColumn::make('honeypot_triggered')
                     ->label(__('filament.contact.spam_detected'))

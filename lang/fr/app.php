@@ -119,4 +119,7 @@ return [
         'french' => 'Français',
         'german' => 'Deutsch',
     ],
+
+    // Legal
+    'all_rights_reserved' => 'Tous droits réservés',
 ];

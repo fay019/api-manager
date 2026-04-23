@@ -3,14 +3,21 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ContactMessage extends Model
 {
     protected $fillable = [
+        'client_id',
         'name',
+        'contact_name',
         'email',
+        'contact_email',
+        'billing_email',
+        'phone',
         'subject',
         'message',
+        'type',
         'status',
         'ip_address',
         'user_agent',
@@ -31,5 +38,10 @@ class ContactMessage extends Model
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
         ];
+    }
+
+    public function client(): BelongsTo
+    {
+        return $this->belongsTo(Client::class);
     }
 }

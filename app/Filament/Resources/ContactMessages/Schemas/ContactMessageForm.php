@@ -15,7 +15,7 @@ class ContactMessageForm
     {
         return $schema
             ->components([
-                Section::make(__('filament.contact.section_message'))
+                Section::make(__('filament.contact.section_sender'))
                     ->schema([
                         Grid::make(2)
                             ->schema([
@@ -29,6 +29,44 @@ class ContactMessageForm
                                     ->disabled(),
                             ]),
 
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('type')
+                                    ->label(__('filament.contact.type'))
+                                    ->disabled()
+                                    ->formatStateUsing(fn (?string $state): string => $state === 'company' ? __('filament.contact.type_company') : __('filament.contact.type_person')),
+
+                                TextInput::make('contact_name')
+                                    ->label(__('filament.contact.contact_name'))
+                                    ->disabled(),
+                            ])
+                            ->visible(fn ($record) => $record?->contact_name !== null),
+
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('contact_email')
+                                    ->label(__('filament.contact.contact_email'))
+                                    ->email()
+                                    ->disabled(),
+                            ])
+                            ->visible(fn ($record) => $record?->contact_email !== null),
+
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('billing_email')
+                                    ->label(__('filament.contact.billing_email'))
+                                    ->email()
+                                    ->disabled(),
+
+                                TextInput::make('phone')
+                                    ->label(__('filament.contact.phone'))
+                                    ->disabled(),
+                            ])
+                            ->visible(fn ($record) => $record?->billing_email !== null || $record?->phone !== null),
+                    ]),
+
+                Section::make(__('filament.contact.section_message'))
+                    ->schema([
                         TextInput::make('subject')
                             ->label(__('filament.contact.subject'))
                             ->disabled()
@@ -58,6 +96,14 @@ class ContactMessageForm
                             ->disabled(),
                     ])
                     ->visible(fn (string $operation, $record) => $operation === 'edit' && $record?->replied_at !== null),
+
+                Section::make(__('filament.contact.section_client'))
+                    ->schema([
+                        TextInput::make('client_id')
+                            ->label(__('filament.contact.client_id'))
+                            ->disabled(),
+                    ])
+                    ->visible(fn ($record) => $record?->client_id !== null),
 
                 Section::make(__('filament.contact.section_status'))
                     ->schema([

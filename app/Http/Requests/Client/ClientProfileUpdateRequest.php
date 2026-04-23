@@ -26,10 +26,11 @@ class ClientProfileUpdateRequest extends FormRequest
         $clientType = auth('client')->user()->type;
 
         return [
-            'first_name' => ['required', 'string', 'max:255'],
-            'last_name' => ['required', 'string', 'max:255'],
+            'first_name' => $clientType === 'person' ? ['required', 'string', 'max:255'] : ['nullable'],
+            'last_name' => $clientType === 'person' ? ['required', 'string', 'max:255'] : ['nullable'],
             'email' => ['required', 'email:rfc', "unique:clients,email,{$clientId}"],
             'company_name' => $clientType === 'company' ? ['required', 'string', 'max:255'] : ['nullable'],
+            'contact_name' => $clientType === 'company' ? ['required', 'string', 'min:3', 'max:100', 'regex:/^[\p{L}\s\-\'0-9]+$/u'] : ['nullable'],
             'description' => $clientType === 'company' ? ['nullable', 'string', 'max:1000'] : ['nullable'],
             'phone' => ['nullable', 'string', 'max:20'],
             'country' => ['nullable', 'string', 'size:2'],

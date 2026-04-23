@@ -23,7 +23,11 @@
                         @else
                             <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-400 to-blue-600">
                                 <span class="text-white text-3xl font-bold">
-                                    {{ strtoupper(substr($client->first_name, 0, 1)) }}{{ strtoupper(substr($client->last_name, 0, 1)) }}
+                                    @if ($client->type === 'company')
+                                        {{ strtoupper(substr($client->company_name, 0, 1)) }}{{ strtoupper(substr($client->contact_name ?? '', 0, 1)) }}
+                                    @else
+                                        {{ strtoupper(substr($client->first_name, 0, 1)) }}{{ strtoupper(substr($client->last_name, 0, 1)) }}
+                                    @endif
                                 </span>
                             </div>
                         @endif
@@ -91,41 +95,62 @@
                         @endif
                     </h2>
 
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label for="first_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                {{ __('client.first_name') }} <span class="text-red-500">*</span>
-                            </label>
-                            <input
-                                type="text"
-                                id="first_name"
-                                name="first_name"
-                                value="{{ old('first_name', $client->first_name) }}"
-                                required
-                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            >
-                            @error('first_name')
-                                <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
+                    @if ($client->type === 'person')
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="first_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    {{ __('client.first_name') }} <span class="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    id="first_name"
+                                    name="first_name"
+                                    value="{{ old('first_name', $client->first_name) }}"
+                                    required
+                                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                >
+                                @error('first_name')
+                                    <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
 
+                            <div>
+                                <label for="last_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    {{ __('client.last_name') }} <span class="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    id="last_name"
+                                    name="last_name"
+                                    value="{{ old('last_name', $client->last_name) }}"
+                                    required
+                                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                >
+                                @error('last_name')
+                                    <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                    @else
                         <div>
-                            <label for="last_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                {{ __('client.last_name') }} <span class="text-red-500">*</span>
+                            <label for="contact_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                {{ __('contact.contact_person') }} <span class="text-red-500">*</span>
                             </label>
                             <input
                                 type="text"
-                                id="last_name"
-                                name="last_name"
-                                value="{{ old('last_name', $client->last_name) }}"
+                                id="contact_name"
+                                name="contact_name"
+                                value="{{ old('contact_name', $client->contact_name) }}"
                                 required
+                                minlength="3"
+                                maxlength="100"
                                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
-                            @error('last_name')
+                            @error('contact_name')
                                 <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
-                    </div>
+                    @endif
 
                     <div class="mt-4">
                         <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">

@@ -9,6 +9,9 @@ use Illuminate\Mail\Mailables\Envelope;
 
 class ContactReply extends Mailable
 {
+    private ?string $avatarUrl = null;
+    private ?string $avatarInitials = null;
+
     public function __construct(
         public ContactMessage $message,
         public string $recipientEmail = '',
@@ -20,6 +23,21 @@ class ContactReply extends Mailable
 
         if (! $this->language) {
             $this->language = $message->language ?? 'en';
+        }
+
+        if ($message->client_id && $message->client) {
+            if ($message->client->avatar) {
+                $this->avatarUrl = url('storage/'.$message->client->avatar);
+            } else {
+                // Generate initials for authenticated client without avatar
+                if ($message->type === 'company') {
+                    $this->avatarInitials = strtoupper(substr($message->client->company_name ?? '', 0, 1)).
+                                           strtoupper(substr($message->client->contact_name ?? '', 0, 1));
+                } else {
+                    $this->avatarInitials = strtoupper(substr($message->client->first_name ?? '', 0, 1)).
+                                           strtoupper(substr($message->client->last_name ?? '', 0, 1));
+                }
+            }
         }
     }
 
@@ -39,9 +57,13 @@ class ContactReply extends Mailable
         return new Content(
             view: 'emails.contact-reply',
             with: [
-                'name' => $this->message->name,
+                'type' => $this->message->type,
+                'contactName' => $this->message->type === 'company' && $this->message->contact_name ? $this->message->contact_name : $this->message->name,
+                'companyName' => $this->message->type === 'company' ? $this->message->name : null,
                 'replyMessage' => $this->message->reply_message,
                 'originalMessage' => $this->message->message,
+                'avatarUrl' => $this->avatarUrl,
+                'avatarInitials' => $this->avatarInitials,
             ],
         );
     }

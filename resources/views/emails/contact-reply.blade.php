@@ -7,8 +7,10 @@
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; line-height: 1.6; color: #1f2937; }
         .container { max-width: 600px; margin: 0 auto; }
-        .header { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 30px; border-radius: 8px 8px 0 0; }
-        .header h2 { margin: 0; font-size: 24px; font-weight: 600; }
+        .header { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 30px; border-radius: 8px 8px 0 0; text-align: center; }
+        .header h2 { margin: 0; font-size: 24px; font-weight: 600; margin-top: 15px; }
+        .avatar { width: 80px; height: 80px; border-radius: 50%; border: 4px solid white; display: inline-block; object-fit: cover; }
+        .avatar-initials { width: 80px; height: 80px; border-radius: 50%; border: 4px solid white; display: inline-flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; font-size: 24px; font-weight: bold; }
         .content { background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none; }
         .greeting { font-size: 16px; line-height: 1.6; margin-bottom: 20px; }
         .reply-section { background: #f0fdf4; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #10b981; }
@@ -24,13 +26,22 @@
 <body>
     <div class="container">
         <div class="header">
+            @if($avatarUrl)
+                <img src="{{ $avatarUrl }}" alt="Avatar" class="avatar">
+            @elseif($avatarInitials)
+                <div class="avatar-initials">{{ $avatarInitials }}</div>
+            @endif
             <h2>{{ __('contact.reply_title') }}</h2>
         </div>
 
         <div class="content">
             <!-- Greeting -->
             <p class="greeting">
-                {{ __('contact.reply_greeting') }} {{ $name }},
+                {{ __('contact.reply_greeting') }} {{ $contactName }},
+                @if($companyName)
+                    <br>
+                    <span style="color: #6b7280; font-size: 14px;">{{ __('contact.company_name') }}: <strong>{{ $companyName }}</strong></span>
+                @endif
             </p>
 
             <!-- Reply Message -->
@@ -51,7 +62,14 @@
         </div>
 
         <div class="footer">
-            © {{ date('Y') }} {{ config('app.name') }}
+            <p style="margin: 0 0 16px 0; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb; font-size: 13px; line-height: 1.6;">
+                <strong>{{ config('app.name') }}</strong><br>
+                <a href="{{ config('app.url') }}" style="color: #4f46e5; text-decoration: none;">{{ config('app.url') }}</a>
+            </p>
+            <p style="margin: 0; font-size: 11px; color: #9ca3af; line-height: 1.5;">
+                © {{ date('Y') }} {{ config('app.name') }}. {{ __('app.all_rights_reserved') ?? 'All rights reserved.' }}<br>
+                {{ __('app.footer.platform_description') ?? 'High-performance API management and analysis platform.' }}
+            </p>
         </div>
     </div>
 </body>

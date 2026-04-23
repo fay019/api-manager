@@ -32,18 +32,16 @@ class ProfileController extends Controller
             : $request->billing_email;
 
         $contactEmail = null;
+        $contactName = null;
         if ($client->type === 'company') {
             $contactEmail = $request->boolean('same_contact_email')
                 ? $request->email
                 : $request->contact_email;
+            $contactName = $request->contact_name;
         }
 
         $data = [
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
             'email' => $request->email,
-            'company_name' => $request->company_name,
-            'description' => $request->description,
             'phone' => $request->phone,
             'country' => $request->country,
             'timezone' => $request->timezone,
@@ -54,8 +52,17 @@ class ProfileController extends Controller
                 'city' => $request->city,
                 'postal_code' => $request->postal_code,
             ],
-            'contact_email' => $contactEmail,
         ];
+
+        if ($client->type === 'person') {
+            $data['first_name'] = $request->first_name;
+            $data['last_name'] = $request->last_name;
+        } else {
+            $data['company_name'] = $request->company_name;
+            $data['description'] = $request->description;
+            $data['contact_name'] = $contactName;
+            $data['contact_email'] = $contactEmail;
+        }
 
         $client->update($data);
 

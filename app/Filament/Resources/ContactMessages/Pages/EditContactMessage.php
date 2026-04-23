@@ -67,16 +67,24 @@ class EditContactMessage extends EditRecord
                         'status' => 'replied',
                     ]);
 
+                    $replyTo = $this->record->email;
+                    if ($this->record->type === 'company' && $this->record->contact_email && $this->record->contact_email !== $this->record->email) {
+                        $replyTo = $this->record->contact_email;
+                    }
+
+                    // Load client relation for email
+                    $this->record->load('client');
+
                     Mail::send(new ContactReply(
                         $this->record,
-                        $this->record->email,
+                        $replyTo,
                         $data['reply_language']
                     ));
 
                     Notification::make()
                         ->success()
                         ->title(__('filament.contact.reply_success_title'))
-                        ->body(__('filament.contact.reply_success_body').' '.$this->record->email)
+                        ->body(__('filament.contact.reply_success_body').' '.$replyTo)
                         ->send();
                 } catch (\Exception $e) {
                     Notification::make()
