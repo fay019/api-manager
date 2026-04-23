@@ -31,6 +31,7 @@ return [
         'clients' => 'Clients API',
         'keys' => 'Clés API',
         'logs' => 'Journaux de Requête',
+        'logs_archive' => 'Journaux Archivés',
         'contact_messages' => 'Messages de Contact',
         'users' => 'Administrateurs',
     ],
@@ -152,6 +153,7 @@ return [
     'log' => [
         'singular' => 'Journal de Requête',
         'plural' => 'Journaux de Requête',
+        'archive_plural' => 'Journaux Archivés',
         'title' => 'Journaux de Requête',
         'timestamp' => 'Horodatage',
         'method' => 'Méthode HTTP',
@@ -190,6 +192,7 @@ return [
         'filter_4xx' => 'Erreurs 4xx',
         'filter_5xx' => 'Erreurs 5xx',
         'filter_client' => 'Client',
+        'archive_button' => 'Archiver les Anciens Journaux',
     ],
 
     // Common Filament Keys

@@ -31,6 +31,7 @@ return [
         'clients' => 'API-Clients',
         'keys' => 'API-Schlüssel',
         'logs' => 'Anforderungsprotokolle',
+        'logs_archive' => 'Archivierte Protokolle',
         'contact_messages' => 'Kontaktnachrichten',
         'users' => 'Administratoren',
     ],
@@ -152,6 +153,7 @@ return [
     'log' => [
         'singular' => 'Anforderungsprotokoll',
         'plural' => 'Anforderungsprotokolle',
+        'archive_plural' => 'Archivierte Protokolle',
         'title' => 'Anforderungsprotokolle',
         'timestamp' => 'Zeitstempel',
         'method' => 'HTTP-Methode',
@@ -190,6 +192,7 @@ return [
         'filter_4xx' => '4xx Fehler',
         'filter_5xx' => '5xx Fehler',
         'filter_client' => 'Client',
+        'archive_button' => 'Alte Protokolle archivieren',
     ],
 
     // Common Filament Keys

@@ -31,6 +31,7 @@ return [
         'clients' => 'API Clients',
         'keys' => 'API Keys',
         'logs' => 'Request Logs',
+        'logs_archive' => 'Archived Logs',
         'contact_messages' => 'Contact Messages',
         'users' => 'Administrators',
     ],
@@ -152,6 +153,7 @@ return [
     'log' => [
         'singular' => 'Request Log',
         'plural' => 'Request Logs',
+        'archive_plural' => 'Archived Logs',
         'title' => 'Request Logs',
         'timestamp' => 'Timestamp',
         'method' => 'HTTP Method',
@@ -190,6 +192,7 @@ return [
         'filter_4xx' => '4xx Errors',
         'filter_5xx' => '5xx Errors',
         'filter_client' => 'Client',
+        'archive_button' => 'Archive Old Logs',
     ],
 
     // Common Filament Keys

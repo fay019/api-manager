@@ -4,8 +4,9 @@ namespace App\Filament\Resources\ApiRequestLogResource\Pages;
 
 use App\Filament\Resources\ApiRequestLogResource;
 use Filament\Actions\Action;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Artisan;
 
 class ListApiRequestLogs extends ListRecords
 {
@@ -20,15 +21,20 @@ class ListApiRequestLogs extends ListRecords
                 ->icon('heroicon-o-archive-box')
                 ->action(function () {
                     try {
-                        $response = Http::post(route('admin.api-request-logs.archive'));
+                        Artisan::call('api:archive-logs');
+                        $output = Artisan::output();
 
-                        if ($response->json('success')) {
-                            $this->notify('success', $response->json('message'));
-                        } else {
-                            $this->notify('danger', $response->json('message'));
-                        }
+                        Notification::make()
+                            ->title('Success')
+                            ->body('Logs archived successfully: '.trim($output))
+                            ->success()
+                            ->send();
                     } catch (\Exception $e) {
-                        $this->notify('danger', $e->getMessage());
+                        Notification::make()
+                            ->title('Error')
+                            ->body($e->getMessage())
+                            ->danger()
+                            ->send();
                     }
                 }),
         ];
