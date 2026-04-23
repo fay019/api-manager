@@ -45,17 +45,14 @@ class LoginController extends Controller
                 'is_admin' => Auth::user()->is_admin,
             ]);
 
-            // Invalidate old cookies to fix stale CSRF/session tokens
-            $response = redirect()->intended(Auth::user()->is_admin ? '/admin' : route('profile.edit'));
-            $response->cookie(cookie()->forget('XSRF-TOKEN'));
-            $response->cookie(cookie()->forget(config('session.cookie')));
+            $target = Auth::user()->is_admin ? '/admin' : route('profile.edit');
 
             Log::info('user.login.redirecting', [
                 'email' => $credentials['email'],
-                'target' => Auth::user()->is_admin ? '/admin' : route('profile.edit'),
+                'target' => $target,
             ]);
 
-            return $response;
+            return redirect()->intended($target);
         }
 
         // Debug: Log why login failed
