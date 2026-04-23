@@ -32,14 +32,14 @@ return [
         'keys' => 'API-Schlüssel',
         'logs' => 'Anforderungsprotokolle',
         'contact_messages' => 'Kontaktnachrichten',
-        'users' => 'Benutzer',
+        'users' => 'Administratoren',
     ],
 
-    // User Resource
-    'user' => [
-        'singular' => 'Benutzer',
-        'plural' => 'Benutzer',
-        'title' => 'Benutzerverwaltung',
+    // Administrator Resource
+    'admin' => [
+        'singular' => 'Administrator',
+        'plural' => 'Administratoren',
+        'title' => 'Administratorverwaltung',
         'section_info' => 'Benutzerinformationen',
         'section_info_desc' => 'Name, E-Mail und Passwort',
         'section_info_desc_edit' => 'Lassen Sie das Passwort leer, um es unverändert zu behalten',
@@ -580,7 +580,7 @@ return [
     'email' => 'E-Mail',
     'contact' => 'Kontakt',
     'authentication' => 'Authentifizierung',
-    'admin' => 'Admin',
+    'admin_word' => 'Admin',
     'pending_email' => 'Ausstehende E-Mail',
     'current_avatar' => 'Aktueller Avatar',
     'upload_avatar' => 'Neuen Avatar hochladen',

@@ -32,14 +32,14 @@ return [
         'keys' => 'Clés API',
         'logs' => 'Journaux de Requête',
         'contact_messages' => 'Messages de Contact',
-        'users' => 'Utilisateurs',
+        'users' => 'Administrateurs',
     ],
 
-    // User Resource
-    'user' => [
-        'singular' => 'Utilisateur',
-        'plural' => 'Utilisateurs',
-        'title' => 'Gestion des Utilisateurs',
+    // Administrator Resource
+    'admin' => [
+        'singular' => 'Administrateur',
+        'plural' => 'Administrateurs',
+        'title' => 'Gestion des Administrateurs',
         'section_info' => 'Informations de l\'Utilisateur',
         'section_info_desc' => 'Nom, email et mot de passe',
         'section_info_desc_edit' => 'Laissez le mot de passe vide pour ne pas le modifier',
@@ -580,7 +580,7 @@ return [
     'email' => 'Email',
     'contact' => 'Contact',
     'authentication' => 'Authentification',
-    'admin' => 'Admin',
+    'admin_word' => 'Admin',
     'pending_email' => 'Email en attente',
     'current_avatar' => 'Avatar actuel',
     'upload_avatar' => 'Télécharger un nouvel avatar',

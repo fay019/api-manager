@@ -15,25 +15,25 @@ class UserForm
     {
         return $schema
             ->components([
-                Section::make(__('filament.user.section_info'))
+                Section::make(__('filament.admin.section_info'))
                     ->description(fn (Get $get) => $get('id') === null
-                        ? __('filament.user.section_info_desc')
-                        : __('filament.user.section_info_desc_edit'))
+                        ? __('filament.admin.section_info_desc')
+                        : __('filament.admin.section_info_desc_edit'))
                     ->schema([
                         TextInput::make('name')
-                            ->label(__('filament.user.name'))
+                            ->label(__('filament.admin.name'))
                             ->required()
                             ->maxLength(255),
 
                         TextInput::make('email')
-                            ->label(__('filament.user.email'))
+                            ->label(__('filament.admin.email'))
                             ->email()
                             ->required()
                             ->maxLength(255)
                             ->unique(ignoreRecord: true),
 
                         TextInput::make('password')
-                            ->label(__('filament.user.password'))
+                            ->label(__('filament.admin.password'))
                             ->password()
                             ->revealable()
                             ->required(fn (Get $get) => $get('id') === null)
@@ -41,7 +41,7 @@ class UserForm
                             ->maxLength(255),
 
                         TextInput::make('password_confirmation')
-                            ->label(__('filament.user.password_confirmation'))
+                            ->label(__('filament.admin.password_confirmation'))
                             ->password()
                             ->revealable()
                             ->required(fn (Get $get) => $get('id') === null)
@@ -50,12 +50,12 @@ class UserForm
                     ])
                     ->columns(2),
 
-                Section::make(__('filament.user.section_permissions'))
-                    ->description(__('filament.user.section_permissions_desc'))
+                Section::make(__('filament.admin.section_permissions'))
+                    ->description(__('filament.admin.section_permissions_desc'))
                     ->schema([
                         Checkbox::make('is_admin')
-                            ->label(__('filament.user.is_admin'))
-                            ->helperText(__('filament.user.is_admin_help')),
+                            ->label(__('filament.admin.is_admin'))
+                            ->helperText(__('filament.admin.is_admin_help')),
                     ]),
             ]);
     }

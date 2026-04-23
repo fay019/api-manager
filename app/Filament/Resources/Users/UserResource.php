@@ -24,12 +24,12 @@ class UserResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('filament.user.singular');
+        return __('filament.admin.singular');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return __('filament.user.plural');
+        return __('filament.admin.plural');
     }
 
     public static function form(Schema $schema): Schema

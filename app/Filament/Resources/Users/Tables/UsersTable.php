@@ -17,18 +17,18 @@ class UsersTable
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label(__('filament.user.name'))
+                    ->label(__('filament.admin.name'))
                     ->searchable()
                     ->sortable(),
 
                 TextColumn::make('email')
-                    ->label(__('filament.user.email'))
+                    ->label(__('filament.admin.email'))
                     ->searchable()
                     ->sortable()
                     ->copyable(),
 
                 IconColumn::make('is_admin')
-                    ->label(__('filament.user.is_admin'))
+                    ->label(__('filament.admin.is_admin'))
                     ->boolean()
                     ->sortable(),
 
@@ -46,7 +46,7 @@ class UsersTable
             ])
             ->filters([
                 SelectFilter::make('is_admin')
-                    ->label(__('filament.user.is_admin'))
+                    ->label(__('filament.admin.is_admin'))
                     ->options([
                         true => __('filament.common.active'),
                         false => __('filament.common.disabled'),
