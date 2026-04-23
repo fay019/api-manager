@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class LoginController extends Controller
 {
@@ -32,6 +35,21 @@ class LoginController extends Controller
             $response->cookie(cookie()->forget(config('session.cookie')));
 
             return $response;
+        }
+
+        // Debug: Log why login failed
+        $user = User::where('email', $credentials['email'])->first();
+        if (! $user) {
+            Log::warning('user.login.failed.user_not_found', ['email' => $credentials['email'], 'ip' => $request->ip()]);
+        } else {
+            $passwordMatch = Hash::check($credentials['password'], $user->password);
+            Log::warning('user.login.failed', [
+                'email' => $credentials['email'],
+                'ip' => $request->ip(),
+                'user_exists' => true,
+                'password_match' => $passwordMatch,
+                'user_id' => $user->id,
+            ]);
         }
 
         return back()->withErrors([
