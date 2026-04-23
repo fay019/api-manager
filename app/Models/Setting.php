@@ -18,7 +18,7 @@ class Setting extends Model
             }
 
             return match ($setting->type) {
-                'boolean' => (bool) $setting->value,
+                'boolean' => in_array(strtolower($setting->value), ['true', '1', 'yes'], true),
                 'integer' => (int) $setting->value,
                 default => $setting->value,
             };
