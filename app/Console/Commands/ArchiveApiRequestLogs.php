@@ -7,7 +7,7 @@ use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
-#[Signature('api:archive-logs {--archive-days=15} {--delete-days=90}')]
+#[Signature('api:archive-logs {--archive-days=} {--delete-days=}')]
 #[Description('Archive logs older than N days and delete archives older than M days')]
 class ArchiveApiRequestLogs extends Command
 {
