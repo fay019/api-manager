@@ -26,13 +26,34 @@ class LoginController extends Controller
             'password' => ['required'],
         ]);
 
+        Log::info('user.login.attempt', [
+            'email' => $credentials['email'],
+            'ip' => $request->ip(),
+        ]);
+
         if (Auth::attempt($credentials)) {
+            Log::info('user.login.auth_attempt_success', [
+                'email' => $credentials['email'],
+                'user_id' => Auth::user()->id,
+            ]);
+
             $request->session()->regenerate();
+
+            Log::info('user.login.session_regenerated', [
+                'email' => $credentials['email'],
+                'session_id' => $request->session()->getId(),
+                'is_admin' => Auth::user()->is_admin,
+            ]);
 
             // Invalidate old cookies to fix stale CSRF/session tokens
             $response = redirect()->intended(Auth::user()->is_admin ? '/admin' : route('profile.edit'));
             $response->cookie(cookie()->forget('XSRF-TOKEN'));
             $response->cookie(cookie()->forget(config('session.cookie')));
+
+            Log::info('user.login.redirecting', [
+                'email' => $credentials['email'],
+                'target' => Auth::user()->is_admin ? '/admin' : route('profile.edit'),
+            ]);
 
             return $response;
         }
