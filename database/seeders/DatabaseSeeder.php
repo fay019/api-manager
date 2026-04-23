@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             ApiKeySeeder::class,
             ApiRequestLogSeeder::class,
             ExternalIconSeeder::class,
+            GoogleAdSenseSeeder::class,
         ]);
     }
 }
