@@ -13,10 +13,17 @@ class ApiRequestLogSeeder extends Seeder
         $keys = ApiKey::all();
 
         foreach ($keys as $key) {
-            ApiRequestLog::factory(rand(5, 20))
-                ->for($key->apiClient)
-                ->for($key)
-                ->create();
+            for ($i = 0; $i < rand(5, 20); $i++) {
+                ApiRequestLog::create([
+                    'api_client_id' => $key->apiClient->id,
+                    'api_key_id' => $key->id,
+                    'method' => 'GET',
+                    'path' => '/api/test',
+                    'status_code' => 200,
+                    'ip' => '127.0.0.1',
+                    'duration_ms' => rand(10, 500),
+                ]);
+            }
         }
     }
 }
