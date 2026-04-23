@@ -2,7 +2,6 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Widgets\ArchiveLogsStatusWidget;
 use App\Filament\Widgets\ApiRequestStatsWidget;
 use App\Filament\Widgets\ConfigInfoWidget;
 use App\Filament\Widgets\DependenciesWidget;
@@ -59,7 +58,6 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
-                ArchiveLogsStatusWidget::class,
                 ApiRequestStatsWidget::class,
                 NpmDependenciesWidget::class,
                 ConfigInfoWidget::class,
