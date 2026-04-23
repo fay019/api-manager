@@ -195,6 +195,8 @@ return [
         'archive_button' => 'Archive Old Logs',
         'archive_queued_title' => 'Archiving Started',
         'archive_queued_message' => 'Log archival has been queued. This may take a few minutes to complete.',
+        'archive_already_running_title' => 'Archiving in Progress',
+        'archive_already_running_message' => 'An archival process is already running. Please be patient.',
     ],
 
     // Common Filament Keys

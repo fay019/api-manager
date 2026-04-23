@@ -195,6 +195,8 @@ return [
         'archive_button' => 'Alte Protokolle archivieren',
         'archive_queued_title' => 'Archivierung gestartet',
         'archive_queued_message' => 'Die Protokollarchivierung wurde in die Warteschlange eingereiht. Dies kann einige Minuten dauern.',
+        'archive_already_running_title' => 'Archivierung läuft',
+        'archive_already_running_message' => 'Ein Archivierungsprozess läuft bereits. Bitte haben Sie Geduld.',
     ],
 
     // Common Filament Keys

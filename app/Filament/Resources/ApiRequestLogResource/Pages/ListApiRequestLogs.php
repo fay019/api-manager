@@ -7,6 +7,7 @@ use App\Jobs\ArchiveApiRequestLogsJob;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Support\Facades\DB;
 
 class ListApiRequestLogs extends ListRecords
 {
@@ -19,7 +20,22 @@ class ListApiRequestLogs extends ListRecords
                 ->label(__('filament.log.archive_button') ?? 'Archive Old Logs')
                 ->color('warning')
                 ->icon('heroicon-o-archive-box')
+                ->disabled(fn () => DB::table('jobs')->where('payload', 'like', '%ArchiveApiRequestLogsJob%')->exists())
                 ->action(function () {
+                    $jobInProgress = DB::table('jobs')
+                        ->where('payload', 'like', '%ArchiveApiRequestLogsJob%')
+                        ->exists();
+
+                    if ($jobInProgress) {
+                        Notification::make()
+                            ->title(__('filament.log.archive_already_running_title') ?? 'Archiving in Progress')
+                            ->body(__('filament.log.archive_already_running_message') ?? 'An archival process is already running. Please be patient.')
+                            ->warning()
+                            ->send();
+
+                        return;
+                    }
+
                     ArchiveApiRequestLogsJob::dispatch();
 
                     Notification::make()

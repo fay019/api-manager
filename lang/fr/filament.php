@@ -195,6 +195,8 @@ return [
         'archive_button' => 'Archiver les Anciens Journaux',
         'archive_queued_title' => 'Archivage Lancé',
         'archive_queued_message' => 'L\'archivage des journaux a été mis en file d\'attente. Cela peut prendre quelques minutes.',
+        'archive_already_running_title' => 'Archivage en Cours',
+        'archive_already_running_message' => 'Un processus d\'archivage est déjà en cours. Veuillez patienter.',
     ],
 
     // Common Filament Keys
