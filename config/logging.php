@@ -136,4 +136,15 @@ return [
 
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Log Retention
+    |--------------------------------------------------------------------------
+    | Configure how long logs are kept before archival and deletion
+    |
+    */
+
+    'archive_days' => (int) env('LOG_ARCHIVE_DAYS', 15),
+    'delete_days' => (int) env('LOG_DELETE_DAYS', 90),
+
 ];

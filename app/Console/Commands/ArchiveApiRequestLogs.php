@@ -13,8 +13,8 @@ class ArchiveApiRequestLogs extends Command
 {
     public function handle(): int
     {
-        $archiveDays = (int) $this->option('archive-days');
-        $deleteDays = (int) $this->option('delete-days');
+        $archiveDays = (int) ($this->option('archive-days') ?: config('logging.archive_days', 15));
+        $deleteDays = (int) ($this->option('delete-days') ?: config('logging.delete_days', 90));
 
         $this->info('Starting API request logs archival process...');
         $this->info("Archive threshold: {$archiveDays} days");
