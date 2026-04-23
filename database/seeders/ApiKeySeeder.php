@@ -16,7 +16,14 @@ class ApiKeySeeder extends Seeder
         $clients = ApiClient::all();
 
         foreach ($clients as $client) {
-            ApiKey::factory(rand(2, 4))->for($client)->create();
+            for ($i = 0; $i < rand(2, 4); $i++) {
+                ApiKey::create([
+                    'api_client_id' => $client->id,
+                    'name' => 'API Key ' . ($i + 1),
+                    'key_encrypted' => hash('sha256', 'test-key-' . $client->id . '-' . $i),
+                    'is_active' => true,
+                ]);
+            }
         }
     }
 }
