@@ -193,6 +193,8 @@ return [
         'filter_5xx' => '5xx Errors',
         'filter_client' => 'Client',
         'archive_button' => 'Archive Old Logs',
+        'archive_queued_title' => 'Archiving Started',
+        'archive_queued_message' => 'Log archival has been queued. This may take a few minutes to complete.',
     ],
 
     // Common Filament Keys

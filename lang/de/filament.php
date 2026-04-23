@@ -193,6 +193,8 @@ return [
         'filter_5xx' => '5xx Fehler',
         'filter_client' => 'Client',
         'archive_button' => 'Alte Protokolle archivieren',
+        'archive_queued_title' => 'Archivierung gestartet',
+        'archive_queued_message' => 'Die Protokollarchivierung wurde in die Warteschlange eingereiht. Dies kann einige Minuten dauern.',
     ],
 
     // Common Filament Keys

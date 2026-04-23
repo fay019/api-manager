@@ -193,6 +193,8 @@ return [
         'filter_5xx' => 'Erreurs 5xx',
         'filter_client' => 'Client',
         'archive_button' => 'Archiver les Anciens Journaux',
+        'archive_queued_title' => 'Archivage Lancé',
+        'archive_queued_message' => 'L\'archivage des journaux a été mis en file d\'attente. Cela peut prendre quelques minutes.',
     ],
 
     // Common Filament Keys
