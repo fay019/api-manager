@@ -6,6 +6,7 @@ use App\Http\Middleware\EnsureDatabaseExists;
 use App\Http\Middleware\LogApiRequest;
 use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\ThrottleApiClient;
+use App\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -31,6 +32,10 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->web(prepend: [
             EnsureDatabaseExists::class,
+        ]);
+
+        $middleware->web([
+            VerifyCsrfToken::class,
         ]);
 
         $middleware->web(append: [
