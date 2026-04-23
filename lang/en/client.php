@@ -48,8 +48,10 @@ return [
 
     // Client authentication flow
     'client_auth.register_title' => 'Create an Account',
+    'client_auth.register_description' => 'Create your client account in just a few steps',
     'client_auth.register_button' => 'Register',
     'client_auth.login_title' => 'Client Area',
+    'client_auth.login_description' => 'Access your client portal and manage your API keys',
     'client_auth.login_button' => 'Login',
     'client_auth.activation_email_subject' => 'Activate Your Account',
     'client_auth.activation_success' => 'Account activated! You can now login.',
@@ -84,10 +86,12 @@ return [
 
     // Password reset flow
     'client_auth.password_forgot_title' => 'Forgot Password',
+    'client_auth.password_forgot_header' => 'Receive a link to reset your password',
     'client_auth.password_forgot_link' => 'Forgot your password?',
     'client_auth.password_forgot_description' => 'Enter your email to receive a reset link',
     'client_auth.password_reset_sent' => 'If this address is known, a reset email has been sent.',
     'client_auth.password_reset_title' => 'Reset Password',
+    'client_auth.password_reset_header' => 'Create a new secure password',
     'client_auth.password_reset_email_subject' => 'Reset Your Password',
     'client_auth.password_reset_message' => 'Click the button below to reset your password.',
     'client_auth.password_reset_button' => 'Reset My Password',
@@ -97,6 +101,13 @@ return [
     'client_auth.password_reset_expired' => 'This link has expired.',
     'show_password' => 'Show password',
     'hide_password' => 'Hide password',
+    'password_min_chars' => 'Minimum 8 characters',
+    'password_uppercase' => 'Uppercase letter',
+    'password_lowercase' => 'Lowercase letter',
+    'password_number' => 'Number',
+    'password_symbol' => 'Special character',
+    'password_match' => 'Passwords match',
+    'client_auth.email_validation_required' => 'A confirmation email will be sent. Please use a valid email address.',
 
     // Client profile fields
     'first_name' => 'First Name',

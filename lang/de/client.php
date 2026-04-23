@@ -45,8 +45,10 @@ return [
 
     // Client authentication flow
     'client_auth.register_title' => 'Konto erstellen',
+    'client_auth.register_description' => 'Erstellen Sie Ihr Kundenkonto in wenigen Schritten',
     'client_auth.register_button' => 'Registrieren',
     'client_auth.login_title' => 'Kundenbereich',
+    'client_auth.login_description' => 'Greifen Sie auf Ihr Kundenportal zu und verwalten Sie Ihre API-Schlüssel',
     'client_auth.login_button' => 'Anmelden',
     'client_auth.activation_email_subject' => 'Aktivieren Sie Ihr Konto',
     'client_auth.activation_success' => 'Konto aktiviert! Sie können sich jetzt anmelden.',
@@ -81,10 +83,12 @@ return [
 
     // Password reset flow
     'client_auth.password_forgot_title' => 'Passwort vergessen',
+    'client_auth.password_forgot_header' => 'Erhalten Sie einen Link zum Zurücksetzen Ihres Passworts',
     'client_auth.password_forgot_link' => 'Passwort vergessen?',
     'client_auth.password_forgot_description' => 'Geben Sie Ihre E-Mail ein, um einen Rücksetzungslink zu erhalten',
     'client_auth.password_reset_sent' => 'Falls diese Adresse bekannt ist, wurde eine Rücksetzungs-E-Mail gesendet.',
     'client_auth.password_reset_title' => 'Passwort zurücksetzen',
+    'client_auth.password_reset_header' => 'Erstellen Sie ein neues sicheres Passwort',
     'client_auth.password_reset_email_subject' => 'Setzen Sie Ihr Passwort zurück',
     'client_auth.password_reset_message' => 'Klicken Sie auf die Schaltfläche unten, um Ihr Passwort zurückzusetzen.',
     'client_auth.password_reset_button' => 'Mein Passwort zurücksetzen',
@@ -94,6 +98,13 @@ return [
     'client_auth.password_reset_expired' => 'Dieser Link ist abgelaufen.',
     'show_password' => 'Passwort anzeigen',
     'hide_password' => 'Passwort verbergen',
+    'password_min_chars' => 'Mindestens 8 Zeichen',
+    'password_uppercase' => 'Großbuchstabe',
+    'password_lowercase' => 'Kleinbuchstabe',
+    'password_number' => 'Zahl',
+    'password_symbol' => 'Sonderzeichen',
+    'password_match' => 'Passwörter stimmen überein',
+    'client_auth.email_validation_required' => 'Es wird eine Bestätigungse-Mail gesendet. Bitte verwenden Sie eine gültige E-Mail-Adresse.',
     'type' => 'Kontotyp',
     'person' => 'Person',
     'company' => 'Unternehmen',

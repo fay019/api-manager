@@ -45,8 +45,10 @@ return [
 
     // Client authentication flow
     'client_auth.register_title' => 'Créer un compte',
+    'client_auth.register_description' => 'Créez votre compte client en quelques étapes',
     'client_auth.register_button' => 'S\'inscrire',
     'client_auth.login_title' => 'Espace Client',
+    'client_auth.login_description' => 'Accédez à votre portail client et gérez vos clés API',
     'client_auth.login_button' => 'Se connecter',
     'client_auth.activation_email_subject' => 'Activez votre compte',
     'client_auth.activation_success' => 'Compte activé ! Vous pouvez maintenant vous connecter.',
@@ -81,10 +83,12 @@ return [
 
     // Password reset flow
     'client_auth.password_forgot_title' => 'Mot de passe oublié',
+    'client_auth.password_forgot_header' => 'Recevez un lien pour réinitialiser votre mot de passe',
     'client_auth.password_forgot_link' => 'Mot de passe oublié ?',
     'client_auth.password_forgot_description' => 'Saisissez votre email pour recevoir un lien de réinitialisation',
     'client_auth.password_reset_sent' => 'Si cette adresse est connue, un email de réinitialisation a été envoyé.',
     'client_auth.password_reset_title' => 'Réinitialiser le mot de passe',
+    'client_auth.password_reset_header' => 'Créez un nouveau mot de passe sécurisé',
     'client_auth.password_reset_email_subject' => 'Réinitialisez votre mot de passe',
     'client_auth.password_reset_message' => 'Cliquez sur le bouton ci-dessous pour réinitialiser votre mot de passe.',
     'client_auth.password_reset_button' => 'Réinitialiser mon mot de passe',
@@ -94,6 +98,13 @@ return [
     'client_auth.password_reset_expired' => 'Ce lien a expiré.',
     'show_password' => 'Afficher le mot de passe',
     'hide_password' => 'Masquer le mot de passe',
+    'password_min_chars' => 'Minimum 8 caractères',
+    'password_uppercase' => 'Lettre majuscule',
+    'password_lowercase' => 'Lettre minuscule',
+    'password_number' => 'Chiffre',
+    'password_symbol' => 'Caractère spécial',
+    'password_match' => 'Les mots de passe correspondent',
+    'client_auth.email_validation_required' => 'Un email de confirmation sera envoyé. Veuillez utiliser une adresse email valide.',
     'type' => 'Type de compte',
     'person' => 'Personne',
     'company' => 'Entreprise',

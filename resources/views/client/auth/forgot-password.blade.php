@@ -1,12 +1,22 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="min-h-screen flex items-center justify-center px-4 py-12">
-    <div class="w-full max-w-md">
-        <div class="bg-white dark:bg-slate-800 rounded-lg shadow-lg p-8">
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
+<div class="pt-16 pb-10 px-4">
+    <div class="w-full max-w-md mx-auto">
+        <div class="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-slate-900 dark:to-slate-800 rounded-lg shadow-lg p-6">
+            <div class="text-center mb-4">
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                    🔑 {{ __('client.client_auth.password_forgot_title') }}
+                </h1>
+                <p class="text-gray-600 dark:text-gray-400">
+                    {{ __('client.client_auth.password_forgot_header') ?? 'Recevez un lien pour réinitialiser votre mot de passe' }}
+                </p>
+            </div>
+
+        <div class="bg-white dark:bg-slate-800 rounded-lg shadow-lg p-6">
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 text-center">
                 {{ __('client.client_auth.password_forgot_title') }}
-            </h1>
+            </h2>
 
             @if ($errors->any())
                 <div class="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
