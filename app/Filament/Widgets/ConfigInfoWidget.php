@@ -12,6 +12,10 @@ class ConfigInfoWidget extends Widget
 
     public function getGitVersion(): string
     {
+        if (! function_exists('exec')) {
+            return 'N/A';
+        }
+
         try {
             exec('git --version', $output, $status);
             if ($status === 0 && ! empty($output)) {
@@ -28,6 +32,10 @@ class ConfigInfoWidget extends Widget
 
     public function getGitBranch(): string
     {
+        if (! function_exists('exec')) {
+            return 'N/A';
+        }
+
         try {
             exec('git rev-parse --abbrev-ref HEAD', $output, $status);
             if ($status === 0 && ! empty($output)) {
@@ -42,6 +50,10 @@ class ConfigInfoWidget extends Widget
 
     public function getGitCommit(): string
     {
+        if (! function_exists('exec')) {
+            return 'N/A';
+        }
+
         try {
             exec('git rev-parse --short HEAD', $output, $status);
             if ($status === 0 && ! empty($output)) {
