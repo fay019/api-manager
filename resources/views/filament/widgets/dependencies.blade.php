@@ -4,13 +4,21 @@
     @endphp
 
     <style>
+        .fi-config-icon {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
         .fi-config-icon svg {
-            fill: currentColor;
-            stroke: currentColor;
+            width: 1.25rem !important;
+            height: 1.25rem !important;
+            fill: currentColor !important;
+            stroke: currentColor !important;
+            display: block !important;
         }
         .fi-config-icon svg * {
-            fill: currentColor;
-            stroke: currentColor;
+            fill: currentColor !important;
+            stroke: currentColor !important;
         }
     </style>
 
