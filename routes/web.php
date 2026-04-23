@@ -86,6 +86,7 @@ Route::prefix('client')->name('client.')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('/profile', [ClientProfileController::class, 'edit'])->name('profile.edit');
         Route::put('/profile', [ClientProfileController::class, 'update'])->name('profile.update');
+        Route::post('/profile/avatar', [ClientProfileController::class, 'updateAvatar'])->name('profile.update-avatar');
         Route::get('/api-keys/{id}/key', [ClientProfileController::class, 'getApiKey'])->name('api-keys.get-key');
     });
 });

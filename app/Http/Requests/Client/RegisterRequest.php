@@ -14,9 +14,18 @@ class RegisterRequest extends FormRequest
 
     public function rules(): array
     {
+        $type = $this->input('type', 'person');
+
         return [
-            'name' => ['required', 'string', 'min:2', 'max:255', 'not_regex:/^\d+$/'],
+            'type' => ['required', 'in:person,company'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
+            'company_name' => $type === 'company' ? ['required', 'string', 'max:255'] : ['nullable', 'string', 'max:255'],
             'email' => ['required', 'email:rfc,dns', 'max:255', 'unique:clients,email'],
+            'contact_email' => $type === 'company' ? ['nullable', 'email:rfc,dns', 'max:255'] : ['nullable'],
+            'billing_email' => $type === 'company' ? ['nullable', 'email:rfc,dns', 'max:255'] : ['nullable'],
+            'same_as_main_email' => ['nullable', 'boolean'],
+            'same_contact_email' => ['nullable', 'boolean'],
             'password' => [
                 'required',
                 'confirmed',

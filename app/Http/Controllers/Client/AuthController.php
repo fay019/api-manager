@@ -33,9 +33,27 @@ class AuthController extends Controller
     {
         $rawToken = Str::random(64);
 
+        $type = $request->input('type', 'person');
+
+        $billingEmail = $request->boolean('same_as_main_email')
+            ? $request->email
+            : $request->input('billing_email');
+
+        $contactEmail = null;
+        if ($type === 'company') {
+            $contactEmail = $request->boolean('same_contact_email')
+                ? $request->email
+                : $request->input('contact_email');
+        }
+
         $client = Client::create([
-            'name' => $request->name,
+            'type' => $type,
+            'first_name' => $request->input('first_name'),
+            'last_name' => $request->input('last_name'),
+            'company_name' => $type === 'company' ? $request->input('company_name') : null,
             'email' => $request->email,
+            'contact_email' => $contactEmail,
+            'billing_email' => $billingEmail,
             'password' => $request->password,
             'activation_token' => hash('sha256', $rawToken),
             'activation_expires_at' => now()->addHours(24),
@@ -44,7 +62,7 @@ class AuthController extends Controller
 
         $client->notify(new ClientActivation($rawToken));
 
-        Log::info('client.register', ['email' => $request->email, 'ip' => $request->ip()]);
+        Log::info('client.register', ['type' => $type, 'email' => $request->email, 'ip' => $request->ip()]);
 
         return redirect()->route('client.login')
             ->with('success', __('client.client_auth.register_success'));

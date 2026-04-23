@@ -12,21 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('clients', function (Blueprint $table) {
-            $table->string('password_reset_token', 64)->nullable();
-            $table->timestamp('password_reset_expires_at')->nullable();
-            $table->index('password_reset_token');
+            $table->enum('type', ['person', 'company'])->default('person')->after('name');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('clients', function (Blueprint $table) {
-            $table->dropIndex(['password_reset_token']);
-            $table->dropColumn('password_reset_token');
-            $table->dropColumn('password_reset_expires_at');
+            $table->dropColumn('type');
         });
     }
 };

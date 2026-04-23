@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Client;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class ClientSeeder extends Seeder
@@ -17,11 +16,13 @@ class ClientSeeder extends Seeder
         Client::query()->delete();
 
         $clients = [
+            // PERSONS
             [
+                'type' => 'person',
                 'name' => 'Fayçal Moussouni',
                 'first_name' => 'Fayçal',
                 'last_name' => 'Moussouni',
-                'email' => 'fay019@gmail.com',
+                'email' => 'faycal@moussouni.dev',
                 'password' => bcrypt('password123'),
                 'company_name' => 'Moussouni Dev',
                 'phone' => '+33612345678',
@@ -29,18 +30,19 @@ class ClientSeeder extends Seeder
                 'timezone' => 'Europe/Paris',
                 'language' => 'fr',
                 'billing_email' => 'billing@moussouni.dev',
-                'contact_email' => 'fay019@gmail.com',
+                'contact_email' => 'faycal@moussouni.dev',
                 'is_active' => true,
                 'activated_at' => now(),
                 'address_json' => json_encode(['street' => '123 Rue de Paris', 'city' => 'Paris', 'postal_code' => '75001']),
             ],
             [
+                'type' => 'person',
                 'name' => 'Jean Dupont',
                 'first_name' => 'Jean',
                 'last_name' => 'Dupont',
                 'email' => 'jean.dupont@example.com',
                 'password' => bcrypt('password123'),
-                'company_name' => 'Dupont SAS',
+                'company_name' => null,
                 'phone' => '+33612345679',
                 'country' => 'FR',
                 'timezone' => 'Europe/Paris',
@@ -52,12 +54,13 @@ class ClientSeeder extends Seeder
                 'address_json' => json_encode(['street' => '456 Rue de Lyon', 'city' => 'Lyon', 'postal_code' => '69001']),
             ],
             [
+                'type' => 'person',
                 'name' => 'Sarah Johnson',
                 'first_name' => 'Sarah',
                 'last_name' => 'Johnson',
                 'email' => 'sarah.johnson@techcorp.com',
                 'password' => bcrypt('password123'),
-                'company_name' => 'TechCorp US',
+                'company_name' => null,
                 'phone' => '+14155551234',
                 'country' => 'US',
                 'timezone' => 'America/New_York',
@@ -68,12 +71,49 @@ class ClientSeeder extends Seeder
                 'activated_at' => now(),
                 'address_json' => json_encode(['street' => '789 Tech Ave', 'city' => 'San Francisco', 'postal_code' => '94105']),
             ],
+            // COMPANIES
+            [
+                'type' => 'company',
+                'name' => 'Acme Corporation',
+                'first_name' => 'Thomas',
+                'last_name' => 'Anderson',
+                'email' => 'contact@acmecorp.com',
+                'password' => bcrypt('password123'),
+                'company_name' => 'Acme Corporation',
+                'phone' => '+442071838750',
+                'country' => 'GB',
+                'timezone' => 'Europe/London',
+                'language' => 'en',
+                'billing_email' => 'billing@acmecorp.com',
+                'contact_email' => 'thomas.anderson@acmecorp.com',
+                'is_active' => true,
+                'activated_at' => now(),
+                'address_json' => json_encode(['street' => '221B Baker Street', 'city' => 'London', 'postal_code' => 'NW1 6XE']),
+            ],
+            [
+                'type' => 'company',
+                'name' => 'Global Ventures GmbH',
+                'first_name' => 'Klaus',
+                'last_name' => 'Mueller',
+                'email' => 'info@globalventures.de',
+                'password' => bcrypt('password123'),
+                'company_name' => 'Global Ventures GmbH',
+                'phone' => '+49302691290',
+                'country' => 'DE',
+                'timezone' => 'Europe/Berlin',
+                'language' => 'de',
+                'billing_email' => 'rechnungen@globalventures.de',
+                'contact_email' => 'klaus.mueller@globalventures.de',
+                'is_active' => true,
+                'activated_at' => now(),
+                'address_json' => json_encode(['street' => 'Unter den Linden 77', 'city' => 'Berlin', 'postal_code' => '10116']),
+            ],
         ];
 
         foreach ($clients as $client) {
             Client::create($client);
         }
 
-        echo "✅ Created " . count($clients) . " seed clients\n";
+        echo '✅ Created '.count($clients)." seed clients\n";
     }
 }

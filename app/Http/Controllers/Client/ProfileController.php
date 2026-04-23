@@ -3,71 +3,133 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Client\UpdateProfileRequest;
-use App\Models\ApiKey;
+use App\Http\Requests\Client\ClientProfileUpdateRequest;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Crypt;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
     public function edit(): View
     {
-        return view('client.profile.edit', ['client' => auth('client')->user()]);
+        $client = auth('client')->user();
+
+        return view('client.profile.edit', [
+            'client' => $client,
+            'countries' => $this->getCountries(),
+            'timezones' => timezone_identifiers_list(),
+        ]);
     }
 
-    public function update(UpdateProfileRequest $request): RedirectResponse
+    public function update(ClientProfileUpdateRequest $request)
     {
         $client = auth('client')->user();
-        $data = $request->safe()->except(['avatar', 'password', 'password_confirmation']);
 
-        if ($request->hasFile('avatar')) {
-            if ($client->avatar && Storage::disk('public')->exists($client->avatar)) {
-                Storage::disk('public')->delete($client->avatar);
-            }
+        $billingEmail = $request->boolean('same_as_main_email')
+            ? $request->email
+            : $request->billing_email;
 
-            $extension = $request->file('avatar')->guessExtension();
-            $path = $request->file('avatar')->storeAs(
-                'avatars',
-                Str::uuid().'.'.$extension,
-                'public'
-            );
-            $data['avatar'] = $path;
+        $contactEmail = null;
+        if ($client->type === 'company') {
+            $contactEmail = $request->boolean('same_contact_email')
+                ? $request->email
+                : $request->contact_email;
         }
 
-        if ($request->filled('password')) {
-            $data['password'] = $request->input('password');
-            Log::info('client.password.changed', ['id' => $client->id]);
-        }
+        $data = [
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'email' => $request->email,
+            'company_name' => $request->company_name,
+            'description' => $request->description,
+            'phone' => $request->phone,
+            'country' => $request->country,
+            'timezone' => $request->timezone,
+            'language' => $request->language,
+            'billing_email' => $billingEmail,
+            'address_json' => [
+                'street' => $request->address,
+                'city' => $request->city,
+                'postal_code' => $request->postal_code,
+            ],
+            'contact_email' => $contactEmail,
+        ];
 
         $client->update($data);
 
-        return redirect()->back()->with('success', __('client.client_auth.profile_updated'));
+        Log::info('client.profile.updated', ['id' => $client->id]);
+
+        return redirect()->route('client.profile.edit')
+            ->with('success', __('client.profile.updated'));
     }
 
-    public function getApiKey(ApiKey $id): JsonResponse
+    public function updateAvatar(Request $request): JsonResponse
+    {
+        $request->validate([
+            'avatar' => ['required', 'image', 'max:5120'],
+        ]);
+
+        $client = auth('client')->user();
+
+        if ($client->avatar && Storage::exists('public/'.$client->avatar)) {
+            Storage::delete('public/'.$client->avatar);
+        }
+
+        $path = $request->file('avatar')->store('avatars', 'public');
+
+        $client->update(['avatar' => $path]);
+
+        Log::info('client.avatar.updated', ['id' => $client->id]);
+
+        return response()->json(['message' => __('client.profile.avatar_updated')]);
+    }
+
+    public function getApiKey(int $apiKeyId)
     {
         $client = auth('client')->user();
 
-        $id->load('apiClient');
-        if ($id->apiClient->client_id !== $client->id) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
+        $apiKey = $client->apiClients()
+            ->with('apiKeys')
+            ->get()
+            ->pluck('apiKeys')
+            ->flatten()
+            ->where('id', $apiKeyId)
+            ->firstOrFail();
 
-        $fullKey = null;
-        try {
-            $fullKey = Crypt::decryptString($id->key_encrypted);
-        } catch (\Exception $e) {
-            Log::warning('client.api-key.decrypt.error', ['id' => $id->id, 'email' => $client->email]);
-        }
+        return response()->json(['key' => decrypt($apiKey->key_encrypted)]);
+    }
 
-        return response()->json([
-            'key' => $fullKey,
-            'prefix' => $id->key_prefix,
-        ]);
+    private function getCountries(): array
+    {
+        return [
+            'DZ' => 'Algeria',
+            'FR' => 'France',
+            'DE' => 'Germany',
+            'GB' => 'United Kingdom',
+            'IT' => 'Italy',
+            'ES' => 'Spain',
+            'NL' => 'Netherlands',
+            'BE' => 'Belgium',
+            'AT' => 'Austria',
+            'CH' => 'Switzerland',
+            'SE' => 'Sweden',
+            'NO' => 'Norway',
+            'DK' => 'Denmark',
+            'FI' => 'Finland',
+            'PL' => 'Poland',
+            'CZ' => 'Czech Republic',
+            'US' => 'United States',
+            'CA' => 'Canada',
+            'MX' => 'Mexico',
+            'BR' => 'Brazil',
+            'AU' => 'Australia',
+            'NZ' => 'New Zealand',
+            'JP' => 'Japan',
+            'CN' => 'China',
+            'IN' => 'India',
+            'SG' => 'Singapore',
+        ];
     }
 }
