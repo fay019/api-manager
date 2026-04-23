@@ -45,16 +45,35 @@
                     </ul>
                 </div>
 
-                <!-- Section Admin -->
+                <!-- Section Client/Admin -->
                 <div>
                     <div class="mb-6 flex items-center gap-2">
                         <svg class="h-5 w-5 text-gray-400 dark:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                         </svg>
-                        <h4 class="text-xs font-bold text-gray-900 uppercase tracking-widest dark:text-white">{{ (auth()->check() && auth()->user()->is_admin) ? __('app.nav.admin') : __('app.nav.user') }}</h4>
+                        <h4 class="text-xs font-bold text-gray-900 uppercase tracking-widest dark:text-white">
+                            @if(auth('client')->check())
+                                {{ __('app.nav.client') ?? 'Client' }}
+                            @elseif(auth()->check() && auth()->user()->is_admin)
+                                {{ __('app.nav.admin') }}
+                            @else
+                                {{ __('app.nav.user') }}
+                            @endif
+                        </h4>
                     </div>
                     <ul class="space-y-3">
-                        @if(auth()->check())
+                        @if(auth('client')->check())
+                            <li><a href="{{ route('client.profile.edit') }}" class="group inline-flex items-center gap-2 text-sm text-gray-700 transition-colors hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400"><span class="h-px w-0 bg-indigo-600 transition-all group-hover:w-3 dark:bg-indigo-400"></span>{{ __('app.footer.my_profile') }}</a></li>
+                            <li>
+                                <form action="{{ route('client.logout') }}" method="POST" class="inline">
+                                    @csrf
+                                    <button type="submit" class="group inline-flex items-center gap-2 text-sm text-gray-700 transition-colors hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400">
+                                        <span class="h-px w-0 bg-red-600 transition-all group-hover:w-3 dark:bg-red-400"></span>
+                                        {{ __('app.footer.logout') }}
+                                    </button>
+                                </form>
+                            </li>
+                        @elseif(auth()->check())
                             <li><a href="{{ route('profile.edit') }}" class="group inline-flex items-center gap-2 text-sm text-gray-700 transition-colors hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400"><span class="h-px w-0 bg-indigo-600 transition-all group-hover:w-3 dark:bg-indigo-400"></span>{{ __('app.footer.my_profile') }}</a></li>
                             <li>
                                 <form action="{{ route('logout') }}" method="POST" class="inline">
@@ -69,6 +88,7 @@
                                 <li><a href="/admin" class="group inline-flex items-center gap-2 text-sm text-gray-700 transition-colors hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400"><span class="h-px w-0 bg-indigo-600 transition-all group-hover:w-3 dark:bg-indigo-400"></span>{{ __('app.footer.admin_panel') }}</a></li>
                             @endif
                         @else
+                            <li><a href="{{ route('client.login') }}" class="group inline-flex items-center gap-2 text-sm text-gray-700 transition-colors hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400"><span class="h-px w-0 bg-indigo-600 transition-all group-hover:w-3 dark:bg-indigo-400"></span>{{ __('app.footer.client_login') ?? 'Client Login' }}</a></li>
                             <li><a href="{{ route('login.show') }}" class="group inline-flex items-center gap-2 text-sm text-gray-700 transition-colors hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400"><span class="h-px w-0 bg-indigo-600 transition-all group-hover:w-3 dark:bg-indigo-400"></span>{{ __('app.footer.login') }}</a></li>
                         @endif
                     </ul>
