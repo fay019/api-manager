@@ -20,6 +20,7 @@ class ApiKeySeeder extends Seeder
                 ApiKey::create([
                     'api_client_id' => $client->id,
                     'name' => 'API Key ' . ($i + 1),
+                    'key_prefix' => 'sk_' . substr(hash('sha256', 'test-key-' . $client->id . '-' . $i), 0, 16),
                     'key_encrypted' => hash('sha256', 'test-key-' . $client->id . '-' . $i),
                     'is_active' => true,
                 ]);
