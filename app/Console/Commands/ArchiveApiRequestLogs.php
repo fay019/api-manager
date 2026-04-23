@@ -33,7 +33,7 @@ class ArchiveApiRequestLogs extends Command
     private function archiveLogs($cutoffDate): int
     {
         $totalArchived = 0;
-        $batchSize = 5000;
+        $batchSize = 500;
 
         while (true) {
             $logsToArchive = DB::table('api_request_logs')

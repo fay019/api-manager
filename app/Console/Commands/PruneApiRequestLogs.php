@@ -17,7 +17,7 @@ class PruneApiRequestLogs extends Command
         $cutoffDate = now()->subDays($days);
 
         $totalDeleted = 0;
-        $batchSize = 5000;
+        $batchSize = 500;
 
         while (true) {
             $deletedCount = ApiRequestLog::where('created_at', '<', $cutoffDate)
