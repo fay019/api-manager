@@ -21,6 +21,10 @@ return Application::configure(basePath: dirname(__DIR__))
             users: '/',
         );
 
+        $middleware->validateCsrfTokens(except: [
+            'livewire/*',
+        ]);
+
         $middleware->encryptCookies(except: [
             'api_manager_setup_token',
             'locale',
