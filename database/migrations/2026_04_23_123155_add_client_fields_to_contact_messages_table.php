@@ -26,7 +26,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('contact_messages', function (Blueprint $table) {
-            $table->dropForeignIdFor('clients');
+            $table->dropForeign(['client_id']);
             $table->dropColumn(['client_id', 'type', 'contact_email', 'billing_email', 'phone']);
         });
     }

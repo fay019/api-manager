@@ -36,7 +36,7 @@ return new class extends Migration
                 $table->integer('response_size')->nullable();
                 $table->string('error_message', 500)->nullable();
                 $table->tinyInteger('cached')->default(0);
-                $table->timestamp('created_at');
+                $table->timestamp('created_at')->useCurrent();
             });
         }
 
