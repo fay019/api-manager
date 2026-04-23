@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\SeoMetaResource\Pages;
 
 use App\Filament\Resources\SeoMetaResource;
+use App\Filament\Resources\SeoMetaResource\Widgets\SeoMetaHelper;
 use App\Models\SeoMeta;
 use Filament\Actions;
 use Filament\Notifications\Notification;
@@ -13,6 +14,13 @@ use Illuminate\Support\Str;
 class ListSeoMetas extends ListRecords
 {
     protected static string $resource = SeoMetaResource::class;
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            SeoMetaHelper::class,
+        ];
+    }
 
     protected function getHeaderActions(): array
     {
