@@ -6,10 +6,10 @@ use App\Filament\Resources\Promos\PromoResource;
 use App\Models\Promo;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 
 class EditPromo extends EditRecord
 {
