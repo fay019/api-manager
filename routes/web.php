@@ -11,6 +11,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -119,6 +120,17 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     })->name('health-check.test');
+
+    Route::post('/api-request-logs/archive', function (Request $request) {
+        try {
+            Artisan::call('api:archive-logs');
+            $output = Artisan::output();
+
+            return response()->json(['success' => true, 'message' => $output]);
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    })->name('api-request-logs.archive');
 });
 
 Route::prefix('docs')->name('docs.')->group(function () {
