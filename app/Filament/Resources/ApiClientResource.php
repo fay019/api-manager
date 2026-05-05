@@ -65,7 +65,13 @@ class ApiClientResource extends Resource
                             ->label(__('filament.api_client.name'))
                             ->required()
                             ->maxLength(255)
-                            ->placeholder(__('filament.api_client.name_placeholder')),
+                            ->placeholder(__('filament.api_client.name_placeholder'))
+                            ->live(onBlur: true),
+
+                        TextInput::make('slug')
+                            ->label(__('filament.api_client.slug'))
+                            ->disabled()
+                            ->helperText(__('filament.api_client.slug_help')),
 
                         Toggle::make('is_active')
                             ->label(__('filament.api_client.active'))
@@ -143,6 +149,13 @@ class ApiClientResource extends Resource
                     ->label(__('filament.api_client.name'))
                     ->searchable()
                     ->sortable(),
+
+                TextColumn::make('slug')
+                    ->label(__('filament.api_client.slug'))
+                    ->searchable()
+                    ->sortable()
+                    ->copyable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('is_active')
                     ->label(__('filament.api_client.status'))

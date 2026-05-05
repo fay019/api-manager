@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Clients\Pages;
 
 use App\Filament\Resources\Clients\ClientResource;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Support\Facades\Hash;
 
 class CreateClient extends CreateRecord
 {
@@ -11,6 +12,15 @@ class CreateClient extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+        // Validate password confirmation
+        if (isset($data['password']) && isset($data['password_confirmation'])) {
+            if ($data['password'] !== $data['password_confirmation']) {
+                throw new \Exception('Les mots de passe ne correspondent pas.');
+            }
+            $data['password'] = Hash::make($data['password']);
+            unset($data['password_confirmation']);
+        }
+
         // Build address_json from separate fields
         $data['address_json'] = [
             'street' => $data['address_json']['street'] ?? null,

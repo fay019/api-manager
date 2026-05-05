@@ -68,7 +68,13 @@ class ApiKeyResource extends Resource
                             ->label(__('filament.key.name'))
                             ->required()
                             ->maxLength(255)
-                            ->placeholder('e.g., Mobile App Key, Integration #1'),
+                            ->placeholder('e.g., Mobile App Key, Integration #1')
+                            ->live(onBlur: true),
+
+                        TextInput::make('slug')
+                            ->label(__('filament.key.slug'))
+                            ->disabled()
+                            ->helperText(__('filament.key.slug_help')),
                     ])->columns(2),
 
                 Section::make(__('filament.key.section_validity'))
@@ -174,6 +180,13 @@ class ApiKeyResource extends Resource
                     ->label(__('filament.key.name'))
                     ->searchable()
                     ->sortable(),
+
+                TextColumn::make('slug')
+                    ->label(__('filament.key.slug'))
+                    ->searchable()
+                    ->sortable()
+                    ->copyable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('starts_at')
                     ->label(__('filament.key.starts_at'))

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class ApiKey extends Model
 {
@@ -16,6 +17,7 @@ class ApiKey extends Model
         'key_encrypted',
         'key_prefix',
         'name',
+        'slug',
         'starts_at',
         'expires_at',
         'is_active',
@@ -46,6 +48,21 @@ class ApiKey extends Model
     public function getIsExpiredAttribute(): bool
     {
         return $this->expires_at && $this->expires_at->isPast();
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $model) {
+            if (! $model->slug && $model->name) {
+                $model->slug = Str::slug($model->name);
+            }
+        });
+
+        static::updating(function (self $model) {
+            if ($model->isDirty('name') && $model->name) {
+                $model->slug = Str::slug($model->name);
+            }
+        });
     }
 
     public function getIsValidAttribute(): bool

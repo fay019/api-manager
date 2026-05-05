@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class ApiClient extends Model
 {
@@ -13,6 +14,7 @@ class ApiClient extends Model
 
     protected $fillable = [
         'name',
+        'slug',
         'client_id',
         'website',
         'client_type',
@@ -46,6 +48,21 @@ class ApiClient extends Model
     public function requestLogs(): HasMany
     {
         return $this->hasMany(ApiRequestLog::class);
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $model) {
+            if (! $model->slug && $model->name) {
+                $model->slug = Str::slug($model->name);
+            }
+        });
+
+        static::updating(function (self $model) {
+            if ($model->isDirty('name') && $model->name) {
+                $model->slug = Str::slug($model->name);
+            }
+        });
     }
 
     public function scopeActive($query)

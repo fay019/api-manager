@@ -2,10 +2,11 @@
 
 namespace App\Filament\Resources\Clients\Schemas;
 
+use App\Models\Client;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -20,209 +21,287 @@ class ClientForm
     {
         return $schema
             ->components([
-                // GENERAL INFORMATION
-                Section::make('General Information')
-                    ->collapsible()
-                    ->components([
+                // AUTHENTICATION & BASIC INFO
+                Section::make(__('filament.client.section_account'))
+                    ->description(__('filament.client.section_account_desc'))
+                    ->schema([
                         Select::make('type')
-                            ->label('Account Type')
+                            ->label(__('filament.client.type'))
                             ->options([
-                                'person' => 'Person',
-                                'company' => 'Company',
+                                'person' => __('filament.client.type_person'),
+                                'company' => __('filament.client.type_company'),
                             ])
                             ->required()
-                            ->live(),
+                            ->live()
+                            ->placeholder(__('filament.client.type_placeholder'))
+                            ->columnSpan(['md' => 2]),
+
+                        Toggle::make('is_active')
+                            ->label(__('filament.client.active'))
+                            ->default(true)
+                            ->disabled(fn (Get $get) => ! $get('type'))
+                            ->columnSpan(['md' => 1]),
+
+                        TextInput::make('name')
+                            ->label(__('filament.client.name'))
+                            ->disabled()
+                            ->dehydrated(false)
+                            ->helperText(__('filament.client.name_help'))
+                            ->visible(fn (?Client $record) => $record !== null)
+                            ->columnSpan(['md' => 1]),
 
                         Grid::make(2)
                             ->schema([
                                 TextInput::make('first_name')
-                                    ->label('First Name')
+                                    ->label(__('filament.client.first_name'))
                                     ->maxLength(255)
                                     ->required(fn (Get $get) => $get('type') === 'person')
+                                    ->disabled(fn (Get $get) => ! $get('type'))
                                     ->visible(fn (Get $get) => $get('type') === 'person'),
                                 TextInput::make('last_name')
-                                    ->label('Last Name')
+                                    ->label(__('filament.client.last_name'))
                                     ->maxLength(255)
                                     ->required(fn (Get $get) => $get('type') === 'person')
+                                    ->disabled(fn (Get $get) => ! $get('type'))
                                     ->visible(fn (Get $get) => $get('type') === 'person'),
-                            ]),
+                            ])
+                            ->columnSpan(['md' => 2])
+                            ->visible(fn (Get $get) => $get('type') === 'person'),
 
                         TextInput::make('company_name')
-                            ->label('Company Name')
+                            ->label(__('filament.client.company_name'))
                             ->maxLength(255)
                             ->required(fn (Get $get) => $get('type') === 'company')
-                            ->visible(fn (Get $get) => $get('type') === 'company'),
+                            ->disabled(fn (Get $get) => ! $get('type'))
+                            ->visible(fn (Get $get) => $get('type') === 'company')
+                            ->columnSpan(['md' => 2]),
 
                         TextInput::make('email')
-                            ->label('Login Email')
+                            ->label(__('filament.client.email'))
                             ->email()
                             ->maxLength(255)
-                            ->required(),
+                            ->required()
+                            ->disabled(fn (Get $get) => ! $get('type'))
+                            ->columnSpan(['md' => 2]),
 
-                        Toggle::make('is_active')
-                            ->label('Active')
-                            ->default(true),
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('password')
+                                    ->label(__('filament.client.password'))
+                                    ->password()
+                                    ->revealable()
+                                    ->minLength(8)
+                                    ->confirmed()
+                                    ->disabled(fn (Get $get) => ! $get('type'))
+                                    ->required(fn (?Client $record) => $record === null)
+                                    ->hidden(fn (?Client $record) => $record !== null),
 
-                        DateTimePicker::make('activated_at')
-                            ->label('Activated At')
-                            ->disabled(),
+                                TextInput::make('password_confirmation')
+                                    ->label(__('filament.client.password_confirmation'))
+                                    ->password()
+                                    ->revealable()
+                                    ->minLength(8)
+                                    ->disabled(fn (Get $get) => ! $get('type'))
+                                    ->required(fn (?Client $record) => $record === null)
+                                    ->hidden(fn (?Client $record) => $record !== null),
+                            ])
+                            ->columnSpan(['md' => 2])
+                            ->visible(fn (?Client $record) => $record === null),
+                    ])
+                    ->columns(2),
 
-                        DateTimePicker::make('last_login_at')
-                            ->label('Last Login')
-                            ->disabled(),
-                    ]),
-
-                // COMPANY INFORMATION
-                Section::make('Company Information')
-                    ->collapsible()
-                    ->visible(fn (Get $get) => $get('type') === 'company')
-                    ->components([
-                        Textarea::make('description')
-                            ->label('Description')
-                            ->maxLength(1000)
-                            ->rows(3),
-                    ]),
-
-                // CONTACT INFORMATION
-                Section::make('Contact Information')
-                    ->collapsible()
-                    ->visible(fn (Get $get) => $get('type') === 'company')
-                    ->components([
+                // CONTACT & BILLING
+                Section::make(__('filament.client.section_contact_billing'))
+                    ->description(__('filament.client.section_contact_billing_desc'))
+                    ->disabled(fn (Get $get) => ! $get('type'))
+                    ->schema([
                         Checkbox::make('same_contact_email')
-                            ->label('Use main email as contact email'),
+                            ->label(__('filament.client.same_contact_email'))
+                            ->live()
+                            ->columnSpan(['md' => 2])
+                            ->visible(fn (Get $get) => $get('type') === 'company'),
 
                         TextInput::make('contact_email')
-                            ->label('Contact Email')
+                            ->label(__('filament.client.contact_email'))
                             ->email()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->visible(fn (Get $get) => $get('type') === 'company' && ! $get('same_contact_email'))
+                            ->columnSpan(['md' => 1]),
 
                         TextInput::make('contact_name')
-                            ->label('Contact Person Name')
-                            ->maxLength(255),
-                    ]),
+                            ->label(__('filament.client.contact_name'))
+                            ->maxLength(255)
+                            ->visible(fn (Get $get) => $get('type') === 'company')
+                            ->columnSpan(['md' => 1]),
 
-                // BILLING
-                Section::make('Billing')
-                    ->collapsible()
-                    ->components([
                         Checkbox::make('same_as_main_email')
-                            ->label('Use main email for billing'),
+                            ->label(__('filament.client.same_billing_email'))
+                            ->live()
+                            ->columnSpan(['md' => 2]),
 
                         TextInput::make('billing_email')
-                            ->label('Billing Email')
+                            ->label(__('filament.client.billing_email'))
                             ->email()
-                            ->maxLength(255),
-                    ]),
+                            ->maxLength(255)
+                            ->visible(fn (Get $get) => ! $get('same_as_main_email'))
+                            ->columnSpan(['md' => 2]),
 
-                // COORDINATES
-                Section::make('Coordinates')
-                    ->collapsible()
-                    ->components([
+                        Textarea::make('description')
+                            ->label(__('filament.client.description'))
+                            ->maxLength(1000)
+                            ->rows(2)
+                            ->visible(fn (Get $get) => $get('type') === 'company')
+                            ->columnSpan(['md' => 2]),
+                    ])
+                    ->columns(2),
+
+                // LOCATION & COORDINATES
+                Section::make(__('filament.client.section_location'))
+                    ->description(__('filament.client.section_location_desc'))
+                    ->disabled(fn (Get $get) => ! $get('type'))
+                    ->schema([
                         TextInput::make('phone')
-                            ->label('Phone')
+                            ->label(__('filament.client.phone'))
                             ->tel()
-                            ->maxLength(20),
+                            ->maxLength(20)
+                            ->columnSpan(['md' => 1]),
+
+                        Select::make('country')
+                            ->label(__('filament.client.country'))
+                            ->options([
+                                'DZ' => __('filament.countries.dz'),
+                                'FR' => __('filament.countries.fr'),
+                                'DE' => __('filament.countries.de'),
+                                'GB' => __('filament.countries.gb'),
+                                'IT' => __('filament.countries.it'),
+                                'ES' => __('filament.countries.es'),
+                                'NL' => __('filament.countries.nl'),
+                                'BE' => __('filament.countries.be'),
+                                'AT' => __('filament.countries.at'),
+                                'CH' => __('filament.countries.ch'),
+                                'SE' => __('filament.countries.se'),
+                                'NO' => __('filament.countries.no'),
+                                'DK' => __('filament.countries.dk'),
+                                'FI' => __('filament.countries.fi'),
+                                'PL' => __('filament.countries.pl'),
+                                'CZ' => __('filament.countries.cz'),
+                                'US' => __('filament.countries.us'),
+                                'CA' => __('filament.countries.ca'),
+                                'MX' => __('filament.countries.mx'),
+                                'BR' => __('filament.countries.br'),
+                                'AU' => __('filament.countries.au'),
+                                'NZ' => __('filament.countries.nz'),
+                                'JP' => __('filament.countries.jp'),
+                                'CN' => __('filament.countries.cn'),
+                                'IN' => __('filament.countries.in'),
+                                'SG' => __('filament.countries.sg'),
+                            ])
+                            ->columnSpan(['md' => 1]),
 
                         TextInput::make('address_json.street')
-                            ->label('Street Address')
-                            ->placeholder('123 Main Street')
-                            ->maxLength(255),
+                            ->label(__('filament.client.street'))
+                            ->placeholder(__('filament.client.street_placeholder'))
+                            ->maxLength(255)
+                            ->columnSpan(['md' => 2]),
 
                         Grid::make(3)
                             ->schema([
                                 TextInput::make('address_json.city')
-                                    ->label('City')
+                                    ->label(__('filament.client.city'))
                                     ->maxLength(255),
                                 TextInput::make('address_json.postal_code')
-                                    ->label('Postal Code')
+                                    ->label(__('filament.client.postal_code'))
                                     ->maxLength(20),
-                                Select::make('country')
-                                    ->label('Country')
-                                    ->options([
-                                        'DZ' => 'Algeria',
-                                        'FR' => 'France',
-                                        'DE' => 'Germany',
-                                        'GB' => 'United Kingdom',
-                                        'IT' => 'Italy',
-                                        'ES' => 'Spain',
-                                        'NL' => 'Netherlands',
-                                        'BE' => 'Belgium',
-                                        'AT' => 'Austria',
-                                        'CH' => 'Switzerland',
-                                        'SE' => 'Sweden',
-                                        'NO' => 'Norway',
-                                        'DK' => 'Denmark',
-                                        'FI' => 'Finland',
-                                        'PL' => 'Poland',
-                                        'CZ' => 'Czech Republic',
-                                        'US' => 'United States',
-                                        'CA' => 'Canada',
-                                        'MX' => 'Mexico',
-                                        'BR' => 'Brazil',
-                                        'AU' => 'Australia',
-                                        'NZ' => 'New Zealand',
-                                        'JP' => 'Japan',
-                                        'CN' => 'China',
-                                        'IN' => 'India',
-                                        'SG' => 'Singapore',
-                                    ]),
-                            ]),
-                    ]),
+                            ])
+                            ->columnSpan(['md' => 2]),
+                    ])
+                    ->columns(2),
 
                 // PREFERENCES
-                Section::make('Preferences')
-                    ->collapsible()
-                    ->components([
+                Section::make(__('filament.client.section_preferences'))
+                    ->description(__('filament.client.section_preferences_desc'))
+                    ->disabled(fn (Get $get) => ! $get('type'))
+                    ->schema([
                         Select::make('language')
-                            ->label('Language')
+                            ->label(__('filament.client.language'))
                             ->options([
-                                'fr' => 'Français',
-                                'en' => 'English',
-                                'de' => 'Deutsch',
+                                'fr' => __('filament.languages.fr'),
+                                'en' => __('filament.languages.en'),
+                                'de' => __('filament.languages.de'),
                             ])
-                            ->required(),
+                            ->required()
+                            ->columnSpan(['md' => 1]),
 
                         Select::make('timezone')
-                            ->label('Timezone')
+                            ->label(__('filament.client.timezone'))
                             ->searchable()
                             ->options(fn () => collect(timezone_identifiers_list())
                                 ->mapWithKeys(fn ($tz) => [$tz => $tz])
                                 ->toArray())
-                            ->required(),
-                    ]),
+                            ->required()
+                            ->columnSpan(['md' => 1]),
+                    ])
+                    ->columns(2),
 
-                // SECURITY (readonly)
-                Section::make('Security')
+                // SECURITY
+                Section::make(__('filament.client.section_security'))
                     ->collapsible()
-                    ->components([
+                    ->collapsed()
+                    ->disabled(fn (Get $get) => ! $get('type'))
+                    ->description(__('filament.client.section_security_desc'))
+                    ->schema([
                         TextInput::make('failed_login_attempts')
-                            ->label('Failed Login Attempts')
+                            ->label(__('filament.client.failed_login_attempts'))
                             ->numeric()
-                            ->disabled(),
+                            ->disabled()
+                            ->columnSpan(['md' => 1]),
 
                         DateTimePicker::make('locked_until_at')
-                            ->label('Account Locked Until')
-                            ->disabled(),
-                    ]),
+                            ->label(__('filament.client.locked_until'))
+                            ->disabled()
+                            ->columnSpan(['md' => 1]),
+
+                        DateTimePicker::make('activated_at')
+                            ->label(__('filament.client.activated_at'))
+                            ->disabled()
+                            ->columnSpan(['md' => 1]),
+
+                        DateTimePicker::make('last_login_at')
+                            ->label(__('filament.client.last_login'))
+                            ->disabled()
+                            ->columnSpan(['md' => 1]),
+                    ])
+                    ->columns(2),
 
                 // ADMIN NOTES
-                Section::make('Admin Notes')
+                Section::make(__('filament.client.section_notes'))
                     ->collapsible()
-                    ->components([
+                    ->collapsed()
+                    ->disabled(fn (Get $get) => ! $get('type'))
+                    ->description(__('filament.client.section_notes_desc'))
+                    ->schema([
                         Textarea::make('notes')
-                            ->label('Internal Notes')
-                            ->rows(4),
-                    ]),
+                            ->label(__('filament.client.notes'))
+                            ->rows(4)
+                            ->columnSpan(['md' => 2]),
+                    ])
+                    ->columns(2),
 
-                // FILE UPLOAD
-                Section::make('Avatar')
+                // AVATAR
+                Section::make(__('filament.client.section_avatar'))
                     ->collapsible()
-                    ->components([
+                    ->collapsed()
+                    ->disabled(fn (Get $get) => ! $get('type'))
+                    ->description(__('filament.client.section_avatar_desc'))
+                    ->schema([
                         FileUpload::make('avatar')
-                            ->label('Avatar')
+                            ->label(__('filament.client.avatar'))
                             ->disk('public')
-                            ->visibility('public'),
-                    ]),
+                            ->visibility('public')
+                            ->image()
+                            ->columnSpan(['md' => 1]),
+                    ])
+                    ->columns(2),
             ]);
     }
 }
