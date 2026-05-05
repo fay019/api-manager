@@ -21,15 +21,15 @@ class RegisterRequest extends FormRequest
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'company_name' => $type === 'company' ? ['required', 'string', 'max:255'] : ['nullable', 'string', 'max:255'],
-            'email' => ['required', 'email:rfc,dns', 'max:255', 'unique:clients,email'],
-            'contact_email' => $type === 'company' ? ['nullable', 'email:rfc,dns', 'max:255'] : ['nullable'],
-            'billing_email' => $type === 'company' ? ['nullable', 'email:rfc,dns', 'max:255'] : ['nullable'],
+            'email' => ['required', 'email', 'max:255', 'unique:clients,email'],
+            'contact_email' => $type === 'company' ? ['nullable', 'email', 'max:255'] : ['nullable'],
+            'billing_email' => $type === 'company' ? ['nullable', 'email', 'max:255'] : ['nullable'],
             'same_as_main_email' => ['nullable', 'boolean'],
             'same_contact_email' => ['nullable', 'boolean'],
             'password' => [
                 'required',
                 'confirmed',
-                Password::min(8)->mixedCase()->numbers()->symbols()->uncompromised(),
+                Password::min(8)->mixedCase()->numbers()->symbols(),
             ],
         ];
     }

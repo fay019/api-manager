@@ -24,6 +24,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->validateCsrfTokens(except: [
             'livewire/*',
+            'livewire/update',
+            'livewire/message',
         ]);
 
         $middleware->encryptCookies(except: [
@@ -36,10 +38,6 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->web(prepend: [
             EnsureDatabaseExists::class,
-        ]);
-
-        $middleware->web([
-            VerifyCsrfToken::class,
         ]);
 
         $middleware->web(append: [

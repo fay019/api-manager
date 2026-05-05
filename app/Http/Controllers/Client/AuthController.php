@@ -31,6 +31,7 @@ class AuthController extends Controller
 
     public function register(RegisterRequest $request): RedirectResponse
     {
+        Log::info('Entering register method', $request->all());
         $rawToken = Str::random(64);
 
         $type = $request->input('type', 'person');

@@ -98,6 +98,19 @@
     @yield('scripts')
     @livewireScripts
 
+    <script>
+        document.addEventListener('livewire:init', () => {
+            Livewire.hook('request', ({ fail }) => {
+                fail(({ status, preventDefault }) => {
+                    if (status === 419) {
+                        preventDefault();
+                        confirm('Votre session a expiré. Souhaitez-vous recharger la page pour continuer ?') && window.location.reload();
+                    }
+                });
+            });
+        });
+    </script>
+
     <!-- Push ads script to reload after page load -->
     <script>
         if (typeof window.adsbygoogle !== 'undefined') {
