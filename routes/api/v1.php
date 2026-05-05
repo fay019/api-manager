@@ -9,3 +9,5 @@ Route::get('/health', [HealthController::class, 'index'])
 Route::prefix('promo')
     ->name('promo.')
     ->group(base_path('routes/api/promo.php'));
+
+include base_path('routes/api/ai.php');

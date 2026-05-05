@@ -6,7 +6,7 @@ use App\Http\Responses\ApiResponse;
 use App\Models\ApiKey;
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Crypt;
 
 class ApiKeyAuthentication
 {
@@ -24,7 +24,17 @@ class ApiKeyAuthentication
                 ->with('apiClient')
                 ->first();
 
-            if ($key && Hash::check($keyHeader, $key->key_encrypted)) {
+            $isValid = false;
+            if ($key) {
+                try {
+                    $decrypted = Crypt::decryptString($key->key_encrypted);
+                    $isValid = ($decrypted === $keyHeader);
+                } catch (\Exception) {
+                    $isValid = false;
+                }
+            }
+
+            if ($isValid) {
                 if ($key->expires_at && $key->expires_at->isPast()) {
                     return ApiResponse::unauthorized('API key has expired');
                 }
