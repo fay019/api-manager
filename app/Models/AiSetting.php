@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Crypt;
 
 class AiSetting extends Model
 {
@@ -14,6 +15,7 @@ class AiSetting extends Model
         'allowed_models',
         'timeout',
         'is_active',
+        'ia_token_hash',
     ];
 
     protected function casts(): array
@@ -62,5 +64,23 @@ class AiSetting extends Model
         $settings = $settings ?? self::getInstance();
 
         return 'ai_models:'.$settings->provider.':'.md5($settings->base_url);
+    }
+
+    public function setIaTokenHashAttribute(string $value): void
+    {
+        $this->attributes['ia_token_hash'] = Crypt::encryptString($value);
+    }
+
+    public function verifyToken(string $token): bool
+    {
+        if (! $this->ia_token_hash) {
+            return false;
+        }
+
+        try {
+            return Crypt::decryptString($this->ia_token_hash) === $token;
+        } catch (\Exception) {
+            return false;
+        }
     }
 }

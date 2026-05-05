@@ -3,7 +3,7 @@
 use App\Http\Controllers\Api\AiController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['api.key:true', 'cors.client', 'throttle.api.client'])
+Route::middleware(['api.key:true', 'cors.client', 'throttle.api.client', 'ia.token'])
     ->prefix('ai')
     ->name('ai.')
     ->group(function () {

@@ -3,10 +3,10 @@
 use App\Http\Middleware\ApiKeyAuthentication;
 use App\Http\Middleware\CorsPerClient;
 use App\Http\Middleware\EnsureDatabaseExists;
+use App\Http\Middleware\IaTokenAuthentication;
 use App\Http\Middleware\LogApiRequest;
 use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\ThrottleApiClient;
-use App\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -49,6 +49,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'cors.client' => CorsPerClient::class,
             'throttle.api.client' => ThrottleApiClient::class,
             'log.api' => LogApiRequest::class,
+            'ia.token' => IaTokenAuthentication::class,
         ]);
 
         $middleware->api(prepend: [

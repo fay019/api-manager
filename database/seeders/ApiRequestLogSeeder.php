@@ -22,6 +22,7 @@ class ApiRequestLogSeeder extends Seeder
                     'status_code' => 200,
                     'ip' => '127.0.0.1',
                     'duration_ms' => rand(10, 500),
+                    'created_at' => now(),
                 ]);
             }
         }

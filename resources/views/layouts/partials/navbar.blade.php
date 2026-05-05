@@ -254,6 +254,9 @@
 
                     clickCount++;
 
+                    // Always prevent default navigation during easter egg counting
+                    e.preventDefault();
+
                     // Clear previous timer and set new one
                     clearTimeout(clickTimer);
                     clickTimer = setTimeout(() => {
@@ -263,7 +266,6 @@
                     // On 5th click, redirect to admin login
                     if (clickCount === 5) {
                         clickCount = 0;
-                        e.preventDefault();
                         window.location.href = '{{ route("login.show") }}';
                     }
                 });

@@ -36,4 +36,9 @@ class AiConfigurationService
     {
         return AiSetting::buildCacheKey();
     }
+
+    public function getInternalToken(): ?string
+    {
+        return config('ai.ollama.internal_token');
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Services\Ai;
 use App\Exceptions\Ai\OllamaInvalidResponseException;
 use App\Exceptions\Ai\OllamaModelNotFoundException;
 use App\Exceptions\Ai\OllamaTimeoutException;
+use App\Exceptions\Ai\OllamaUnauthorizedException;
 use App\Exceptions\Ai\OllamaUnavailableException;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
@@ -22,7 +23,9 @@ class OllamaService
 
         return Cache::remember($cacheKey, 60, function () {
             try {
-                $response = Http::timeout(10)->get(
+                $response = Http::withHeaders([
+                    'X-INTERNAL-AI-TOKEN' => $this->config->getInternalToken(),
+                ])->timeout(10)->get(
                     $this->config->getBaseUrl().'/api/tags'
                 );
 
@@ -59,7 +62,9 @@ class OllamaService
         }
 
         try {
-            $response = Http::timeout($this->config->getTimeout())->post(
+            $response = Http::withHeaders([
+                'X-INTERNAL-AI-TOKEN' => $this->config->getInternalToken(),
+            ])->timeout($this->config->getTimeout())->post(
                 $this->config->getBaseUrl().'/api/generate',
                 [
                     'model' => $model,
@@ -69,6 +74,10 @@ class OllamaService
             );
 
             if (! $response->successful()) {
+                if ($response->status() === 403) {
+                    throw new OllamaUnauthorizedException('Internal token missing or invalid');
+                }
+
                 if ($response->status() >= 500) {
                     throw new OllamaUnavailableException('Ollama Server antwortet mit Fehler');
                 }
@@ -106,7 +115,9 @@ class OllamaService
     public function isHealthy(): bool
     {
         try {
-            $response = Http::timeout(10)->get(
+            $response = Http::withHeaders([
+                'X-INTERNAL-AI-TOKEN' => $this->config->getInternalToken(),
+            ])->timeout(10)->get(
                 $this->config->getBaseUrl().'/api/tags'
             );
 

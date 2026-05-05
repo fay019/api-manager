@@ -6,6 +6,7 @@ use App\Exceptions\Ai\AiDisabledException;
 use App\Exceptions\Ai\OllamaInvalidResponseException;
 use App\Exceptions\Ai\OllamaModelNotFoundException;
 use App\Exceptions\Ai\OllamaTimeoutException;
+use App\Exceptions\Ai\OllamaUnauthorizedException;
 use App\Exceptions\Ai\OllamaUnavailableException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GenerateAiRequest;
@@ -49,6 +50,8 @@ class AiController extends Controller
             return ApiResponse::success(['models' => $models]);
         } catch (AiDisabledException) {
             return ApiResponse::error('AI_DISABLED', 'Der KI-Service ist nicht verfügbar', [], 503);
+        } catch (OllamaUnauthorizedException) {
+            return ApiResponse::error('AI_UNAUTHORIZED', 'Internal token missing or invalid', [], 403);
         } catch (OllamaUnavailableException) {
             return ApiResponse::error('AI_PROVIDER_ERROR', 'Der KI-Server ist nicht verfügbar', [], 503);
         } catch (OllamaTimeoutException) {
@@ -85,6 +88,8 @@ class AiController extends Controller
             );
         } catch (AiDisabledException) {
             return ApiResponse::error('AI_DISABLED', 'Der KI-Service ist nicht verfügbar', [], 503);
+        } catch (OllamaUnauthorizedException) {
+            return ApiResponse::error('AI_UNAUTHORIZED', 'Internal token missing or invalid', [], 403);
         } catch (OllamaTimeoutException) {
             return ApiResponse::error('AI_TIMEOUT', 'Der KI-Server hat nicht in der erwarteten Zeit geantwortet', [], 504);
         } catch (OllamaUnavailableException) {
@@ -121,6 +126,8 @@ class AiController extends Controller
             );
         } catch (AiDisabledException) {
             return ApiResponse::error('AI_DISABLED', 'Der KI-Service ist nicht verfügbar', [], 503);
+        } catch (OllamaUnauthorizedException) {
+            return ApiResponse::error('AI_UNAUTHORIZED', 'Internal token missing or invalid', [], 403);
         } catch (OllamaTimeoutException) {
             return ApiResponse::error('AI_TIMEOUT', 'Der KI-Server hat nicht in der erwarteten Zeit geantwortet', [], 504);
         } catch (OllamaUnavailableException) {

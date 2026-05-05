@@ -4,6 +4,8 @@ namespace App\Filament\Pages;
 
 use App\Models\AiSetting;
 use Filament\Actions\Action;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -11,11 +13,13 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use UnitEnum;
 
-class ManageAiSettings extends Page
+class ManageAiSettings extends Page implements HasActions
 {
+    use InteractsWithActions;
     use InteractsWithForms;
 
     protected static UnitEnum|string|null $navigationGroup = 'IA Manager';
@@ -28,6 +32,14 @@ class ManageAiSettings extends Page
 
     public ?array $data = [];
 
+    public ?bool $hasToken = null;
+
+    public ?array $testResult = null;
+
+    public ?string $testError = null;
+
+    public bool $showModal = false;
+
     public function getTitle(): string
     {
         return 'AI Configuration';
@@ -36,6 +48,16 @@ class ManageAiSettings extends Page
     public function mount(): void
     {
         $settings = AiSetting::getInstance();
+        $this->hasToken = ! empty($settings->ia_token_hash);
+
+        $decryptedToken = '';
+        if ($this->hasToken) {
+            try {
+                $decryptedToken = Crypt::decryptString($settings->ia_token_hash);
+            } catch (\Exception) {
+                $decryptedToken = '';
+            }
+        }
 
         $this->form->fill([
             'base_url' => $settings->base_url,
@@ -43,6 +65,7 @@ class ManageAiSettings extends Page
             'allowed_models' => implode(',', $settings->allowed_models ?? []),
             'timeout' => $settings->timeout,
             'is_active' => $settings->is_active,
+            'ia_token' => $decryptedToken,
         ]);
     }
 
@@ -50,28 +73,28 @@ class ManageAiSettings extends Page
     {
         return $schema
             ->components([
-                Section::make('Ollama Configuration')
-                    ->description('Configure your Ollama AI server connection')
+                Section::make(__('filament.ia_settings.section_config'))
+                    ->description(__('filament.ia_settings.section_config_desc'))
                     ->schema([
                         TextInput::make('base_url')
-                            ->label('Ollama Base URL')
+                            ->label(__('filament.ia_settings.base_url'))
                             ->url()
                             ->required()
-                            ->placeholder('https://ia.fayotech.com'),
+                            ->placeholder(__('filament.ia_settings.base_url_placeholder')),
 
                         TextInput::make('default_model')
-                            ->label('Default Model')
+                            ->label(__('filament.ia_settings.default_model'))
                             ->required()
-                            ->placeholder('llama3.2:3b'),
+                            ->placeholder(__('filament.ia_settings.default_model_placeholder')),
 
                         TextInput::make('allowed_models')
-                            ->label('Allowed Models (comma-separated)')
+                            ->label(__('filament.ia_settings.allowed_models'))
                             ->required()
-                            ->placeholder('llama3.2:3b,llama2:7b')
-                            ->helperText('Separate multiple models with commas'),
+                            ->placeholder(__('filament.ia_settings.allowed_models_placeholder'))
+                            ->helperText(__('filament.ia_settings.allowed_models_help')),
 
                         TextInput::make('timeout')
-                            ->label('Timeout (seconds)')
+                            ->label(__('filament.ia_settings.timeout'))
                             ->numeric()
                             ->minValue(60)
                             ->maxValue(600)
@@ -79,14 +102,25 @@ class ManageAiSettings extends Page
                             ->default(120),
 
                         Toggle::make('is_active')
-                            ->label('Service Active')
+                            ->label(__('filament.ia_settings.is_active'))
                             ->default(true),
+                    ]),
+
+                Section::make(__('filament.ia_settings.section_token'))
+                    ->description(__('filament.ia_settings.section_token_desc'))
+                    ->schema([
+                        TextInput::make('ia_token')
+                            ->label(__('filament.ia_settings.ia_token'))
+                            ->password()
+                            ->revealable()
+                            ->placeholder(__('filament.ia_settings.ia_token_placeholder'))
+                            ->helperText(fn () => $this->hasToken ? __('filament.ia_settings.token_set') : __('filament.ia_settings.token_new')),
                     ]),
 
                 Section::make()
                     ->schema([
                         Action::make('save')
-                            ->label('Save Configuration')
+                            ->label(__('filament.ia_settings.save'))
                             ->action('save')
                             ->keyBindings(['mod+s']),
                     ]),
@@ -98,12 +132,16 @@ class ManageAiSettings extends Page
     {
         return [
             Action::make('testConnection')
-                ->label('Test Connection')
+                ->label(__('filament.ia_settings.test_connection'))
+                ->icon('heroicon-o-bolt')
+                ->color('info')
                 ->action('testConnection'),
 
             Action::make('fetchModels')
-                ->label('Fetch Models')
-                ->action('fetchModels'),
+                ->label(__('filament.ia_settings.fetch_models'))
+                ->action('fetchModels')
+                ->icon('heroicon-o-arrow-path')
+                ->color('success'),
         ];
     }
 
@@ -115,13 +153,24 @@ class ManageAiSettings extends Page
         $allowedModels = array_filter(array_map('trim', explode(',', $data['allowed_models'] ?? '')));
 
         $settings = AiSetting::getInstance();
-        $settings->update([
+        $updateData = [
             'base_url' => $data['base_url'],
             'default_model' => $data['default_model'],
             'allowed_models' => $allowedModels,
             'timeout' => $data['timeout'],
             'is_active' => $data['is_active'],
-        ]);
+        ];
+
+        // Only update token if provided
+        if (! empty($data['ia_token'])) {
+            $updateData['ia_token_hash'] = $data['ia_token'];
+        }
+
+        $settings->update($updateData);
+
+        // Refresh token status display
+        $settings->refresh();
+        $this->hasToken = ! empty($settings->ia_token_hash);
 
         Notification::make()
             ->success()
@@ -134,35 +183,49 @@ class ManageAiSettings extends Page
     {
         try {
             $data = $this->form->getState();
-            $response = Http::timeout(10)->get($data['base_url'].'/api/tags');
+            $baseUrl = rtrim($data['base_url'], '/');
+            $model = $data['default_model'];
+
+            $response = Http::withHeaders([
+                'X-INTERNAL-AI-TOKEN' => config('ai.ollama.internal_token'),
+            ])->timeout($data['timeout'] ?? 120)->post(
+                $baseUrl.'/api/generate',
+                [
+                    'model' => $model,
+                    'prompt' => 'Bonjour',
+                    'stream' => false,
+                ]
+            );
 
             if ($response->successful()) {
-                Notification::make()
-                    ->success()
-                    ->title('Connection Test')
-                    ->body('Successfully connected to Ollama')
-                    ->send();
+                $responseData = $response->json();
+                $this->testResult = [
+                    'model' => $responseData['model'] ?? $model,
+                    'response' => $responseData['response'] ?? '',
+                    'duration_ms' => (int) (($responseData['total_duration'] ?? 0) / 1_000_000),
+                    'prompt_eval_count' => $responseData['prompt_eval_count'] ?? 0,
+                    'eval_count' => $responseData['eval_count'] ?? 0,
+                ];
+                $this->testError = null;
             } else {
-                Notification::make()
-                    ->warning()
-                    ->title('Connection Test')
-                    ->body('Ollama returned an error: '.$response->status())
-                    ->send();
+                $this->testError = 'Ollama returned an error: '.$response->status();
+                $this->testResult = null;
             }
         } catch (\Exception $e) {
-            Notification::make()
-                ->danger()
-                ->title('Connection Test')
-                ->body('Failed to connect to Ollama: '.$e->getMessage())
-                ->send();
+            $this->testError = 'Failed to connect to Ollama: '.$e->getMessage();
+            $this->testResult = null;
         }
+
+        $this->showModal = true;
     }
 
     public function fetchModels(): void
     {
         try {
             $data = $this->form->getState();
-            $response = Http::timeout(10)->get($data['base_url'].'/api/tags');
+            $response = Http::withHeaders([
+                'X-INTERNAL-AI-TOKEN' => config('ai.ollama.internal_token'),
+            ])->timeout(10)->get($data['base_url'].'/api/tags');
 
             if (! $response->successful()) {
                 Notification::make()
