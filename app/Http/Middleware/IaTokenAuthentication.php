@@ -12,16 +12,11 @@ class IaTokenAuthentication
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $tokenHeader = $request->header('X-IA-TOKEN');
-
-        if (! $tokenHeader) {
-            return ApiResponse::unauthorized('Invalid or missing IA token');
-        }
-
+        // Vérifier que le service IA est configuré avec un token interne
         $settings = AiSetting::getInstance();
 
-        if (! $settings->verifyToken($tokenHeader)) {
-            return ApiResponse::unauthorized('Invalid or missing IA token');
+        if (! $settings->ia_token_hash) {
+            return ApiResponse::error('AI_NOT_CONFIGURED', 'AI service is not properly configured', [], 503);
         }
 
         return $next($request);

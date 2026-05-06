@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             ClientSeeder::class,
             DocumentationSettingSeeder::class,
+            AiSettingSeeder::class,
             ApiClientSeeder::class,
             ApiKeySeeder::class,
             ApiRequestLogSeeder::class,

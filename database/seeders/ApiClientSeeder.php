@@ -14,7 +14,7 @@ class ApiClientSeeder extends Seeder
     {
         // Skip factory, create manually to avoid faker issues
         for ($i = 0; $i < 15; $i++) {
-            ApiClient::create([
+            $client = ApiClient::create([
                 'name' => 'Test Client ' . ($i + 1),
                 'website' => 'https://example' . $i . '.com',
                 'client_type' => 'WEB',
@@ -23,6 +23,19 @@ class ApiClientSeeder extends Seeder
                 'rate_limit_per_minute' => 60,
                 'monthly_quota' => 10000,
             ]);
+
+            // Ajouter les colonnes IA si elles existent (après migration Phase 1)
+            if ($i % 3 === 0 && \Schema::hasColumn('api_clients', 'type')) {
+                $client->update([
+                    'type' => 'ia',
+                    'allowed_endpoints' => json_encode(['api/v1/ai/generate', 'api/v1/ai/models']),
+                ]);
+            } elseif (\Schema::hasColumn('api_clients', 'type')) {
+                $client->update([
+                    'type' => 'ia',
+                    'allowed_endpoints' => null,
+                ]);
+            }
         }
     }
 }
